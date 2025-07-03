@@ -37,7 +37,8 @@ passport.use(
           });
         }
 
-        return done(null, user); // send the user back to passport.authenticate()
+        const { password: _, ...userWithoutPassword } = user; // remove password before sending the response
+        return done(null, userWithoutPassword); // send the user back to passport.authenticate()
       } catch (error) {
         console.error("Local strategy error:", error);
         return done(error);
@@ -75,7 +76,8 @@ passport.use(
       });
 
       if (user) {
-        return done(null, user);
+        const { password: _, ...userWithoutPassword } = user; // remove password before sending the response
+        return done(null, userWithoutPassword);
       } else {
         return done(null, false, {
           message: "User not found",

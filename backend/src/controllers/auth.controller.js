@@ -60,8 +60,7 @@ async function login(req, res) {
       maxAge: 3600000, // 1 hour
     });
 
-    const { password: _, ...user } = req.user; // remove password before sending the response
-    res.status(200).json(user);
+    res.status(200).json(req.user); // req.user do not have the pw since it is removed in passport.js
   } catch (error) {
     console.error("Login error", error);
     res.status(500).json({ message: "Internal server error" });
@@ -70,8 +69,7 @@ async function login(req, res) {
 
 async function profile(req, res) {
   try {
-    const {password: _, ...user} = req.user;
-    res.status(200).json(user);
+    res.status(200).json(req.user); // req.user do not have the pw since it is removed in passport.js
   } catch (error) {
     console.error("Profile access error", error);
     res.status(500).json({ message: "Internal server error" });
