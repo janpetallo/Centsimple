@@ -1,14 +1,14 @@
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const JwtStrategy = require("passport-jwt").Strategy;
-const ExtractJwt = require("passport-jwt").ExtractJwt;
-const bcrypt = require("bcryptjs");
-const prisma = require("./prisma");
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const bcrypt = require('bcryptjs');
+const prisma = require('./prisma');
 
 // Strategy for logging in
 passport.use(
   new LocalStrategy(
-    { usernameField: "email" },
+    { usernameField: 'email' },
     async (email, password, done) => {
       try {
         const user = await prisma.user.findUnique({
@@ -19,7 +19,7 @@ passport.use(
 
         if (!user) {
           return done(null, false, {
-            message: "Incorrect email or password.",
+            message: 'Incorrect email or password.',
           });
         }
 
@@ -27,20 +27,20 @@ passport.use(
 
         if (!isMatch) {
           return done(null, false, {
-            message: "Incorrect email or password.",
+            message: 'Incorrect email or password.',
           });
         }
 
         if (!user.isVerified) {
           return done(null, false, {
-            message: "Please verify your email to log in.",
+            message: 'Please verify your email to log in.',
           });
         }
 
         const { password: _, ...userWithoutPassword } = user; // remove password before sending the response
         return done(null, userWithoutPassword); // send the user back to passport.authenticate()
       } catch (error) {
-        console.error("Local strategy error:", error);
+        console.error('Local strategy error:', error);
         return done(error);
       }
     }
@@ -51,7 +51,7 @@ passport.use(
 const cookieExtractor = function (req) {
   const token = null;
   if (req && req.cookies) {
-    return req.cookies["token"];
+    return req.cookies['token'];
   }
   return token;
 };
@@ -80,11 +80,11 @@ passport.use(
         return done(null, userWithoutPassword);
       } else {
         return done(null, false, {
-          message: "User not found",
+          message: 'User not found',
         });
       }
     } catch (error) {
-      console.error("JWT strategy error:", error);
+      console.error('JWT strategy error:', error);
       return done(error);
     }
   })

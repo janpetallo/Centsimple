@@ -1,11 +1,11 @@
-const { Router } = require("express");
+const { Router } = require('express');
 const authRouter = Router();
-const passport = require("passport");
+const passport = require('passport');
 
-const authController = require("../controllers/auth.controller");
-const validators = require("../middlewares/validators.middleware");
+const authController = require('../controllers/auth.controller');
+const validators = require('../middlewares/validators.middleware');
 
-authRouter.post("/register", validators.validateUser, authController.register);
+authRouter.post('/register', validators.validateUser, authController.register);
 // authRouter.post("/login",
 //   passport.authenticate("local", {
 //     session: false,
@@ -14,9 +14,9 @@ authRouter.post("/register", validators.validateUser, authController.register);
 // ); // simple way to do this, but no custom messages in response body
 
 authRouter.post(
-  "/login",
+  '/login',
   (req, res, next) => {
-    passport.authenticate("local", { session: false }, (error, user, info) => {
+    passport.authenticate('local', { session: false }, (error, user, info) => {
       // This is our custom callback
       if (error) {
         return next(error); // Handle server errors
@@ -34,8 +34,8 @@ authRouter.post(
 );
 
 authRouter.get(
-  "/profile",
-  passport.authenticate("jwt", { session: false }),
+  '/profile',
+  passport.authenticate('jwt', { session: false }),
   authController.profile
 );
 
