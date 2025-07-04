@@ -18,6 +18,9 @@ app.get('/', (req, res) => {
 const authRouter = require('./routes/auth.route');
 app.use('/api/auth', authRouter);
 
+const categoryRouter = require('./routes/category.route');
+app.use('/api/categories', categoryRouter);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

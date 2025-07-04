@@ -38,4 +38,14 @@ const validateUser = [
   }),
 ];
 
-module.exports = { validateUser };
+const validateCategory = [
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('Category name is required')
+    .isLength({ min: 2 })
+    .withMessage(`Category name ${lengthErr}`)
+    .escape(),
+];
+
+module.exports = { validateUser, validateCategory };
