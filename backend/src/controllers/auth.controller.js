@@ -1,8 +1,8 @@
-const prisma = require("../config/prisma");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const prisma = require('../config/prisma');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-const { validationResult } = require("express-validator");
+const { validationResult } = require('express-validator');
 
 async function register(req, res) {
   try {
@@ -18,7 +18,7 @@ async function register(req, res) {
       },
     });
     if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
+      return res.status(409).json({ message: 'User already exists' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -35,8 +35,8 @@ async function register(req, res) {
     const { password: _, ...user } = newUser; // remove password before sending the response
     res.status(201).json(user);
   } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 }
 
@@ -51,19 +51,19 @@ async function login(req, res) {
 
     const secret = process.env.JWT_SECRET;
 
-    const token = jwt.sign(userPayload, secret, { expiresIn: "1h" });
+    const token = jwt.sign(userPayload, secret, { expiresIn: '1h' });
 
-    res.cookie("token", token, {
+    res.cookie('token', token, {
       httpOnly: true, // prevents client-side js from accessing the cookie
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
       maxAge: 3600000, // 1 hour
     });
 
     res.status(200).json(req.user); // req.user do not have the pw since it is removed in passport.js
   } catch (error) {
-    console.error("Login error", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error('Login error', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 }
 
@@ -71,8 +71,8 @@ async function profile(req, res) {
   try {
     res.status(200).json(req.user); // req.user do not have the pw since it is removed in passport.js
   } catch (error) {
-    console.error("Profile access error", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error('Profile access error', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 }
 
