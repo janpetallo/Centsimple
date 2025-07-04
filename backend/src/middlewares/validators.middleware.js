@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const lengthErr = 'must be at least 2 characters';
 const emailErr = 'must be a valid email';
 
@@ -48,4 +48,12 @@ const validateCategory = [
     .escape(),
 ];
 
-module.exports = { validateUser, validateCategory };
+const validateCategoryId = [
+  param('categoryId').isInt().withMessage('Category ID must be an integer'),
+];
+
+module.exports = {
+  validateUser,
+  validateCategory,
+  validateCategoryId,
+};

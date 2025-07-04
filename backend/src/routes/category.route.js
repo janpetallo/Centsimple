@@ -21,6 +21,7 @@ categoryRouter.get(
 categoryRouter.put(
   '/update/:categoryId',
   passport.authenticate('jwt', { session: false }),
+  validators.validateCategoryId,
   validators.validateCategory,
   categoryController.updateCategory
 );
@@ -28,6 +29,7 @@ categoryRouter.put(
 categoryRouter.delete(
   '/delete/:categoryId',
   passport.authenticate('jwt', { session: false }),
+  validators.validateCategoryId,
   categoryController.deleteCategory
 );
 

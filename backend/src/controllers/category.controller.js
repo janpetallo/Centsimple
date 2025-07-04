@@ -11,33 +11,36 @@ async function createCategory(req, res) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const defaultCategory = await prisma.category.findFirst({
+    const existingCategory = await prisma.category.findFirst({
       where: {
-        name: { equals: name, mode: 'insensitive' }, // Case-insensitive check
-        userId: null,
+        name: { equals: name, mode: 'insensitive' }, // The key is mode: 'insensitive'
+        OR: [
+          { userId: null }, // Is it a default category?
+          { userId: userId }, // Or does it belong to this user?
+        ],
       },
     });
 
-    if (defaultCategory) {
+    if (existingCategory) {
       return res.status(409).json({
-        message: `A default category named '${name}' already exists.`,
+        message: `You already have a category named '${existingCategory.name}'.`,
       });
     }
 
-    const category = await prisma.category.create({
+    const newCategory = await prisma.category.create({
       data: {
         name: name,
         userId: userId,
       },
     });
 
-    res.status(201).json(category);
+    res.status(201).json(newCategory);
   } catch (error) {
     // Prisma's error code for a unique constraint violation for @@unique([name, userId])
     if (error.code === 'P2002') {
-      return res
-        .status(409)
-        .json({ message: `You already have a category named '${name}'.` });
+      return res.status(409).json({
+        message: `You already have a category named '${name}'.`,
+      });
     }
     console.error('Error creating a category', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -64,7 +67,7 @@ async function getCategories(req, res) {
 }
 
 async function updateCategory(req, res) {
-  const { categoryId } = req.params;
+  const categoryId = parseInt(req.params.categoryId, 10);
   const { name } = req.body;
   const userId = req.user.id;
 
@@ -74,7 +77,36 @@ async function updateCategory(req, res) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // This inherently prevents updating default (userId: null) or other users' categories.
+    const categoryToUpdate = await prisma.category.findUnique({
+      where: { id: categoryId, userId: userId },
+    });
+
+    if (!categoryToUpdate) {
+      return res.status(404).json({
+        message: 'Category not found or you do not have permission to edit it.',
+      });
+    }
+
+    const existingCategory = await prisma.category.findFirst({
+      where: {
+        name: {
+          equals: name,
+          mode: 'insensitive',
+        },
+        userId: userId,
+        NOT: {
+          id: categoryId, // Exclude the current category
+        },
+      },
+    });
+
+    if (existingCategory) {
+      return res.status(409).json({
+        message: `You already have a category named '${existingCategory.name}'.`,
+      });
+    }
+
+    // This inherently checks if the category exists AND belongs to the user
     const updatedCategory = await prisma.category.update({
       where: { id: categoryId, userId: userId },
       data: { name: name },
@@ -85,6 +117,13 @@ async function updateCategory(req, res) {
       category: updatedCategory,
     });
   } catch (error) {
+    // Prisma's error code for a unique constraint violation for @@unique([name, userId])
+    // Duplicate error
+    if (error.code === 'P2002') {
+      return res.status(409).json({
+        message: `You already have a category named '${name}'.`,
+      });
+    }
     // Prisma's error code for "record to update not found".
     // This error occurs if the ID doesn't exist OR if the userId doesn't match.
     if (error.code === 'P2025') {
@@ -98,10 +137,15 @@ async function updateCategory(req, res) {
 }
 
 async function deleteCategory(req, res) {
-  const { categoryId } = req.params;
+  const categoryId = parseInt(req.params.categoryId, 10);
   const userId = req.user.id;
 
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     // The delete will only happen if the category ID exists AND belongs to the user.
     const deletedCategory = await prisma.category.delete({
       where: { id: categoryId, userId: userId },
