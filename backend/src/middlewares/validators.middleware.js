@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const lengthErr = 'must be at least 2 characters';
 const emailErr = 'must be a valid email';
 
@@ -38,4 +38,63 @@ const validateUser = [
   }),
 ];
 
-module.exports = { validateUser };
+const validateCategory = [
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('Category name is required')
+    .isLength({ min: 2 })
+    .withMessage(`Category name ${lengthErr}`)
+    .escape(),
+];
+
+const validateTransaction = [
+  body('amount')
+    .trim()
+    .notEmpty()
+    .withMessage('Amount is required')
+    .isFloat({ gt: 0 })
+    .withMessage('Amount must be a positive number'),
+  body('description')
+    .trim()
+    .notEmpty()
+    .withMessage('Description is required')
+    .escape(),
+  body('categoryId')
+    .trim()
+    .notEmpty()
+    .withMessage('Category is required')
+    .isInt()
+    .withMessage('Category ID must be an integer'),
+  body('date')
+    .trim()
+    .notEmpty()
+    .withMessage('Date is required')
+    .isISO8601()
+    .withMessage('Invalid date format'),
+  body('type')
+    .trim()
+    .notEmpty()
+    .withMessage('Type is required')
+    .isIn(['INCOME', 'EXPENSE'])
+    .withMessage('Invalid type')
+    .escape(),
+];
+
+const validateCategoryId = [
+  param('categoryId').isInt().withMessage('Category ID must be an integer'),
+];
+
+const validateTransactionId = [
+  param('transactionId')
+    .isInt()
+    .withMessage('Transaction ID must be an integer'),
+];
+
+module.exports = {
+  validateUser,
+  validateCategory,
+  validateTransaction,
+  validateCategoryId,
+  validateTransactionId,
+};
