@@ -48,12 +48,53 @@ const validateCategory = [
     .escape(),
 ];
 
+const validateTransaction = [
+  body('amount')
+    .trim()
+    .notEmpty()
+    .withMessage('Amount is required')
+    .isFloat({ gt: 0 })
+    .withMessage('Amount must be a positive number'),
+  body('description')
+    .trim()
+    .notEmpty()
+    .withMessage('Description is required')
+    .escape(),
+  body('categoryId')
+    .trim()
+    .notEmpty()
+    .withMessage('Category is required')
+    .isInt()
+    .withMessage('Category ID must be an integer'),
+  body('date')
+    .trim()
+    .notEmpty()
+    .withMessage('Date is required')
+    .isISO8601()
+    .withMessage('Invalid date format'),
+  body('type')
+    .trim()
+    .notEmpty()
+    .withMessage('Type is required')
+    .isIn(['INCOME', 'EXPENSE'])
+    .withMessage('Invalid type')
+    .escape(),
+];
+
 const validateCategoryId = [
   param('categoryId').isInt().withMessage('Category ID must be an integer'),
+];
+
+const validateTransactionId = [
+  param('transactionId')
+    .isInt()
+    .withMessage('Transaction ID must be an integer'),
 ];
 
 module.exports = {
   validateUser,
   validateCategory,
+  validateTransaction,
   validateCategoryId,
+  validateTransactionId,
 };
