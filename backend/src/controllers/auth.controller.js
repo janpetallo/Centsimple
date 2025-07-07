@@ -1,8 +1,9 @@
 const prisma = require('../config/prisma');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const crypto = require('crypto');
 const { validationResult } = require('express-validator');
+const emailService = require('../services/email.service');
 
 async function register(req, res) {
   try {
@@ -22,6 +23,8 @@ async function register(req, res) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
 
     const newUser = await prisma.user.create({
       data: {
@@ -29,13 +32,54 @@ async function register(req, res) {
         lastName: lastName,
         email: email,
         password: hashedPassword,
+        verificationToken: verificationToken,
+        verificationTokenExpires: expiresAt,
       },
     });
+
+    // call the function sending the verification email
+    await emailService.sendVerificationEmail(email, verificationToken);
 
     const { password: _, ...user } = newUser; // remove password before sending the response
     res.status(201).json(user);
   } catch (error) {
     console.error('Registration error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+async function verifyEmail(req, res) {
+  const token = req.query.token;
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        verificationToken: token,
+        verificationTokenExpires: {
+          gte: new Date(), // token should not be expired yet
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        isVerified: true,
+        verificationToken: null,
+        verificationTokenExpires: null,
+      },
+    });
+
+    res.status(200).json({
+      message: 'Email verified successfully',
+    });
+  } catch (error) {
+    console.error('Email verification error', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -76,4 +120,4 @@ async function profile(req, res) {
   }
 }
 
-module.exports = { register, login, profile };
+module.exports = { register, verifyEmail, login, profile };
