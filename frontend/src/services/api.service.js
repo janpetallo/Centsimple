@@ -30,4 +30,30 @@ async function registerUser(formData) {
   }
 }
 
-export { registerUser };
+async function loginUser(formData) {
+  try {
+    const response = await fetch("http://localhost:5001/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      if (data.errors && data.errors.length > 0) {
+        throw new Error(data.errors[0].msg);
+      }
+      throw new Error(data.message || "Login failed");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
+}
+
+export { registerUser, loginUser };
