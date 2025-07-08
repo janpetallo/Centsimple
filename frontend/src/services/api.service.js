@@ -12,6 +12,12 @@ async function registerUser(formData) {
 
     if (!response.ok) {
       // This is for application-level errors sent by our backend (e.g., 409 Conflict)
+      // Check if the server sent back a specific array of validation errors
+      if (data.errors && data.errors.length > 0) {
+        // Throw an error with the message from the *first* validation error
+        throw new Error(data.errors[0].msg);
+      }
+      // Otherwise, use the generic message from the server or a fallback
       throw new Error(data.message || "Registration failed");
     }
 

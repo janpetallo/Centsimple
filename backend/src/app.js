@@ -2,9 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
+const cors = require('cors');
 require('./config/passport'); // run this file for its side effect
 
 const app = express();
+
+// Allow frontend to access API
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

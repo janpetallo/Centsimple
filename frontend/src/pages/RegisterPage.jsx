@@ -1,5 +1,5 @@
 import { useState } from "react";
-import apiService from "../services/apiService";
+import * as apiService from "../services/api.service";
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
