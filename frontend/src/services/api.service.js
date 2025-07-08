@@ -1,0 +1,27 @@
+async function registerUser(formData) {
+  try {
+    const response = await fetch("http://localhost:5001/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // This is for application-level errors sent by our backend (e.g., 409 Conflict)
+      throw new Error(data.message || "Registration failed");
+    }
+
+    return data;
+  } catch (error) {
+    // This will catch network errors (e.g., user is offline) OR the error we threw above.
+    // We re-throw it so the component's catch block can handle it and update the UI.
+    console.error("Registration error:", error);
+    throw error;
+  }
+}
+
+export { registerUser };
