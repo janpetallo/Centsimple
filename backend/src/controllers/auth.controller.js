@@ -40,7 +40,14 @@ async function register(req, res) {
     // call the function sending the verification email
     await emailService.sendVerificationEmail(email, verificationToken);
 
-    const { password: _, ...user } = newUser; // remove password before sending the response
+    // Remove all sensitive fields before sending the response
+    const {
+      password: _,
+      verificationToken: __,
+      verificationTokenExpires: ___,
+      ...user
+    } = newUser;
+    
     res.status(201).json(user);
   } catch (error) {
     console.error('Registration error:', error);
