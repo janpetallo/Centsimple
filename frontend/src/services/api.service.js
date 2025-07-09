@@ -56,4 +56,21 @@ async function loginUser(formData) {
   }
 }
 
-export { registerUser, loginUser };
+async function logoutUser() {
+  try {
+    const response = await fetch("http://localhost:5001/api/auth/logout", {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Logout failed");
+    }
+    // On success, we don't need to parse the body or return anything.
+  } catch (error) {
+    console.error("Logout error:", error);
+    throw error;
+  }
+}
+
+export { registerUser, loginUser, logoutUser };

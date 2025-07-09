@@ -119,6 +119,16 @@ async function login(req, res) {
   }
 }
 
+async function logout(req, res) {
+  try {
+    res.clearCookie('token');
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error('Logout error', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
 async function profile(req, res) {
   try {
     // req.user do not have the sensitive data since they were removed in passport.js
@@ -129,4 +139,4 @@ async function profile(req, res) {
   }
 }
 
-module.exports = { register, verifyEmail, login, profile };
+module.exports = { register, verifyEmail, login, logout, profile };

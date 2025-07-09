@@ -35,6 +35,8 @@ authRouter.post(
   authController.login
 );
 
+authRouter.post('/logout', authController.logout);
+
 authRouter.get(
   '/profile',
   passport.authenticate('jwt', { session: false }),
