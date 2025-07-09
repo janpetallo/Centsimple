@@ -40,7 +40,14 @@ async function register(req, res) {
     // call the function sending the verification email
     await emailService.sendVerificationEmail(email, verificationToken);
 
-    const { password: _, ...user } = newUser; // remove password before sending the response
+    // Remove all sensitive fields before sending the response
+    const {
+      password: _,
+      verificationToken: __,
+      verificationTokenExpires: ___,
+      ...user
+    } = newUser;
+
     res.status(201).json(user);
   } catch (error) {
     console.error('Registration error:', error);
@@ -104,20 +111,32 @@ async function login(req, res) {
       maxAge: 3600000, // 1 hour
     });
 
-    res.status(200).json(req.user); // req.user do not have the pw since it is removed in passport.js
+    // req.user do not have the sensitive data since they were removed in passport.js
+    res.status(200).json(req.user);
   } catch (error) {
     console.error('Login error', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
 
+async function logout(req, res) {
+  try {
+    res.clearCookie('token');
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error('Logout error', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
 async function profile(req, res) {
   try {
-    res.status(200).json(req.user); // req.user do not have the pw since it is removed in passport.js
+    // req.user do not have the sensitive data since they were removed in passport.js
+    res.status(200).json(req.user);
   } catch (error) {
     console.error('Profile access error', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
 
-module.exports = { register, verifyEmail, login, profile };
+module.exports = { register, verifyEmail, login, logout, profile };

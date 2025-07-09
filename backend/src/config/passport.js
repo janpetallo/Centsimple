@@ -37,8 +37,15 @@ passport.use(
           });
         }
 
-        const { password: _, ...userWithoutPassword } = user; // remove password before sending the response
-        return done(null, userWithoutPassword); // send the user back to passport.authenticate()
+        // Create a clean user object with all sensitive fields removed
+        const {
+          password: _,
+          verificationToken: __,
+          verificationTokenExpires: ___,
+          ...sanitizedUser
+        } = user;
+
+        return done(null, sanitizedUser); // send the user back to passport.authenticate()
       } catch (error) {
         console.error('Local strategy error:', error);
         return done(error);
@@ -76,8 +83,15 @@ passport.use(
       });
 
       if (user) {
-        const { password: _, ...userWithoutPassword } = user; // remove password before sending the response
-        return done(null, userWithoutPassword);
+        // Create a clean user object with all sensitive fields removed
+        const {
+          password: _,
+          verificationToken: __,
+          verificationTokenExpires: ___,
+          ...sanitizedUser
+        } = user;
+        
+        return done(null, sanitizedUser); // send the user back to passport.authenticate()
       } else {
         return done(null, false, {
           message: 'User not found',
