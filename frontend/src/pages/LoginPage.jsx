@@ -1,5 +1,7 @@
 import { useState } from "react";
 import * as apiService from "../services/api.service";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -8,6 +10,9 @@ function LoginPage() {
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   function handleChange(e) {
     setFormData({
@@ -25,7 +30,10 @@ function LoginPage() {
     try {
       const response = await apiService.loginUser(formData);
       console.log("User logged in successfully", response);
-      // Here we will redirect the user to the dashboard or show a success message
+      // Pass the user data to the auth provider login function
+      // This will update the user state in the context
+      login(response);
+      navigate("/");
     } catch (error) {
       console.error("Error logging in user", error.message);
       setError(error.message);
