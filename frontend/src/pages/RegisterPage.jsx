@@ -44,7 +44,7 @@ function RegisterPage() {
 
   return (
     <div>
-      <h2>Register Page</h2>;
+      <h2>Register Page</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor="firstName">First Name:</label>
         <input
