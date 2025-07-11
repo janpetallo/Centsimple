@@ -73,4 +73,23 @@ async function logoutUser() {
   }
 }
 
-export { registerUser, loginUser, logoutUser };
+async function checkAuthStatus() {
+  try {
+    const response = await fetch("http://localhost:5001/api/auth/profile", {
+      method: "GET",
+    });
+
+    const data = await response.json(); // user data
+
+    if (!response.ok) {
+      throw new Error(data.message || "Check auth status failed");
+    }
+
+    return data; 
+  } catch (error) {
+    console.error("Check auth status error:", error);
+    throw error;
+  }
+}
+
+export { registerUser, loginUser, logoutUser, checkAuthStatus };

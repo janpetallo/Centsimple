@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import * as apiService from "../services/api.service";
 
 // 1. Create the Context
@@ -14,6 +14,22 @@ export function AuthProvider({ children }) {
   // State to hold the currently logged-in user's data.
   const [user, setUser] = useState(null);
 
+  // State to track whether the initial check is still happening
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    async function checkUserStatus() {
+      try {
+        const userData = await apiService.checkAuthStatus();
+        login(userData);
+      } catch (error) {
+        console.error("Server checkAuthStatus failed:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    checkUserStatus();
+  }, []);
+
   // Function to update the user state when someone logs in.
   function login(userData) {
     setUser(userData);
@@ -25,7 +41,10 @@ export function AuthProvider({ children }) {
       await apiService.logoutUser();
     } catch (error) {
       // Even if the server call fails, we should still log the user out on the client.
-      console.error("Server logout failed, logging out locally anyway:", error);
+      console.error(
+        "Server logout failed, logging out locally anyway:",
+        error.message
+      );
     } finally {
       // This ensures the user is always cleared from the client-side
       setUser(null);
@@ -37,6 +56,7 @@ export function AuthProvider({ children }) {
   // to any component that consumes this context.
   const contextValue = {
     user,
+    loading,
     login,
     logout,
   };
