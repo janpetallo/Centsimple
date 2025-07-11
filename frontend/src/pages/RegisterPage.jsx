@@ -31,8 +31,8 @@ function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await apiService.registerUser(formData);
-      console.log("User registered successfully", response);
+      const userData = await apiService.registerUser(formData);
+      console.log("User registered successfully", userData);
       // Here we will redirect the user to the login page or show a success message
     } catch (error) {
       console.error("Error registering user", error.message);

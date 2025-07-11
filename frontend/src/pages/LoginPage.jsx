@@ -28,11 +28,11 @@ function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await apiService.loginUser(formData);
-      console.log("User logged in successfully", response);
+      const userData = await apiService.loginUser(formData);
+      console.log("User logged in successfully", userData);
       // Pass the user data to the auth provider login function
       // This will update the user state in the context
-      login(response);
+      login(userData);
       navigate("/");
     } catch (error) {
       console.error("Error logging in user", error.message);
