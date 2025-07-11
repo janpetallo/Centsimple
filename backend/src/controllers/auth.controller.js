@@ -5,6 +5,22 @@ const crypto = require('crypto');
 const { validationResult } = require('express-validator');
 const emailService = require('../services/email.service');
 
+// Helper function to get consistent cookie options
+function getCookieOptions() {
+  const options = {
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === 'production') {
+    options.secure = true;
+    options.sameSite = 'lax';
+  } else {
+    // For development on localhost with different ports
+    options.secure = true;
+    options.sameSite = 'none';
+  }
+  return options;
+}
+
 async function register(req, res) {
   try {
     const errors = validationResult(req);
@@ -101,17 +117,15 @@ async function login(req, res) {
     };
 
     const secret = process.env.JWT_SECRET;
-
     const token = jwt.sign(userPayload, secret, { expiresIn: '1h' });
 
-    res.cookie('token', token, {
-      httpOnly: true, // prevents client-side js from accessing the cookie
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 3600000, // 1 hour
-    });
+    const cookieOptions = {
+      ...getCookieOptions(),
+      maxAge: 60 * 60 * 1000, // 1 hour
+    };
 
-    // req.user do not have the sensitive data since they were removed in passport.js
+    res.cookie('token', token, cookieOptions);
+
     res.status(200).json(req.user);
   } catch (error) {
     console.error('Login error', error);
@@ -121,7 +135,7 @@ async function login(req, res) {
 
 async function logout(req, res) {
   try {
-    res.clearCookie('token');
+    res.clearCookie('token', getCookieOptions());
     res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {
     console.error('Logout error', error);
