@@ -2,6 +2,7 @@ async function registerUser(formData) {
   try {
     const response = await fetch("http://localhost:5001/api/auth/register", {
       method: "POST",
+      credentials: "include", // include cookies including the JWT cookie
       headers: {
         "Content-Type": "application/json",
       },
@@ -34,6 +35,7 @@ async function loginUser(formData) {
   try {
     const response = await fetch("http://localhost:5001/api/auth/login", {
       method: "POST",
+      credentials: "include", // include cookies including the JWT cookie
       headers: {
         "Content-Type": "application/json",
       },
@@ -60,6 +62,7 @@ async function logoutUser() {
   try {
     const response = await fetch("http://localhost:5001/api/auth/logout", {
       method: "POST",
+      credentials: "include", // include cookies including the JWT cookie
     });
 
     if (!response.ok) {
@@ -73,4 +76,31 @@ async function logoutUser() {
   }
 }
 
-export { registerUser, loginUser, logoutUser };
+async function checkAuthStatus() {
+  try {
+    const response = await fetch("http://localhost:5001/api/auth/profile", {
+      method: "GET",
+      credentials: "include", // include cookies including the JWT cookie
+    });
+
+    // First, check if the response was NOT successful
+    if (!response.ok) {
+      // If we get a 401, it just means the user isn't logged in.
+      // This is not a real "error" we need to throw. We can just return null.
+      if (response.status === 401) {
+        return null;
+      }
+      // For other errors (like 500), we can throw an error.
+      throw new Error("Authentication check failed");
+    }
+
+    // Only parse the JSON when successful
+    const data = await response.json(); // user data
+    return data;
+  } catch (error) {
+    console.error("Check auth status error:", error);
+    throw error;
+  }
+}
+
+export { registerUser, loginUser, logoutUser, checkAuthStatus };
