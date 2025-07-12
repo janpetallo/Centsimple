@@ -33,7 +33,7 @@ function LoginPage() {
       // Pass the user data to the auth provider login function
       // This will update the user state in the context
       login(userData);
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error logging in user", error.message);
       setError(error.message);

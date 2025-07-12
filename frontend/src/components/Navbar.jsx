@@ -10,7 +10,7 @@ function Navbar() {
         <nav>
           <ul>
             <li>
-              <Link to="/">Dashboard</Link>
+              <Link to="/dashboard">Dashboard</Link>
             </li>
             <li>
               <button onClick={logout}>Logout</button>
