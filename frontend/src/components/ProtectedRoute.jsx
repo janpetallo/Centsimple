@@ -8,7 +8,7 @@ function ProtectedRoute() {
     return <div>Loading...</div>; // while still checking auth status
   }
 
-  if (user) {
+  if (user) { // if user is logged in, render PROTECTED routes
     return <Outlet />; // placeholder where actual protected routes will be rendered
   }
 
