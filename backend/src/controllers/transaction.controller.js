@@ -70,9 +70,36 @@ async function getTransactions(req, res) {
       take: limit,
     });
 
+    const totalIncomeResult = await prisma.transaction.aggregate({
+      where: {
+        userId: userId,
+        type: 'INCOME',
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    const totalExpenseResult = await prisma.transaction.aggregate({
+      where: {
+        userId: userId,
+        type: 'EXPENSE',
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    // Handle potential null sums by defaulting to 0
+    const totalIncome = totalIncomeResult._sum.amount || 0;
+    const totalExpense = totalExpenseResult._sum.amount || 0;
+
+    const balance = totalIncome - totalExpense;
+
     res.status(200).json({
       message: 'Transactions fetched successfully',
       transactions: transactions,
+      balance: balance,
       pagination: {
         total: totalTransactions,
         page: page,
