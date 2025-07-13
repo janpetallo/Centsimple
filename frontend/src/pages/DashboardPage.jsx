@@ -1,5 +1,73 @@
+import { useState, useEffect } from "react";
+import * as apiService from "../services/api.service";
+import Pagination from "../components/Pagination";
+
 function DashboardPage() {
-  return <h2>Dashboard Page</h2>;
+  const [categories, setCategories] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const [pagination, setPagination] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const [categoriesData, transactionsData] = await Promise.all([
+          apiService.getCategories(),
+          apiService.getTransactions(currentPage),
+        ]);
+
+        setCategories(categoriesData.categories);
+        setTransactions(transactionsData.transactions);
+        setBalance(transactionsData.balance);
+        setPagination(transactionsData.pagination);
+      } catch (error) {
+        console.error("Error fetching data:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [currentPage]); // Re-fetch every time the currentPage changes
+
+  function handlePageChange(newPageNumber) {
+    setCurrentPage(newPageNumber);
+  }
+
+  return (
+    <div>
+      <h2>Dashboard Page</h2>
+
+      {loading ? (
+        <h3>Loading...</h3>
+      ) : (
+        <div>
+          <h3>Balance: {balance}</h3>
+
+          <h3>Categories</h3>
+          <ul>
+            {categories.map((category) => (
+              <li key={category.id}>{category.name}</li>
+            ))}
+          </ul>
+
+          <h3>Transactions</h3>
+          <ul>
+            {transactions.map((transaction) => (
+              <li key={transaction.id}>
+                {transaction.description} - {transaction.amount}
+              </li>
+            ))}
+          </ul>
+
+          <Pagination pagination={pagination} onPageChange={handlePageChange} />
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default DashboardPage;

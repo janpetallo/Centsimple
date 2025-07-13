@@ -103,4 +103,51 @@ async function checkAuthStatus() {
   }
 }
 
-export { registerUser, loginUser, logoutUser, checkAuthStatus };
+async function getCategories() {
+  try {
+    const response = await fetch("http://localhost:5001/api/categories", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch categories");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Get categories error:", error);
+    throw error;
+  }
+}
+
+async function getTransactions(page = 1, limit = 10) {
+  try {
+    const response = await fetch(`http://localhost:5001/api/transactions?page=${page}&limit=${limit}`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch transactions");
+    }
+
+    return data; // this includes pagination metadata
+  } catch (error) {
+    console.error("Get transactions error:", error);
+    throw error;
+  }
+}
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  checkAuthStatus,
+  getCategories,
+  getTransactions,
+};
