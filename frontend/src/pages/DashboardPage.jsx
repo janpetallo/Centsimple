@@ -1,19 +1,22 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import * as apiService from "../services/api.service";
+import Pagination from "../components/Pagination";
 
 function DashboardPage() {
   const [categories, setCategories] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
   const [pagination, setPagination] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
       try {
         const [categoriesData, transactionsData] = await Promise.all([
           apiService.getCategories(),
-          apiService.getTransactions(),
+          apiService.getTransactions(currentPage),
         ]);
 
         setCategories(categoriesData.categories);
@@ -28,15 +31,18 @@ function DashboardPage() {
     }
 
     fetchData();
-  }, []); // run once on first mount
+  }, [currentPage]); // Re-fetch every time the currentPage changes
 
+  function handlePageChange(newPageNumber) {
+    setCurrentPage(newPageNumber);
+  }
 
   return (
     <div>
       <h2>Dashboard Page</h2>
 
       {loading ? (
-        <p>Loading...</p>
+        <h3>Loading...</h3>
       ) : (
         <div>
           <h3>Balance: {balance}</h3>
@@ -56,6 +62,8 @@ function DashboardPage() {
               </li>
             ))}
           </ul>
+
+          <Pagination pagination={pagination} onPageChange={handlePageChange} />
         </div>
       )}
     </div>

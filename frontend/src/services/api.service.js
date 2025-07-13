@@ -123,9 +123,9 @@ async function getCategories() {
   }
 }
 
-async function getTransactions() {
+async function getTransactions(page = 1, limit = 10) {
   try {
-    const response = await fetch("http://localhost:5001/api/transactions", {
+    const response = await fetch(`http://localhost:5001/api/transactions?page=${page}&limit=${limit}`, {
       method: "GET",
       credentials: "include",
     });
