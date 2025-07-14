@@ -1,7 +1,7 @@
 import { useState } from "react";
 import * as apiService from "../services/api.service";
 
-function AddTransactionModal({ categories, onTransactionCreated }) {
+function AddTransactionModal({ categories, onTransactionCreated, onClose }) {
   const [formData, setFormData] = useState({
     amount: "",
     description: "",
@@ -103,6 +103,10 @@ function AddTransactionModal({ categories, onTransactionCreated }) {
         </select>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
+
+        <button type="button" onClick={onClose}>
+          Cancel
+        </button>
 
         <button type="submit" disabled={loading}>
           Add Transaction
