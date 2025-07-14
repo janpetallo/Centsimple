@@ -2,8 +2,8 @@ const prisma = require('../config/prisma');
 const { validationResult } = require('express-validator');
 
 async function createTransaction(req, res) {
-  const { description, date, type } = req.body;
-
+  const { description, type } = req.body;
+  const date = new Date(req.body.date);
   const amount = parseFloat(req.body.amount);
   const categoryId = parseInt(req.body.categoryId, 10);
   const userId = req.user.id;
@@ -115,7 +115,8 @@ async function getTransactions(req, res) {
 
 async function updateTransaction(req, res) {
   const transactionId = parseInt(req.params.transactionId, 10);
-  const { description, date, type } = req.body;
+  const { description, type } = req.body;
+  const date = new Date(req.body.date);
   const amount = parseFloat(req.body.amount);
   const categoryId = parseInt(req.body.categoryId, 10);
   const userId = req.user.id;
