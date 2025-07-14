@@ -34,7 +34,10 @@ async function createCategory(req, res) {
       },
     });
 
-    res.status(201).json(newCategory);
+    res.status(201).json({
+      message: 'Category created successfully',
+      category: newCategory,
+    });
   } catch (error) {
     // Prisma's error code for a unique constraint violation for @@unique([name, userId])
     if (error.code === 'P2002') {

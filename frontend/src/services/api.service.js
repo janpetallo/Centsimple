@@ -146,6 +146,40 @@ async function getTransactions(page = 1, limit = 10) {
   }
 }
 
+async function createCategory(categoryData) {
+  try {
+    const response = await fetch(
+      "http://localhost:5001/api/categories/create",
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(categoryData),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // This is for application-level errors sent by our backend
+      // Check if the server sent back a specific array of validation errors
+      if (data.errors && data.errors.length > 0) {
+        // Throw an error with the message from the *first* validation error
+        throw new Error(data.errors[0].msg);
+      }
+      // Otherwise, use the generic message from the server or a fallback
+      throw new Error(data.message || "Transaction creation failed");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Create category error:", error);
+    throw error;
+  }
+}
+
 async function createTransaction(transactionData) {
   try {
     const response = await fetch(
@@ -187,5 +221,6 @@ export {
   checkAuthStatus,
   getCategories,
   getTransactions,
+  createCategory,
   createTransaction,
 };

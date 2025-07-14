@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import * as apiService from "../services/api.service";
 import Pagination from "../components/Pagination";
+import AddCategoryModal from "../components/AddCategoryModal";
 import AddTransactionModal from "../components/AddTransactionModal";
 
 function DashboardPage() {
@@ -10,7 +11,8 @@ function DashboardPage() {
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
 
   // Wrap fetchData in useCallback
   const fetchData = useCallback(async () => {
@@ -40,16 +42,29 @@ function DashboardPage() {
     setCurrentPage(newPageNumber);
   }
 
-  function handleAddTransaction() {
-    setIsModalOpen(true);
+  function handleAddCategory() {
+    setIsCategoryModalOpen(true);
   }
 
-  function handleCloseModal() {
-    setIsModalOpen(false);
+  function handleCloseCategoryModal() {
+    setIsCategoryModalOpen(false);
+  }
+
+  function handleCategoryCreated() {
+    setIsCategoryModalOpen(false);
+    fetchData();
+  }
+
+  function handleAddTransaction() {
+    setIsTransactionModalOpen(true);
+  }
+
+  function handleCloseTransactionModal() {
+    setIsTransactionModalOpen(false);
   }
 
   function handleTransactionCreated() {
-    setIsModalOpen(false);
+    setIsTransactionModalOpen(false);
     // By setting the page to 1, we trigger the useEffect to run again automatically.
     // If we are already on page 1, we can call fetchData directly.
     if (currentPage === 1) {
@@ -70,6 +85,13 @@ function DashboardPage() {
           <h3>Balance: {balance}</h3>
 
           <h3>Categories</h3>
+          <button onClick={handleAddCategory}>Add Category</button>
+          {isCategoryModalOpen && (
+            <AddCategoryModal
+              onCategoryCreated={handleCategoryCreated}
+              onClose={handleCloseCategoryModal}
+            />
+          )}
           <ul>
             {categories.map((category) => (
               <li key={category.id}>{category.name}</li>
@@ -78,14 +100,13 @@ function DashboardPage() {
 
           <h3>Transactions</h3>
           <button onClick={handleAddTransaction}>Add Transaction</button>
-          {isModalOpen && (
+          {isTransactionModelOpen && (
             <AddTransactionModal
               categories={categories}
               onTransactionCreated={handleTransactionCreated}
-              onClose={handleCloseModal}
+              onClose={handleCloseTransactionModal}
             />
           )}
-
           <ul>
             {transactions.map((transaction) => (
               <li key={transaction.id}>
