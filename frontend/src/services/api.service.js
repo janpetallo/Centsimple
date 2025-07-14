@@ -261,7 +261,14 @@ async function deleteCategory(categoryId) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || "Failed to delete category");
+      // This is for application-level errors sent by our backend
+      // Check if the server sent back a specific array of validation errors
+      if (data.errors && data.errors.length > 0) {
+        // Throw an error with the message from the *first* validation error
+        throw new Error(data.errors[0].msg);
+      }
+      // Otherwise, use the generic message from the server or a fallback
+      throw new Error(data.message || "Transaction creation failed");
     }
 
     return data;
