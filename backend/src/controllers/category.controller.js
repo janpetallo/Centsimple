@@ -34,7 +34,10 @@ async function createCategory(req, res) {
       },
     });
 
-    res.status(201).json(newCategory);
+    res.status(201).json({
+      message: 'Category created successfully',
+      category: newCategory,
+    });
   } catch (error) {
     // Prisma's error code for a unique constraint violation for @@unique([name, userId])
     if (error.code === 'P2002') {
@@ -146,6 +149,23 @@ async function deleteCategory(req, res) {
       return res.status(400).json({ errors: errors.array() });
     }
 
+    // STEP 1: Check if this category is being used by any transactions.
+    const transactionCount = await prisma.transaction.count({
+      where: {
+        categoryId: categoryId,
+        userId: userId,
+      },
+    });
+
+    // STEP 2: If the category is in use, send back a specific error.
+    if (transactionCount > 0) {
+      return res.status(409).json({
+        message:
+          'Cannot delete category because it is still in use by transactions.',
+      });
+    }
+
+    // STEP 3: If the category is NOT in use, proceed with the deletion.
     // The delete will only happen if the category ID exists AND belongs to the user.
     const deletedCategory = await prisma.category.delete({
       where: { id: categoryId, userId: userId },
