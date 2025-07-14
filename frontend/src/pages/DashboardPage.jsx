@@ -11,7 +11,11 @@ function DashboardPage() {
   const [balance, setBalance] = useState(0);
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [error, setError] = useState(null);
+  const [categoryError, setCategoryError] = useState({ id: null, message: "" });
+  // const [transactionError, setTransactionError] = useState({
+  //   id: null,
+  //   message: "",
+  // });
   const [loading, setLoading] = useState(true);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
@@ -90,7 +94,7 @@ function DashboardPage() {
       fetchData();
     } catch (error) {
       console.error("Error deleting category:", error.message);
-      setError(error.message);
+      setCategoryError({ id: categoryId, message: error.message });
     }
   }
 
@@ -159,7 +163,9 @@ function DashboardPage() {
                       </div>
                     )}
 
-                    {error && <p style={{ color: "red" }}>{error}</p>}
+                    {categoryError.id === category.id && (
+                      <p style={{ color: "red" }}>{categoryError.message}</p>
+                    )}
                   </div>
                 }
               </li>
