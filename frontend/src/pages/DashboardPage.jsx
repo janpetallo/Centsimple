@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import * as apiService from "../services/api.service";
 import Pagination from "../components/Pagination";
 import AddCategoryModal from "../components/AddCategoryModal";
+import EditCategoryModal from "../components/EditCategoryModal";
 import AddTransactionModal from "../components/AddTransactionModal";
 
 function DashboardPage() {
@@ -10,9 +11,12 @@ function DashboardPage() {
   const [balance, setBalance] = useState(0);
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
+
+  const [editingCategory, setEditingCategory] = useState(null);
 
   // Wrap fetchData in useCallback
   const fetchData = useCallback(async () => {
@@ -42,6 +46,7 @@ function DashboardPage() {
     setCurrentPage(newPageNumber);
   }
 
+  // CREATE CATEGORY
   function handleAddCategory() {
     setIsCategoryModalOpen(true);
   }
@@ -55,6 +60,41 @@ function DashboardPage() {
     fetchData();
   }
 
+  // EDIT CATEGORY
+  function handleEditCategory(category) {
+    setEditingCategory(category);
+  }
+
+  function handleCloseEditCategoryModal() {
+    setEditingCategory(null);
+  }
+
+  function handleCategoryUpdated() {
+    setEditingCategory(null);
+    fetchData();
+  }
+
+  // DELETE CATEGORY
+  async function handleDeleteCategory(categoryId) {
+    try {
+      const isConfirmed = window.confirm(
+        "Are you sure you want to delete this category?"
+      );
+      if (!isConfirmed) {
+        return;
+      }
+
+      const categoryData = await apiService.deleteCategory(categoryId);
+      console.log("Category deleted successfully", categoryData);
+
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting category:", error.message);
+      setError(error.message);
+    }
+  }
+
+  // ADD TRANSACTION
   function handleAddTransaction() {
     setIsTransactionModalOpen(true);
   }
@@ -94,7 +134,35 @@ function DashboardPage() {
           )}
           <ul>
             {categories.map((category) => (
-              <li key={category.id}>{category.name}</li>
+              <li key={category.id}>
+                {
+                  <div>
+                    {category.name}
+
+                    {category.userId && (
+                      <div>
+                        <button
+                          onClick={() => handleDeleteCategory(category.id)}
+                        >
+                          Delete
+                        </button>
+                        <button onClick={() => handleEditCategory(category)}>
+                          Edit
+                        </button>
+                        {editingCategory?.id === category.id && (
+                          <EditCategoryModal
+                            category={category}
+                            onCategoryUpdated={handleCategoryUpdated}
+                            onClose={handleCloseEditCategoryModal}
+                          />
+                        )}
+                      </div>
+                    )}
+
+                    {error && <p style={{ color: "red" }}>{error}</p>}
+                  </div>
+                }
+              </li>
             ))}
           </ul>
 
