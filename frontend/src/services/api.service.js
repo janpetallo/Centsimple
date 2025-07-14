@@ -170,7 +170,7 @@ async function createCategory(categoryData) {
         throw new Error(data.errors[0].msg);
       }
       // Otherwise, use the generic message from the server or a fallback
-      throw new Error(data.message || "Transaction creation failed");
+      throw new Error(data.message || "Category creation failed");
     }
 
     return data;
@@ -238,12 +238,46 @@ async function updateCategory(categoryId, categoryData) {
         throw new Error(data.errors[0].msg);
       }
       // Otherwise, use the generic message from the server or a fallback
-      throw new Error(data.message || "Transaction creation failed");
+      throw new Error(data.message || "Category edit failed");
     }
 
     return data;
   } catch (error) {
     console.error("Update category error:", error);
+    throw error;
+  }
+}
+
+async function updateTransaction(transactionId, transactionData) {
+  try {
+    const response = await fetch(
+      "http://localhost:5001/api/transactions/update/" + transactionId,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(transactionData),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // This is for application-level errors sent by our backend
+      // Check if the server sent back a specific array of validation errors
+      if (data.errors && data.errors.length > 0) {
+        // Throw an error with the message from the *first* validation error
+        throw new Error(data.errors[0].msg);
+      }
+      // Otherwise, use the generic message from the server or a fallback
+      throw new Error(data.message || "Transaction edit failed");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Update transaction error:", error);
     throw error;
   }
 }
@@ -268,12 +302,42 @@ async function deleteCategory(categoryId) {
         throw new Error(data.errors[0].msg);
       }
       // Otherwise, use the generic message from the server or a fallback
-      throw new Error(data.message || "Transaction creation failed");
+      throw new Error(data.message || "Category deletion failed");
     }
 
     return data;
   } catch (error) {
     console.error("Delete category error:", error);
+    throw error;
+  }
+}
+
+async function deleteTransaction(transactionId) {
+  try {
+    const response = await fetch(
+      "http://localhost:5001/api/transactions/delete/" + transactionId,
+      {
+        method: "DELETE",
+        credentials: "include",
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // This is for application-level errors sent by our backend
+      // Check if the server sent back a specific array of validation errors
+      if (data.errors && data.errors.length > 0) {
+        // Throw an error with the message from the *first* validation error
+        throw new Error(data.errors[0].msg);
+      }
+      // Otherwise, use the generic message from the server or a fallback
+      throw new Error(data.message || "Transaction deletion failed");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Delete transaction error:", error);
     throw error;
   }
 }
@@ -288,5 +352,7 @@ export {
   createCategory,
   createTransaction,
   updateCategory,
+  updateTransaction,
   deleteCategory,
+  deleteTransaction,
 };

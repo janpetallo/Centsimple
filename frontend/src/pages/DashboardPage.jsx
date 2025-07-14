@@ -4,6 +4,7 @@ import Pagination from "../components/Pagination";
 import AddCategoryModal from "../components/AddCategoryModal";
 import EditCategoryModal from "../components/EditCategoryModal";
 import AddTransactionModal from "../components/AddTransactionModal";
+import EditTransactionModal from "../components/EditTransactionModal";
 
 function DashboardPage() {
   const [categories, setCategories] = useState([]);
@@ -12,15 +13,16 @@ function DashboardPage() {
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [categoryError, setCategoryError] = useState({ id: null, message: "" });
-  // const [transactionError, setTransactionError] = useState({
-  //   id: null,
-  //   message: "",
-  // });
+  const [transactionError, setTransactionError] = useState({
+    id: null,
+    message: "",
+  });
   const [loading, setLoading] = useState(true);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
 
   const [editingCategory, setEditingCategory] = useState(null);
+  const [editingTransaction, setEditingTransaction] = useState(null);
 
   // Wrap fetchData in useCallback
   const fetchData = useCallback(async () => {
@@ -118,6 +120,40 @@ function DashboardPage() {
     }
   }
 
+  // EDIT TRANSACTION
+  function handleEditTransaction(transaction) {
+    setEditingTransaction(transaction);
+  }
+
+  function handleCloseEditTransactionModal() {
+    setEditingTransaction(null);
+  }
+
+  function handleTransactionUpdated() {
+    setEditingTransaction(null);
+    fetchData();
+  }
+
+  // DELETE TRANSACTION
+  async function handleDeleteTransaction(transactionId) {
+    try {
+      const isConfirmed = window.confirm(
+        "Are you sure you want to delete this transaction?"
+      );
+      if (!isConfirmed) {
+        return;
+      }
+
+      const transactionData = await apiService.deleteTransaction(transactionId);
+      console.log("Transaction deleted successfully", transactionData);
+
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting transaction:", error.message);
+      setTransactionError({ id: transactionId, message: error.message });
+    }
+  }
+
   return (
     <div>
       <h2>Dashboard Page</h2>
@@ -184,7 +220,35 @@ function DashboardPage() {
           <ul>
             {transactions.map((transaction) => (
               <li key={transaction.id}>
-                {transaction.description} - {transaction.amount}
+                <div>
+                  {transaction.description} - {transaction.amount}
+                  {
+                    <div>
+                      <button
+                        onClick={() => handleDeleteTransaction(transaction.id)}
+                      >
+                        Delete
+                      </button>
+                      <button
+                        onClick={() => handleEditTransaction(transaction)}
+                      >
+                        Edit
+                      </button>
+
+                      {editingTransaction?.id === transaction.id && (
+                        <EditTransactionModal
+                          transaction={transaction}
+                          categories={categories}
+                          onTransactionUpdated={handleTransactionUpdated}
+                          onClose={handleCloseEditTransactionModal}
+                        />
+                      )}
+                    </div>
+                  }
+                  {transactionError.id === transaction.id && (
+                    <p style={{ color: "red" }}>{transactionError.message}</p>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
