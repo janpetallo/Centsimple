@@ -222,16 +222,10 @@ function DashboardPage() {
                   {transaction.description} - {transaction.amount}
                   {
                     <div>
-                      <button
-                        onClick={() => handleDeleteTransaction(transaction.id)}
-                      >
-                        Delete
-                      </button>
-                      <button
-                        onClick={() => handleEditTransaction(transaction)}
-                      >
-                        Edit
-                      </button>
+                      <ActionMenu
+                        onDelete={() => handleDeleteTransaction(transaction.id)}
+                        onEdit={() => handleEditTransaction(transaction)}
+                      />
 
                       {editingTransaction?.id === transaction.id && (
                         <EditTransactionModal
