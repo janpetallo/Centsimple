@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import * as apiService from "../services/api.service";
 import Pagination from "../components/Pagination";
+import ActionMenu from "../components/ActionMenu";
 import AddCategoryModal from "../components/AddCategoryModal";
 import EditCategoryModal from "../components/EditCategoryModal";
 import AddTransactionModal from "../components/AddTransactionModal";
@@ -181,14 +182,11 @@ function DashboardPage() {
 
                     {category.userId && (
                       <div>
-                        <button
-                          onClick={() => handleDeleteCategory(category.id)}
-                        >
-                          Delete
-                        </button>
-                        <button onClick={() => handleEditCategory(category)}>
-                          Edit
-                        </button>
+                        <ActionMenu
+                          onDelete={() => handleDeleteCategory(category.id)}
+                          onEdit={() => handleEditCategory(category)}
+                        />
+
                         {editingCategory?.id === category.id && (
                           <EditCategoryModal
                             category={category}
