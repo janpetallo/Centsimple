@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import * as apiService from "../services/api.service";
+import * as formatter from "../utils/format";
 import Pagination from "../components/Pagination";
 import ActionMenu from "../components/ActionMenu";
 import AddCategoryModal from "../components/AddCategoryModal";
@@ -163,7 +164,7 @@ function DashboardPage() {
         <h3>Loading...</h3>
       ) : (
         <div>
-          <h3>Balance: {balance}</h3>
+          <h3>Balance: {formatter.formatCurrency(balance)}</h3>
 
           <h3>Categories</h3>
           <button onClick={handleAddCategory}>Add Category</button>
@@ -221,12 +222,14 @@ function DashboardPage() {
                 <div>
                   <div>
                     <div>{transaction.description}</div>
-                    <div>{transaction.date}</div>
+                    <div>{formatter.formatDate(transaction.date)}</div>
                     <div>{transaction.category.name}</div>
                     <div>
-                      {transaction.type === "EXPENSE"
-                        ? `-${transaction.amount}`
-                        : transaction.amount}
+                      {formatter.formatCurrency(
+                        transaction.type === "EXPENSE"
+                          ? -transaction.amount
+                          : transaction.amount
+                      )}
                     </div>
                   </div>
                   {
