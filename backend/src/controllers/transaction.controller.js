@@ -58,20 +58,78 @@ async function getTransactions(req, res) {
   const page = parseInt(req.query.page) || 1; // Default to page 1
   const limit = parseInt(req.query.limit) || 10; // Default to 10 transactions per page
 
-  try {
-    const totalTransactions = await prisma.transaction.count({
-      where: { userId: userId },
-    });
+  // Optional filters
+  const categoryId = parseInt(req.query.categoryId, 10);
+  const dateRange = req.query.dateRange;
+  const search = req.query.search;
 
-    const transactions = await prisma.transaction.findMany({
-      where: { userId: userId },
-      orderBy: { date: 'desc' },
-      skip: (page - 1) * limit,
-      take: limit,
-      include: {
-        category: true,
-      },
-    });
+  const whereOptions = {
+    userId: userId,
+  };
+
+  if (!isNaN(categoryId)) {
+    whereOptions.categoryId = categoryId;
+  }
+
+  if (dateRange) {
+    const now = new Date();
+    let startDate;
+    let endDate; // Use an end date for specific ranges
+
+    // It's good practice to make these consistent (e.g., all lowercase or camelCase)
+    switch (dateRange) {
+      case 'last7days':
+        startDate = new Date();
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case 'last30days':
+        startDate = new Date();
+        startDate.setDate(now.getDate() - 30);
+        break;
+      case 'last90days':
+        startDate = new Date();
+        startDate.setDate(now.getDate() - 90);
+        break;
+      case 'thisMonth':
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      case 'lastMonth':
+        // First day of the previous month
+        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        // First day of the current month
+        endDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      case 'thisYear':
+        startDate = new Date(now.getFullYear(), 0, 1);
+        break;
+      case 'lastYear':
+        // First day of the previous year
+        startDate = new Date(now.getFullYear() - 1, 0, 1);
+        // First day of the current year
+        endDate = new Date(now.getFullYear(), 0, 1);
+        break;
+      default:
+        break;
+    }
+
+    if (startDate) {
+      startDate.setHours(0, 0, 0, 0); // Set to start of the day
+      whereOptions.date = { gte: startDate };
+    }
+    if (endDate) {
+      whereOptions.date = { ...whereOptions.date, lt: endDate };
+    }
+  }
+
+  if (search) {
+    whereOptions.OR = [
+      { description: { contains: search, mode: 'insensitive' } },
+      { category: { name: { contains: search, mode: 'insensitive' } } },
+    ];
+  }
+
+  try {
+    // CALCULATING OVERALL BALANCE
 
     const totalIncomeResult = await prisma.transaction.aggregate({
       where: {
@@ -98,6 +156,22 @@ async function getTransactions(req, res) {
     const totalExpense = totalExpenseResult._sum.amount || 0;
 
     const balance = totalIncome - totalExpense;
+
+    // FETCHING THE TRANSACTIONS
+
+    const totalTransactions = await prisma.transaction.count({
+      where: whereOptions,
+    });
+
+    const transactions = await prisma.transaction.findMany({
+      where: whereOptions,
+      orderBy: { date: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+      include: {
+        category: true,
+      },
+    });
 
     res.status(200).json({
       message: 'Transactions fetched successfully',
