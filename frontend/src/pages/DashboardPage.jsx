@@ -216,46 +216,55 @@ function DashboardPage() {
               onClose={handleCloseTransactionModal}
             />
           )}
-          <ul>
-            {transactions.map((transaction) => (
-              <li key={transaction.id}>
-                <div>
-                  <div>
-                    <div>{transaction.description}</div>
-                    <div>{formatter.formatDate(transaction.date)}</div>
-                    <div>{transaction.category.name}</div>
-                    <div>
-                      {formatter.formatCurrency(
-                        transaction.type === "EXPENSE"
-                          ? -transaction.amount
-                          : transaction.amount
-                      )}
-                    </div>
-                  </div>
-                  {
-                    <div>
-                      <ActionMenu
-                        onDelete={() => handleDeleteTransaction(transaction.id)}
-                        onEdit={() => handleEditTransaction(transaction)}
-                      />
 
-                      {editingTransaction?.id === transaction.id && (
-                        <EditTransactionModal
-                          transaction={transaction}
-                          categories={categories}
-                          onTransactionUpdated={handleTransactionUpdated}
-                          onClose={handleCloseEditTransactionModal}
-                        />
-                      )}
+          {transactions.length === 0 && (
+            <p>No transactions yet. Click "Add Transaction" to get started!</p>
+          )}
+
+          {transactions.length > 0 && (
+            <ul>
+              {transactions.map((transaction) => (
+                <li key={transaction.id}>
+                  <div>
+                    <div>
+                      <div>{transaction.description}</div>
+                      <div>{formatter.formatDate(transaction.date)}</div>
+                      <div>{transaction.category.name}</div>
+                      <div>
+                        {formatter.formatCurrency(
+                          transaction.type === "EXPENSE"
+                            ? -transaction.amount
+                            : transaction.amount
+                        )}
+                      </div>
                     </div>
-                  }
-                  {transactionError.id === transaction.id && (
-                    <p style={{ color: "red" }}>{transactionError.message}</p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
+                    {
+                      <div>
+                        <ActionMenu
+                          onDelete={() =>
+                            handleDeleteTransaction(transaction.id)
+                          }
+                          onEdit={() => handleEditTransaction(transaction)}
+                        />
+
+                        {editingTransaction?.id === transaction.id && (
+                          <EditTransactionModal
+                            transaction={transaction}
+                            categories={categories}
+                            onTransactionUpdated={handleTransactionUpdated}
+                            onClose={handleCloseEditTransactionModal}
+                          />
+                        )}
+                      </div>
+                    }
+                    {transactionError.id === transaction.id && (
+                      <p style={{ color: "red" }}>{transactionError.message}</p>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
 
           <Pagination pagination={pagination} onPageChange={handlePageChange} />
         </div>
