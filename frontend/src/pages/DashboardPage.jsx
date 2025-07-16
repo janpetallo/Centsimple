@@ -219,7 +219,16 @@ function DashboardPage() {
             {transactions.map((transaction) => (
               <li key={transaction.id}>
                 <div>
-                  {transaction.description} - {transaction.amount}
+                  <div>
+                    <div>{transaction.description}</div>
+                    <div>{transaction.date}</div>
+                    <div>{transaction.category.name}</div>
+                    <div>
+                      {transaction.type === "EXPENSE"
+                        ? `-${transaction.amount}`
+                        : transaction.amount}
+                    </div>
+                  </div>
                   {
                     <div>
                       <ActionMenu
