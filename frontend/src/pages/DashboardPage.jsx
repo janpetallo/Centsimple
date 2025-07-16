@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import * as apiService from "../services/api.service";
+import * as formatter from "../utils/format";
 import Pagination from "../components/Pagination";
+import ActionMenu from "../components/ActionMenu";
 import AddCategoryModal from "../components/AddCategoryModal";
 import EditCategoryModal from "../components/EditCategoryModal";
 import AddTransactionModal from "../components/AddTransactionModal";
@@ -162,7 +164,7 @@ function DashboardPage() {
         <h3>Loading...</h3>
       ) : (
         <div>
-          <h3>Balance: {balance}</h3>
+          <h3>Balance: {formatter.formatCurrency(balance)}</h3>
 
           <h3>Categories</h3>
           <button onClick={handleAddCategory}>Add Category</button>
@@ -181,14 +183,11 @@ function DashboardPage() {
 
                     {category.userId && (
                       <div>
-                        <button
-                          onClick={() => handleDeleteCategory(category.id)}
-                        >
-                          Delete
-                        </button>
-                        <button onClick={() => handleEditCategory(category)}>
-                          Edit
-                        </button>
+                        <ActionMenu
+                          onDelete={() => handleDeleteCategory(category.id)}
+                          onEdit={() => handleEditCategory(category)}
+                        />
+
                         {editingCategory?.id === category.id && (
                           <EditCategoryModal
                             category={category}
@@ -217,41 +216,55 @@ function DashboardPage() {
               onClose={handleCloseTransactionModal}
             />
           )}
-          <ul>
-            {transactions.map((transaction) => (
-              <li key={transaction.id}>
-                <div>
-                  {transaction.description} - {transaction.amount}
-                  {
-                    <div>
-                      <button
-                        onClick={() => handleDeleteTransaction(transaction.id)}
-                      >
-                        Delete
-                      </button>
-                      <button
-                        onClick={() => handleEditTransaction(transaction)}
-                      >
-                        Edit
-                      </button>
 
-                      {editingTransaction?.id === transaction.id && (
-                        <EditTransactionModal
-                          transaction={transaction}
-                          categories={categories}
-                          onTransactionUpdated={handleTransactionUpdated}
-                          onClose={handleCloseEditTransactionModal}
-                        />
-                      )}
+          {transactions.length === 0 && (
+            <p>No transactions yet. Click "Add Transaction" to get started!</p>
+          )}
+
+          {transactions.length > 0 && (
+            <ul>
+              {transactions.map((transaction) => (
+                <li key={transaction.id}>
+                  <div>
+                    <div>
+                      <div>{transaction.description}</div>
+                      <div>{formatter.formatDate(transaction.date)}</div>
+                      <div>{transaction.category.name}</div>
+                      <div>
+                        {formatter.formatCurrency(
+                          transaction.type === "EXPENSE"
+                            ? -transaction.amount
+                            : transaction.amount
+                        )}
+                      </div>
                     </div>
-                  }
-                  {transactionError.id === transaction.id && (
-                    <p style={{ color: "red" }}>{transactionError.message}</p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
+                    {
+                      <div>
+                        <ActionMenu
+                          onDelete={() =>
+                            handleDeleteTransaction(transaction.id)
+                          }
+                          onEdit={() => handleEditTransaction(transaction)}
+                        />
+
+                        {editingTransaction?.id === transaction.id && (
+                          <EditTransactionModal
+                            transaction={transaction}
+                            categories={categories}
+                            onTransactionUpdated={handleTransactionUpdated}
+                            onClose={handleCloseEditTransactionModal}
+                          />
+                        )}
+                      </div>
+                    }
+                    {transactionError.id === transaction.id && (
+                      <p style={{ color: "red" }}>{transactionError.message}</p>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
 
           <Pagination pagination={pagination} onPageChange={handlePageChange} />
         </div>

@@ -68,6 +68,9 @@ async function getTransactions(req, res) {
       orderBy: { date: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
+      include: {
+        category: true,
+      },
     });
 
     const totalIncomeResult = await prisma.transaction.aggregate({
