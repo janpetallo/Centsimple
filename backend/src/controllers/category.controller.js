@@ -11,6 +11,7 @@ async function createCategory(req, res) {
       return res.status(400).json({ errors: errors.array() });
     }
 
+    // Verify the category name does not already exist
     const existingCategory = await prisma.category.findFirst({
       where: {
         name: { equals: name, mode: 'insensitive' }, // The key is mode: 'insensitive'
@@ -80,6 +81,7 @@ async function updateCategory(req, res) {
       return res.status(400).json({ errors: errors.array() });
     }
 
+    // Verify the category to update exists and belongs to the user.
     const categoryToUpdate = await prisma.category.findUnique({
       where: { id: categoryId, userId: userId },
     });
@@ -90,16 +92,21 @@ async function updateCategory(req, res) {
       });
     }
 
+    // Verify the new category name to update does not already exist
     const existingCategory = await prisma.category.findFirst({
       where: {
         name: {
           equals: name,
           mode: 'insensitive',
         },
-        userId: userId,
         NOT: {
           id: categoryId, // Exclude the current category
         },
+        // check for conflicts in both default AND user's own categories
+        OR: [
+          { userId: null }, // Is it a default category?
+          { userId: userId }, // Or does it belong to this user?
+        ],
       },
     });
 
