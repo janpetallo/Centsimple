@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import * as apiService from "../services/api.service";
 import * as formatter from "../utils/format";
 import Pagination from "../components/Pagination";
@@ -7,6 +7,11 @@ import AddCategoryModal from "../components/AddCategoryModal";
 import EditCategoryModal from "../components/EditCategoryModal";
 import AddTransactionModal from "../components/AddTransactionModal";
 import EditTransactionModal from "../components/EditTransactionModal";
+
+import SearchIcon from "../icons/SearchIcon";
+import useDebounce from "../hooks/useDebounce";
+import FilterListIcon from "../icons/FilterListIcon";
+import FilterModal from "../components/FilterModal";
 
 function DashboardPage() {
   const [categories, setCategories] = useState([]);
@@ -26,13 +31,40 @@ function DashboardPage() {
   const [editingCategory, setEditingCategory] = useState(null);
   const [editingTransaction, setEditingTransaction] = useState(null);
 
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    dateRangeFilter: "",
+    categoryFilter: "",
+  });
+
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearchTerm = useDebounce(searchInput, 1000);
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    // This effect runs every time the transactions list is updated.
+    // We check if the search input is the currently active element.
+    // If it's not, we re-apply focus to it.
+    if (document.activeElement !== searchInputRef.current) {
+      // We can add a check here to only re-focus if there was a search term
+      if (searchInput) {
+        searchInputRef.current.focus();
+      }
+    }
+  }, [transactions, searchInput]); // Run this effect when transactions or searchInput changes
+
   // Wrap fetchData in useCallback
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [categoriesData, transactionsData] = await Promise.all([
         apiService.getCategories(),
-        apiService.getTransactions(currentPage),
+        apiService.getTransactions(
+          currentPage,
+          filters.categoryFilter,
+          filters.dateRangeFilter,
+          debouncedSearchTerm
+        ),
       ]);
 
       setCategories(categoriesData.categories);
@@ -44,14 +76,33 @@ function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage]); // fetchData will only be re-created if currentPage changes
+  }, [currentPage, filters, debouncedSearchTerm]); // fetchData will only be re-created if any of these changes
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]); // only run useEffect when fetchData changes/recreated (that is when currentPage changes)
+  }, [fetchData]); // only run useEffect when fetchData changes/recreated
 
   function handlePageChange(newPageNumber) {
     setCurrentPage(newPageNumber);
+  }
+
+  function handleSearchInputChange(e) {
+    setSearchInput(e.target.value);
+    setCurrentPage(1);
+  }
+
+  function handleFilterModalOpen() {
+    setIsFilterModalOpen(true);
+  }
+
+  function handleFilterModalClose() {
+    setIsFilterModalOpen(false);
+  }
+
+  function handleFilterApplied(draftFilters) {
+    setFilters(draftFilters);
+    setCurrentPage(1);
+    setIsFilterModalOpen(false);
   }
 
   // CREATE CATEGORY
@@ -214,6 +265,41 @@ function DashboardPage() {
               categories={categories}
               onTransactionCreated={handleTransactionCreated}
               onClose={handleCloseTransactionModal}
+            />
+          )}
+
+          {
+            <div>
+              <div>
+                <label htmlFor="searchInput">Search:</label>
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  id="searchInput"
+                  placeholder="Search by description or category"
+                  value={searchInput}
+                  onChange={handleSearchInputChange}
+                />
+                <SearchIcon
+                  className="h-5 w-5"
+                  style={{ width: "24px", height: "24px" }}
+                />
+              </div>
+              <button onClick={handleFilterModalOpen}>
+                <div>
+                  <FilterListIcon className="h-5 w-5" />
+                  <span>Filters</span>
+                </div>
+              </button>
+            </div>
+          }
+
+          {isFilterModalOpen && (
+            <FilterModal
+              categories={categories}
+              currentFilters={filters}
+              onApply={handleFilterApplied}
+              onClose={handleFilterModalClose}
             />
           )}
 
