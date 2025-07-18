@@ -1,15 +1,24 @@
-function FilterModal({
-  categories,
-  dateRangeFilter,
-  categoryFilter,
-  handleDateRangeChange,
-  handleCategoryChange,
-  onApply,
-  onClose,
-}) {
+import { useState, useEffect } from "react";
+
+function FilterModal({ categories, currentFilters, onApply, onClose }) {
+  const [draftFilters, setDraftFilters] = useState(currentFilters);
+
+  // This effect will run whenever the modal is opened or the parent's filters change.
+  // It ensures our draft state is always up-to-date with the "live" state.
+  useEffect(() => {
+    setDraftFilters(currentFilters);
+  }, [currentFilters]);
+
+  function handleDraftFiltersChange(e) {
+    setDraftFilters({
+      ...draftFilters,
+      [e.target.name]: e.target.value,
+    });
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-    onApply();
+    onApply(draftFilters);
   }
 
   return (
@@ -19,10 +28,9 @@ function FilterModal({
         <label htmlFor="dateRange">Date Range:</label>
         <select
           id="dateRange"
-          name="dateRange"
-          value={dateRangeFilter}
-          onChange={handleDateRangeChange}
-          
+          name="dateRangeFilter"
+          value={draftFilters.dateRangeFilter}
+          onChange={handleDraftFiltersChange}
         >
           <option value="">All Time</option>
           <option value="last7days">Last 7 Days</option>
@@ -37,10 +45,9 @@ function FilterModal({
         <label htmlFor="category">Category:</label>
         <select
           id="categoryId"
-          name="categoryId"
-          value={categoryFilter}
-          onChange={handleCategoryChange}
-          
+          name="categoryFilter"
+          value={draftFilters.categoryFilter}
+          onChange={handleDraftFiltersChange}
         >
           <option value="">All Categories</option>
           {categories.map((category) => (
@@ -54,9 +61,7 @@ function FilterModal({
           Cancel
         </button>
 
-        <button type="submit">
-          Apply
-        </button>
+        <button type="submit">Apply</button>
       </form>
     </div>
   );

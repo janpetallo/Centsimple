@@ -83,17 +83,9 @@ function DashboardPage() {
     setIsFilterModalOpen(false);
   }
 
-  function handleDateRangeChange(e) {
-    setFilters({ ...filters, dateRangeFilter: e.target.value });
+  function handleFilterApplied(draftFilters) {
+    setFilters(draftFilters);
     setCurrentPage(1);
-  }
-
-  function handleCategoryChange(e) {
-    setFilters({ ...filters, categoryFilter: e.target.value });
-    setCurrentPage(1);
-  }
-
-  function handleFilterApplied() {
     setIsFilterModalOpen(false);
   }
 
@@ -271,7 +263,10 @@ function DashboardPage() {
                   value={searchTerm}
                   onChange={handleSearchTermChange}
                 />
-                <SearchIcon className="h-5 w-5" />
+                <SearchIcon
+                  className="h-5 w-5"
+                  style={{ width: "24px", height: "24px" }}
+                />
               </div>
               <button onClick={handleFilterModalOpen}>
                 <div>
@@ -285,10 +280,7 @@ function DashboardPage() {
           {isFilterModalOpen && (
             <FilterModal
               categories={categories}
-              dateRangeFilter={filters.dateRangeFilter}
-              categoryFilter={filters.categoryFilter}
-              handleDateRangeChange={handleDateRangeChange}
-              handleCategoryChange={handleCategoryChange}
+              currentFilters={filters}
               onApply={handleFilterApplied}
               onClose={handleFilterModalClose}
             />
