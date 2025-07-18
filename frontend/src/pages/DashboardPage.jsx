@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import * as apiService from "../services/api.service";
 import * as formatter from "../utils/format";
 import Pagination from "../components/Pagination";
@@ -31,15 +31,27 @@ function DashboardPage() {
   const [editingCategory, setEditingCategory] = useState(null);
   const [editingTransaction, setEditingTransaction] = useState(null);
 
-  const [searchInput, setSearchInput] = useState("");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const debouncedSearchTerm = useDebounce(searchInput, 1000);
-
-
   const [filters, setFilters] = useState({
     dateRangeFilter: "",
     categoryFilter: "",
   });
+
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearchTerm = useDebounce(searchInput, 1000);
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    // This effect runs every time the transactions list is updated.
+    // We check if the search input is the currently active element.
+    // If it's not, we re-apply focus to it.
+    if (document.activeElement !== searchInputRef.current) {
+      // We can add a check here to only re-focus if there was a search term
+      if (searchInput) {
+        searchInputRef.current.focus();
+      }
+    }
+  }, [transactions, searchInput]); // Run this effect when transactions or searchInput changes
 
   // Wrap fetchData in useCallback
   const fetchData = useCallback(async () => {
@@ -261,6 +273,7 @@ function DashboardPage() {
               <div>
                 <label htmlFor="searchInput">Search:</label>
                 <input
+                  ref={searchInputRef}
                   type="text"
                   id="searchInput"
                   placeholder="Search by description or category"
