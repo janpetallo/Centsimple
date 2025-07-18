@@ -23,7 +23,10 @@ function EditCategoryModal({ category, onCategoryUpdated, onClose }) {
     setLoading(true);
 
     try {
-      const categoryData = await apiService.updateCategory(category.id, formData);
+      const categoryData = await apiService.updateCategory(
+        category.id,
+        formData
+      );
       onCategoryUpdated();
       console.log("Category updated successfully", categoryData);
     } catch (error) {

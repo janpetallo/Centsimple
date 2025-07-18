@@ -3,8 +3,7 @@ import * as apiService from "../services/api.service";
 import * as formatter from "../utils/format";
 import Pagination from "../components/Pagination";
 import ActionMenu from "../components/ActionMenu";
-import AddCategoryModal from "../components/AddCategoryModal";
-import EditCategoryModal from "../components/EditCategoryModal";
+import ManageCategoriesModal from "../components/ManageCategoriesModal";
 import AddTransactionModal from "../components/AddTransactionModal";
 import EditTransactionModal from "../components/EditTransactionModal";
 
@@ -19,17 +18,18 @@ function DashboardPage() {
   const [balance, setBalance] = useState(0);
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [categoryError, setCategoryError] = useState({ id: null, message: "" });
+  const [loading, setLoading] = useState(true);
+
+  const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
   const [transactionError, setTransactionError] = useState({
     id: null,
     message: "",
   });
-  const [loading, setLoading] = useState(true);
-  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-  const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
 
-  const [editingCategory, setEditingCategory] = useState(null);
+  const [isManageCategoriesModalOpen, setIsManageCategoriesModalOpen] =
+    useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
+  const [categoryError, setCategoryError] = useState({ id: null, message: "" });
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [filters, setFilters] = useState({
@@ -105,36 +105,26 @@ function DashboardPage() {
     setIsFilterModalOpen(false);
   }
 
-  // CREATE CATEGORY
-  function handleAddCategory() {
-    setIsCategoryModalOpen(true);
+  // MANAGE CATEGORIES
+  function handleManageCategoriesModalOpen() {
+    setCategoryError({ id: null, message: "" });
+    setIsManageCategoriesModalOpen(true);
   }
 
-  function handleCloseCategoryModal() {
-    setIsCategoryModalOpen(false);
+  function handleCloseManageCategoriesModal() {
+    setCategoryError({ id: null, message: "" });
+    setIsManageCategoriesModalOpen(false);
   }
 
-  function handleCategoryCreated() {
-    setIsCategoryModalOpen(false);
-    fetchData();
-  }
-
-  // EDIT CATEGORY
-  function handleEditCategory(category) {
-    setEditingCategory(category);
-  }
-
-  function handleCloseEditCategoryModal() {
-    setEditingCategory(null);
-  }
-
-  function handleCategoryUpdated() {
-    setEditingCategory(null);
+  function handleCategoryDataRefresh() {
+    setCategoryError({ id: null, message: "" });
     fetchData();
   }
 
   // DELETE CATEGORY
   async function handleDeleteCategory(categoryId) {
+    setCategoryError({ id: null, message: "" });
+
     try {
       const isConfirmed = window.confirm(
         "Are you sure you want to delete this category?"
@@ -217,46 +207,19 @@ function DashboardPage() {
         <div>
           <h3>Balance: {formatter.formatCurrency(balance)}</h3>
 
-          <h3>Categories</h3>
-          <button onClick={handleAddCategory}>Add Category</button>
-          {isCategoryModalOpen && (
-            <AddCategoryModal
-              onCategoryCreated={handleCategoryCreated}
-              onClose={handleCloseCategoryModal}
+          <button onClick={handleManageCategoriesModalOpen}>
+            Manage Categories
+          </button>
+
+          {isManageCategoriesModalOpen && (
+            <ManageCategoriesModal
+              categories={categories}
+              error={categoryError}
+              onDataRefresh={handleCategoryDataRefresh}
+              onDeleteCategory={handleDeleteCategory}
+              onClose={handleCloseManageCategoriesModal}
             />
           )}
-          <ul>
-            {categories.map((category) => (
-              <li key={category.id}>
-                {
-                  <div>
-                    {category.name}
-
-                    {category.userId && (
-                      <div>
-                        <ActionMenu
-                          onDelete={() => handleDeleteCategory(category.id)}
-                          onEdit={() => handleEditCategory(category)}
-                        />
-
-                        {editingCategory?.id === category.id && (
-                          <EditCategoryModal
-                            category={category}
-                            onCategoryUpdated={handleCategoryUpdated}
-                            onClose={handleCloseEditCategoryModal}
-                          />
-                        )}
-                      </div>
-                    )}
-
-                    {categoryError.id === category.id && (
-                      <p style={{ color: "red" }}>{categoryError.message}</p>
-                    )}
-                  </div>
-                }
-              </li>
-            ))}
-          </ul>
 
           <h3>Transactions</h3>
           <button onClick={handleAddTransaction}>Add Transaction</button>
