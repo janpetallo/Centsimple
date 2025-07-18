@@ -123,15 +123,34 @@ async function getCategories() {
   }
 }
 
-async function getTransactions(page = 1, limit = 10) {
+async function getTransactions(
+  page = 1,
+  categoryId = null,
+  dateRange = null,
+  search = null,
+  limit = 10
+) {
   try {
-    const response = await fetch(
-      `http://localhost:5001/api/transactions?page=${page}&limit=${limit}`,
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    );
+    const link = new URL("http://localhost:5001/api/transactions");
+    link.searchParams.append("page", page);
+    link.searchParams.append("limit", limit);
+
+    if (categoryId) {
+      link.searchParams.append("categoryId", categoryId);
+    }
+
+    if (dateRange) {
+      link.searchParams.append("dateRange", dateRange);
+    }
+
+    if (search) {
+      link.searchParams.append("search", search);
+    }
+
+    const response = await fetch(link.toString(), {
+      method: "GET",
+      credentials: "include",
+    });
 
     const data = await response.json();
 

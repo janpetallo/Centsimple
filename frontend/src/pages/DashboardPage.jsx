@@ -8,6 +8,10 @@ import EditCategoryModal from "../components/EditCategoryModal";
 import AddTransactionModal from "../components/AddTransactionModal";
 import EditTransactionModal from "../components/EditTransactionModal";
 
+import SearchIcon from "../icons/SearchIcon";
+import FilterListIcon from "../icons/FilterListIcon";
+import FilterModal from "../components/FilterModal";
+
 function DashboardPage() {
   const [categories, setCategories] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -26,13 +30,25 @@ function DashboardPage() {
   const [editingCategory, setEditingCategory] = useState(null);
   const [editingTransaction, setEditingTransaction] = useState(null);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    dateRangeFilter: "",
+    categoryFilter: "",
+  });
+
   // Wrap fetchData in useCallback
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [categoriesData, transactionsData] = await Promise.all([
         apiService.getCategories(),
-        apiService.getTransactions(currentPage),
+        apiService.getTransactions(
+          currentPage,
+          filters.categoryFilter,
+          filters.dateRangeFilter,
+          searchTerm
+        ),
       ]);
 
       setCategories(categoriesData.categories);
@@ -44,14 +60,41 @@ function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage]); // fetchData will only be re-created if currentPage changes
+  }, [currentPage, filters, searchTerm]); // fetchData will only be re-created if any of these changes
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]); // only run useEffect when fetchData changes/recreated (that is when currentPage changes)
+  }, [fetchData]); // only run useEffect when fetchData changes/recreated
 
   function handlePageChange(newPageNumber) {
     setCurrentPage(newPageNumber);
+  }
+
+  function handleSearchTermChange(e) {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  }
+
+  function handleFilterModalOpen() {
+    setIsFilterModalOpen(true);
+  }
+
+  function handleFilterModalClose() {
+    setIsFilterModalOpen(false);
+  }
+
+  function handleDateRangeChange(e) {
+    setFilters({ ...filters, dateRangeFilter: e.target.value });
+    setCurrentPage(1);
+  }
+
+  function handleCategoryChange(e) {
+    setFilters({ ...filters, categoryFilter: e.target.value });
+    setCurrentPage(1);
+  }
+
+  function handleFilterApplied() {
+    setIsFilterModalOpen(false);
   }
 
   // CREATE CATEGORY
@@ -214,6 +257,40 @@ function DashboardPage() {
               categories={categories}
               onTransactionCreated={handleTransactionCreated}
               onClose={handleCloseTransactionModal}
+            />
+          )}
+
+          {
+            <div>
+              <div>
+                <label htmlFor="searchInput">Search:</label>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Search by description or category"
+                  value={searchTerm}
+                  onChange={handleSearchTermChange}
+                />
+                <SearchIcon className="h-5 w-5" />
+              </div>
+              <button onClick={handleFilterModalOpen}>
+                <div>
+                  <FilterListIcon className="h-5 w-5" />
+                  <span>Filters</span>
+                </div>
+              </button>
+            </div>
+          }
+
+          {isFilterModalOpen && (
+            <FilterModal
+              categories={categories}
+              dateRangeFilter={filters.dateRangeFilter}
+              categoryFilter={filters.categoryFilter}
+              handleDateRangeChange={handleDateRangeChange}
+              handleCategoryChange={handleCategoryChange}
+              onApply={handleFilterApplied}
+              onClose={handleFilterModalClose}
             />
           )}
 
