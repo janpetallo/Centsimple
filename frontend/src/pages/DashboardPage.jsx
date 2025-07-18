@@ -107,19 +107,24 @@ function DashboardPage() {
 
   // MANAGE CATEGORIES
   function handleManageCategoriesModalOpen() {
+    setCategoryError({ id: null, message: "" });
     setIsManageCategoriesModalOpen(true);
   }
 
   function handleCloseManageCategoriesModal() {
+    setCategoryError({ id: null, message: "" });
     setIsManageCategoriesModalOpen(false);
   }
 
   function handleCategoryDataRefresh() {
+    setCategoryError({ id: null, message: "" });
     fetchData();
   }
 
   // DELETE CATEGORY
   async function handleDeleteCategory(categoryId) {
+    setCategoryError({ id: null, message: "" });
+
     try {
       const isConfirmed = window.confirm(
         "Are you sure you want to delete this category?"
