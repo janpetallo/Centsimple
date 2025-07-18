@@ -9,6 +9,7 @@ import AddTransactionModal from "../components/AddTransactionModal";
 import EditTransactionModal from "../components/EditTransactionModal";
 
 import SearchIcon from "../icons/SearchIcon";
+import useDebounce from "../hooks/useDebounce";
 import FilterListIcon from "../icons/FilterListIcon";
 import FilterModal from "../components/FilterModal";
 
@@ -30,8 +31,11 @@ function DashboardPage() {
   const [editingCategory, setEditingCategory] = useState(null);
   const [editingTransaction, setEditingTransaction] = useState(null);
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const debouncedSearchTerm = useDebounce(searchInput, 1000);
+
+
   const [filters, setFilters] = useState({
     dateRangeFilter: "",
     categoryFilter: "",
@@ -47,7 +51,7 @@ function DashboardPage() {
           currentPage,
           filters.categoryFilter,
           filters.dateRangeFilter,
-          searchTerm
+          debouncedSearchTerm
         ),
       ]);
 
@@ -60,7 +64,7 @@ function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, filters, searchTerm]); // fetchData will only be re-created if any of these changes
+  }, [currentPage, filters, debouncedSearchTerm]); // fetchData will only be re-created if any of these changes
 
   useEffect(() => {
     fetchData();
@@ -70,8 +74,8 @@ function DashboardPage() {
     setCurrentPage(newPageNumber);
   }
 
-  function handleSearchTermChange(e) {
-    setSearchTerm(e.target.value);
+  function handleSearchInputChange(e) {
+    setSearchInput(e.target.value);
     setCurrentPage(1);
   }
 
@@ -260,8 +264,8 @@ function DashboardPage() {
                   type="text"
                   id="searchInput"
                   placeholder="Search by description or category"
-                  value={searchTerm}
-                  onChange={handleSearchTermChange}
+                  value={searchInput}
+                  onChange={handleSearchInputChange}
                 />
                 <SearchIcon
                   className="h-5 w-5"
