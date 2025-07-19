@@ -287,6 +287,26 @@ async function deleteTransaction(transactionId) {
   }
 }
 
+async function getSummaryReport(dateRange) {
+  try {
+    const link = new URL("http://localhost:5001/api/reports/summary");
+    if (dateRange) {
+      link.searchParams.append("dateRange", dateRange);
+    }
+    const url = link.toString();
+    const options = {
+      method: "GET",
+      credentials: "include",
+    };
+
+    const data = await apiClient(url, options);
+    return data;
+  } catch (error) {
+    console.error("Get summary report error:", error);
+    throw error;
+  }
+}
+
 export {
   setupApiInterceptor,
   registerUser,
@@ -301,4 +321,5 @@ export {
   updateTransaction,
   deleteCategory,
   deleteTransaction,
+  getSummaryReport,
 };

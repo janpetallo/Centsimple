@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
+import InsightsPage from "./pages/InsightsPage.jsx";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="insights" element={<InsightsPage />} />
         </Route>
       </Route>
     </Routes>
