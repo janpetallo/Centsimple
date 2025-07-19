@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import * as apiService from "../services/api.service";
 import * as formatter from "../utils/format";
 import Pagination from "../components/Pagination";
@@ -81,6 +82,13 @@ function DashboardPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]); // only run useEffect when fetchData changes/recreated
+
+  const navigate = useNavigate();
+
+  function handleViewFinancialInsights() {
+    console.log("View Financial Insights");
+    navigate("/insights");
+  }
 
   function handlePageChange(newPageNumber) {
     setCurrentPage(newPageNumber);
@@ -206,6 +214,10 @@ function DashboardPage() {
       ) : (
         <div>
           <h3>Balance: {formatter.formatCurrency(balance)}</h3>
+
+          <button onClick={handleViewFinancialInsights}>
+            View Financial Insights
+          </button>
 
           <button onClick={handleManageCategoriesModalOpen}>
             Manage Categories
