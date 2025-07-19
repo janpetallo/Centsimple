@@ -126,6 +126,8 @@ async function getSummaryReport(req, res) {
       totalIncome: totalIncome,
       totalExpense: totalExpense,
       expenseBreakdown: expenseBreakdown,
+      startDate: whereOptions.date ? whereOptions.date.gte : null,
+      endDate: whereOptions.date ? whereOptions.date.lt : null,
     });
   } catch (error) {
     console.error('Error fetching summary report', error);

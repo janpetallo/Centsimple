@@ -50,7 +50,7 @@ function InsightsPage() {
         <h3>Loading...</h3>
       ) : (
         <div>
-          {reportData && console.log(reportData)}
+          {reportData && <div>Report fetched</div>}
           {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
       )}
