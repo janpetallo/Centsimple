@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import * as apiService from "../services/api.service";
+import IncomeExpenseChart from "../components/IncomeExpenseBarChart";
+import ExpensePieChart from "../components/ExpensePieChart";
 
 function InsightsPage() {
   const [reportData, setReportData] = useState(null);
@@ -50,7 +52,13 @@ function InsightsPage() {
         <h3>Loading...</h3>
       ) : (
         <div>
-          {reportData && <div>Report fetched</div>}
+          {reportData && (
+            <div>
+              <IncomeExpenseChart reportData={reportData} />
+              <ExpensePieChart reportData={reportData} />
+            </div>
+          )}
+          
           {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
       )}
