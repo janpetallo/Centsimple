@@ -52,13 +52,18 @@ function InsightsPage() {
         <h3>Loading...</h3>
       ) : (
         <div>
-          {reportData && (
+          {reportData &&
+          (reportData.totalIncome > 0 || reportData.totalExpense > 0) ? (
+            // If there is data, show the charts
             <div>
               <IncomeExpenseChart reportData={reportData} />
               <ExpensePieChart reportData={reportData} />
             </div>
+          ) : (
+            // If there is no data, show a helpful message
+            <p>No transaction data available for the selected period.</p>
           )}
-          
+
           {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
       )}
