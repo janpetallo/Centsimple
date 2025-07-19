@@ -20,7 +20,9 @@ export function AuthProvider({ children }) {
     async function checkUserStatus() {
       try {
         const userData = await apiService.checkAuthStatus();
-        login(userData);
+        if (userData) {
+          login(userData);
+        }
       } catch (error) {
         console.error("Server checkAuthStatus failed:", error.message);
       } finally {
@@ -28,6 +30,7 @@ export function AuthProvider({ children }) {
       }
     }
     checkUserStatus();
+    apiService.setupApiInterceptor(logout);
   }, []);
 
   // Function to update the user state when someone logs in.
