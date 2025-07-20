@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import * as apiService from "../services/api.service";
+import * as formatter from "../utils/format";
 import IncomeExpenseChart from "../components/IncomeExpenseBarChart";
 import ExpensePieChart from "../components/ExpensePieChart";
 
@@ -52,21 +53,34 @@ function InsightsPage() {
         <h3>Loading...</h3>
       ) : (
         <div>
-          {reportData &&
-          (reportData.totalIncome > 0 || reportData.totalExpense > 0) ? (
-            // If there is data, show the charts
+          {reportData ? (
             <div>
-              <IncomeExpenseChart reportData={reportData} />
-              <ExpensePieChart reportData={reportData} />
+              <div>Balance: {formatter.formatCurrency(reportData.balance)}</div>
+              {reportData.startDate && (
+                <div>
+                  From {formatter.formatDate(reportData.startDate)} to{" "}
+                  {reportData.endDate
+                    ? formatter.formatDate(reportData.endDate)
+                    : "Present"}
+                </div>
+              )}
+
+              {reportData.totalIncome > 0 || reportData.totalExpense > 0 ? ( // If there is data, show the charts
+                <div>
+                  <IncomeExpenseChart reportData={reportData} />
+                  <ExpensePieChart reportData={reportData} />
+                </div>
+              ) : (
+                // If there is no data, show a helpful message
+                <p>No transaction data available for the selected period.</p>
+              )}
             </div>
           ) : (
-            // If there is no data, show a helpful message
-            <p>No transaction data available for the selected period.</p>
+            <p>No data available for the selected period.</p>
           )}
-
-          {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
       )}
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
