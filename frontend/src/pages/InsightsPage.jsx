@@ -60,7 +60,14 @@ function InsightsPage() {
                 <div>
                   From {formatter.formatDate(reportData.startDate)} to{" "}
                   {reportData.endDate
-                    ? formatter.formatDate(reportData.endDate)
+                    ? formatter.formatDate(
+                        // Create a new Date object from the endDate string,
+                        // then get its time in milliseconds and subtract one day's worth of milliseconds.
+                        new Date(
+                          new Date(reportData.endDate).getTime() -
+                            24 * 60 * 60 * 1000
+                        )
+                      )
                     : "Present"}
                 </div>
               )}
