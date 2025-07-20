@@ -1,12 +1,12 @@
-import { useState } from "react";
-import * as apiService from "../services/api.service";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import * as apiService from '../services/api.service';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -29,13 +29,13 @@ function LoginPage() {
 
     try {
       const userData = await apiService.loginUser(formData);
-      console.log("User logged in successfully", userData);
+      console.log('User logged in successfully', userData);
       // Pass the user data to the auth provider login function
       // This will update the user state in the context
       login(userData);
-      navigate("/dashboard");
+      navigate('/dashboard');
     } catch (error) {
-      console.error("Error logging in user", error.message);
+      console.error('Error logging in user', error.message);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -64,7 +64,7 @@ function LoginPage() {
           required
         />
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <button type="submit" disabled={loading}>
           Login

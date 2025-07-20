@@ -1,7 +1,7 @@
-import { useState } from "react";
-import AddCategoryModal from "../components/AddCategoryModal";
-import EditCategoryModal from "../components/EditCategoryModal";
-import ActionMenu from "../components/ActionMenu";
+import { useState } from 'react';
+import AddCategoryModal from '../components/AddCategoryModal';
+import EditCategoryModal from '../components/EditCategoryModal';
+import ActionMenu from '../components/ActionMenu';
 
 function ManageCategoriesModal({
   categories,
@@ -76,7 +76,7 @@ function ManageCategoriesModal({
                 )}
 
                 {error.id === category.id && (
-                  <p style={{ color: "red" }}>{error.message}</p>
+                  <p style={{ color: 'red' }}>{error.message}</p>
                 )}
               </div>
             }

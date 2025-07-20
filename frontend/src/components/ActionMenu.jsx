@@ -1,5 +1,5 @@
-import { useState } from "react";
-import MoreVertIcon from "../icons/MoreVertIcon";
+import { useState } from 'react';
+import MoreVertIcon from '../icons/MoreVertIcon';
 
 function ActionMenu({ onDelete, onEdit }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +12,7 @@ function ActionMenu({ onDelete, onEdit }) {
     <div>
       <button
         onClick={handleMenuClick}
-        style={{ width: "24px", height: "24px" }}
+        style={{ width: '24px', height: '24px' }}
       >
         <MoreVertIcon className="h-5 w-5" />
       </button>

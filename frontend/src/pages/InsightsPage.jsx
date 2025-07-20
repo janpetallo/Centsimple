@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import * as apiService from "../services/api.service";
-import * as formatter from "../utils/format";
-import IncomeExpenseChart from "../components/IncomeExpenseBarChart";
-import ExpensePieChart from "../components/ExpensePieChart";
+import { useState, useEffect } from 'react';
+import * as apiService from '../services/api.service';
+import * as formatter from '../utils/format';
+import IncomeExpenseChart from '../components/IncomeExpenseBarChart';
+import ExpensePieChart from '../components/ExpensePieChart';
 
 function InsightsPage() {
   const [reportData, setReportData] = useState(null);
-  const [dateRange, setDateRange] = useState("last30days"); // Default to last 30 days'
+  const [dateRange, setDateRange] = useState('last30days'); // Default to last 30 days'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -17,10 +17,10 @@ function InsightsPage() {
 
       try {
         const data = await apiService.getSummaryReport(dateRange);
-        console.log("Report data fetched successfully", data);
+        console.log('Report data fetched successfully', data);
         setReportData(data);
       } catch (error) {
-        console.error("Error fetching report data:", error.message);
+        console.error('Error fetching report data:', error.message);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -58,7 +58,7 @@ function InsightsPage() {
               <div>Balance: {formatter.formatCurrency(reportData.balance)}</div>
               {reportData.startDate && (
                 <div>
-                  From {formatter.formatDate(reportData.startDate)} to{" "}
+                  From {formatter.formatDate(reportData.startDate)} to{' '}
                   {reportData.endDate
                     ? formatter.formatDate(
                         // Create a new Date object from the endDate string,
@@ -68,7 +68,7 @@ function InsightsPage() {
                             24 * 60 * 60 * 1000
                         )
                       )
-                    : "Present"}
+                    : 'Present'}
                 </div>
               )}
 
@@ -87,7 +87,7 @@ function InsightsPage() {
           )}
         </div>
       )}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 }

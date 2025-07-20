@@ -1,11 +1,16 @@
-import { useState } from "react";
-import * as apiService from "../services/api.service";
+import { useState } from 'react';
+import * as apiService from '../services/api.service';
 
-function EditTransactionModal({ transaction, categories, onTransactionUpdated, onClose }) {
+function EditTransactionModal({
+  transaction,
+  categories,
+  onTransactionUpdated,
+  onClose,
+}) {
   const [formData, setFormData] = useState({
     amount: transaction.amount,
     description: transaction.description,
-    date: new Date(transaction.date).toISOString().split("T")[0],
+    date: new Date(transaction.date).toISOString().split('T')[0],
     type: transaction.type,
     categoryId: transaction.categoryId,
   });
@@ -32,9 +37,9 @@ function EditTransactionModal({ transaction, categories, onTransactionUpdated, o
         formData
       );
       onTransactionUpdated();
-      console.log("Transaction updated successfully", transactionData);
+      console.log('Transaction updated successfully', transactionData);
     } catch (error) {
-      console.error("Error updating a transaction", error.message);
+      console.error('Error updating a transaction', error.message);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -108,7 +113,7 @@ function EditTransactionModal({ transaction, categories, onTransactionUpdated, o
           ))}
         </select>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <button type="button" onClick={onClose}>
           Cancel

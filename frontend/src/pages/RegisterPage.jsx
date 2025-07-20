@@ -1,13 +1,13 @@
-import { useState } from "react";
-import * as apiService from "../services/api.service";
+import { useState } from 'react';
+import * as apiService from '../services/api.service';
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -23,7 +23,7 @@ function RegisterPage() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
 
@@ -32,10 +32,10 @@ function RegisterPage() {
 
     try {
       const userData = await apiService.registerUser(formData);
-      console.log("User registered successfully", userData);
+      console.log('User registered successfully', userData);
       // Here we will redirect the user to the login page or show a success message
     } catch (error) {
-      console.error("Error registering user", error.message);
+      console.error('Error registering user', error.message);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -96,7 +96,7 @@ function RegisterPage() {
           required
         />
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <button type="submit" disabled={loading}>
           Register
