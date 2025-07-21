@@ -78,3 +78,24 @@
     @apply bg-surface font-sans text-on-surface;
   }
 }
+
+/* We are creating new, reusable utility classes */
+@utility text-display-large {
+  @apply text-4xl font-bold md:text-6xl;
+}
+
+@utility text-headline-medium {
+  @apply text-3xl font-bold;
+}
+
+@utility text-title-large {
+  @apply text-xl font-bold;
+}
+
+@utility text-label-large {
+  @apply text-base font-bold;
+}
+
+@utility text-body-large {
+  @apply text-lg text-gray-600;
+}
