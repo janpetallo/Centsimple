@@ -3,6 +3,10 @@
 
 @theme {
   --font-sans: 'Inter', sans-serif;
+  --color-brand: oklch(51.1% 0.262 276.966);
+  --color-success: oklch(62.7% 0.194 149.214);
+  --color-error: oklch(57.7% 0.245 27.325);
+  --color-warning: oklch(68.1% 0.162 75.834);
 }
 
 @layer base {
