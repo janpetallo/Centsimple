@@ -1,4 +1,4 @@
-function FilterListIcon({ className = '', ...props }) {
+function BarChartIcon({ className = '', ...props }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -7,9 +7,9 @@ function FilterListIcon({ className = '', ...props }) {
       className={className}
       {...props}
     >
-      <path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z" />
+      <path d="M640-160v-280h160v280H640Zm-240 0v-640h160v640H400Zm-240 0v-440h160v440H160Z" />
     </svg>
   );
 }
 
-export default FilterListIcon;
+export default BarChartIcon;

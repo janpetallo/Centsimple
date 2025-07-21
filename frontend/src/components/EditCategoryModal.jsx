@@ -1,5 +1,5 @@
-import { useState } from "react";
-import * as apiService from "../services/api.service";
+import { useState } from 'react';
+import * as apiService from '../services/api.service';
 
 function EditCategoryModal({ category, onCategoryUpdated, onClose }) {
   const [formData, setFormData] = useState({
@@ -28,9 +28,9 @@ function EditCategoryModal({ category, onCategoryUpdated, onClose }) {
         formData
       );
       onCategoryUpdated();
-      console.log("Category updated successfully", categoryData);
+      console.log('Category updated successfully', categoryData);
     } catch (error) {
-      console.error("Error updating a category", error.message);
+      console.error('Error updating a category', error.message);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -51,7 +51,7 @@ function EditCategoryModal({ category, onCategoryUpdated, onClose }) {
           required
         />
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <button type="button" onClick={onClose}>
           Cancel

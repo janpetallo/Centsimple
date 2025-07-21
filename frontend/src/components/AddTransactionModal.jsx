@@ -1,13 +1,13 @@
-import { useState } from "react";
-import * as apiService from "../services/api.service";
+import { useState } from 'react';
+import * as apiService from '../services/api.service';
 
 function AddTransactionModal({ categories, onTransactionCreated, onClose }) {
   const [formData, setFormData] = useState({
-    amount: "",
-    description: "",
-    date: "",
-    type: "",
-    categoryId: "",
+    amount: '',
+    description: '',
+    date: '',
+    type: '',
+    categoryId: '',
   });
 
   const [error, setError] = useState(null);
@@ -29,9 +29,9 @@ function AddTransactionModal({ categories, onTransactionCreated, onClose }) {
     try {
       const transactionData = await apiService.createTransaction(formData);
       onTransactionCreated();
-      console.log("Transaction created successfully", transactionData);
+      console.log('Transaction created successfully', transactionData);
     } catch (error) {
-      console.error("Error creating a new transaction", error.message);
+      console.error('Error creating a new transaction', error.message);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -102,7 +102,7 @@ function AddTransactionModal({ categories, onTransactionCreated, onClose }) {
           ))}
         </select>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <button type="button" onClick={onClose}>
           Cancel

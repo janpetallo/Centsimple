@@ -13,7 +13,7 @@ async function apiClient(url, options) {
         // If we get a 401, it just means the user isn't logged in
         // In a real app, we would redirect them to the login page
         logoutCallback();
-        throw new Error("Not authenticated");
+        throw new Error('Not authenticated');
       }
 
       const errorData = await response.json();
@@ -25,25 +25,25 @@ async function apiClient(url, options) {
         throw new Error(errorData.errors[0].msg);
       }
       // Otherwise, use the generic message from the server or a fallback
-      throw new Error(errorData.message || "API request failed");
+      throw new Error(errorData.message || 'API request failed');
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("API client error:", error);
+    console.error('API client error:', error);
     throw error;
   }
 }
 
 async function registerUser(formData) {
   try {
-    const url = "http://localhost:5001/api/auth/register";
+    const url = 'http://localhost:5001/api/auth/register';
     const options = {
-      method: "POST",
-      credentials: "include", // include cookies including the JWT cookie
+      method: 'POST',
+      credentials: 'include', // include cookies including the JWT cookie
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData),
     };
@@ -53,51 +53,51 @@ async function registerUser(formData) {
   } catch (error) {
     // This will catch network errors (e.g., user is offline) OR the error we threw above.
     // We re-throw it so the component's catch block can handle it and update the UI.
-    console.error("Registration error:", error);
+    console.error('Registration error:', error);
     throw error;
   }
 }
 
 async function loginUser(formData) {
   try {
-    const url = "http://localhost:5001/api/auth/login";
+    const url = 'http://localhost:5001/api/auth/login';
     const options = {
-      method: "POST",
-      credentials: "include", // include cookies including the JWT cookie
+      method: 'POST',
+      credentials: 'include', // include cookies including the JWT cookie
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData),
     };
     const data = await apiClient(url, options);
     return data;
   } catch (error) {
-    console.error("Login error:", error);
+    console.error('Login error:', error);
     throw error;
   }
 }
 
 async function logoutUser() {
   try {
-    const url = "http://localhost:5001/api/auth/logout";
+    const url = 'http://localhost:5001/api/auth/logout';
     const options = {
-      method: "POST",
-      credentials: "include", // include cookies including the JWT cookie
+      method: 'POST',
+      credentials: 'include', // include cookies including the JWT cookie
     };
 
     const data = await apiClient(url, options);
     return data;
   } catch (error) {
-    console.error("Logout error:", error);
+    console.error('Logout error:', error);
     throw error;
   }
 }
 
 async function checkAuthStatus() {
   try {
-    const response = await fetch("http://localhost:5001/api/auth/profile", {
-      method: "GET",
-      credentials: "include", // include cookies including the JWT cookie
+    const response = await fetch('http://localhost:5001/api/auth/profile', {
+      method: 'GET',
+      credentials: 'include', // include cookies including the JWT cookie
     });
 
     // First, check if the response was NOT successful
@@ -108,30 +108,30 @@ async function checkAuthStatus() {
         return null;
       }
       // For other errors (like 500), we can throw an error.
-      throw new Error("Authentication check failed");
+      throw new Error('Authentication check failed');
     }
 
     // Only parse the JSON when successful
     const data = await response.json(); // user data
     return data;
   } catch (error) {
-    console.error("Check auth status error:", error);
+    console.error('Check auth status error:', error);
     throw error;
   }
 }
 
 async function getCategories() {
   try {
-    const url = "http://localhost:5001/api/categories";
+    const url = 'http://localhost:5001/api/categories';
     const options = {
-      method: "GET",
-      credentials: "include",
+      method: 'GET',
+      credentials: 'include',
     };
 
     const data = await apiClient(url, options);
     return data;
   } catch (error) {
-    console.error("Get categories error:", error);
+    console.error('Get categories error:', error);
     throw error;
   }
 }
@@ -144,44 +144,44 @@ async function getTransactions(
   limit = 10
 ) {
   try {
-    const link = new URL("http://localhost:5001/api/transactions");
-    link.searchParams.append("page", page);
-    link.searchParams.append("limit", limit);
+    const link = new URL('http://localhost:5001/api/transactions');
+    link.searchParams.append('page', page);
+    link.searchParams.append('limit', limit);
 
     if (categoryId) {
-      link.searchParams.append("categoryId", categoryId);
+      link.searchParams.append('categoryId', categoryId);
     }
 
     if (dateRange) {
-      link.searchParams.append("dateRange", dateRange);
+      link.searchParams.append('dateRange', dateRange);
     }
 
     if (search) {
-      link.searchParams.append("search", search);
+      link.searchParams.append('search', search);
     }
 
     const url = link.toString();
     const options = {
-      method: "GET",
-      credentials: "include",
+      method: 'GET',
+      credentials: 'include',
     };
 
     const data = await apiClient(url, options);
     return data; // this includes pagination metadata
   } catch (error) {
-    console.error("Get transactions error:", error);
+    console.error('Get transactions error:', error);
     throw error;
   }
 }
 
 async function createCategory(categoryData) {
   try {
-    const url = "http://localhost:5001/api/categories/create";
+    const url = 'http://localhost:5001/api/categories/create';
     const options = {
-      method: "POST",
-      credentials: "include",
+      method: 'POST',
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(categoryData),
     };
@@ -189,38 +189,38 @@ async function createCategory(categoryData) {
     const data = await apiClient(url, options);
     return data;
   } catch (error) {
-    console.error("Create category error:", error);
+    console.error('Create category error:', error);
     throw error;
   }
 }
 
 async function createTransaction(transactionData) {
   try {
-    const url = "http://localhost:5001/api/transactions/create";
+    const url = 'http://localhost:5001/api/transactions/create';
     const options = {
-      method: "POST",
-      credentials: "include",
+      method: 'POST',
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(transactionData),
     };
     const data = await apiClient(url, options);
     return data;
   } catch (error) {
-    console.error("Create transaction error:", error);
+    console.error('Create transaction error:', error);
     throw error;
   }
 }
 
 async function updateCategory(categoryId, categoryData) {
   try {
-    const url = "http://localhost:5001/api/categories/update/" + categoryId;
+    const url = 'http://localhost:5001/api/categories/update/' + categoryId;
     const options = {
-      method: "PUT",
-      credentials: "include",
+      method: 'PUT',
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(categoryData),
     };
@@ -228,7 +228,7 @@ async function updateCategory(categoryId, categoryData) {
     const data = await apiClient(url, options);
     return data;
   } catch (error) {
-    console.error("Update category error:", error);
+    console.error('Update category error:', error);
     throw error;
   }
 }
@@ -236,12 +236,12 @@ async function updateCategory(categoryId, categoryData) {
 async function updateTransaction(transactionId, transactionData) {
   try {
     const url =
-      "http://localhost:5001/api/transactions/update/" + transactionId;
+      'http://localhost:5001/api/transactions/update/' + transactionId;
     const options = {
-      method: "PUT",
-      credentials: "include",
+      method: 'PUT',
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(transactionData),
     };
@@ -249,23 +249,23 @@ async function updateTransaction(transactionId, transactionData) {
     const data = await apiClient(url, options);
     return data;
   } catch (error) {
-    console.error("Update transaction error:", error);
+    console.error('Update transaction error:', error);
     throw error;
   }
 }
 
 async function deleteCategory(categoryId) {
   try {
-    const url = "http://localhost:5001/api/categories/delete/" + categoryId;
+    const url = 'http://localhost:5001/api/categories/delete/' + categoryId;
     const options = {
-      method: "DELETE",
-      credentials: "include",
+      method: 'DELETE',
+      credentials: 'include',
     };
 
     const data = await apiClient(url, options);
     return data;
   } catch (error) {
-    console.error("Delete category error:", error);
+    console.error('Delete category error:', error);
     throw error;
   }
 }
@@ -273,36 +273,36 @@ async function deleteCategory(categoryId) {
 async function deleteTransaction(transactionId) {
   try {
     const url =
-      "http://localhost:5001/api/transactions/delete/" + transactionId;
+      'http://localhost:5001/api/transactions/delete/' + transactionId;
     const options = {
-      method: "DELETE",
-      credentials: "include",
+      method: 'DELETE',
+      credentials: 'include',
     };
 
     const data = await apiClient(url, options);
     return data;
   } catch (error) {
-    console.error("Delete transaction error:", error);
+    console.error('Delete transaction error:', error);
     throw error;
   }
 }
 
 async function getSummaryReport(dateRange) {
   try {
-    const link = new URL("http://localhost:5001/api/reports/summary");
+    const link = new URL('http://localhost:5001/api/reports/summary');
     if (dateRange) {
-      link.searchParams.append("dateRange", dateRange);
+      link.searchParams.append('dateRange', dateRange);
     }
     const url = link.toString();
     const options = {
-      method: "GET",
-      credentials: "include",
+      method: 'GET',
+      credentials: 'include',
     };
 
     const data = await apiClient(url, options);
     return data;
   } catch (error) {
-    console.error("Get summary report error:", error);
+    console.error('Get summary report error:', error);
     throw error;
   }
 }

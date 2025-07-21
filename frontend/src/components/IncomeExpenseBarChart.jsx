@@ -1,4 +1,4 @@
-import { Bar } from "react-chartjs-2";
+import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -7,7 +7,7 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
+} from 'chart.js';
 
 ChartJS.register(
   CategoryScale,
@@ -20,18 +20,18 @@ ChartJS.register(
 
 function IncomeExpenseChart({ reportData }) {
   const data = {
-    labels: ["Income vs Expense"],
+    labels: ['Income vs Expense'],
     datasets: [
       {
-        label: "Income",
+        label: 'Income',
         data: [reportData.totalIncome],
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
       },
       {
-        label: "Expense",
+        label: 'Expense',
         data: [reportData.totalExpense],
-        backgroundColor: "rgba(255, 99, 132, 0.6)",
-      }
+        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+      },
     ],
   };
 
@@ -39,11 +39,11 @@ function IncomeExpenseChart({ reportData }) {
     responsive: true,
     plugins: {
       legend: {
-        position: "top",
+        position: 'top',
       },
       title: {
         display: true,
-        text: "Income vs Expense",
+        text: 'Income vs Expense',
       },
     },
   };

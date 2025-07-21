@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import * as apiService from "../services/api.service";
+import { createContext, useContext, useState, useEffect } from 'react';
+import * as apiService from '../services/api.service';
 
 // 1. Create the Context
 // This creates a "box" or a "pipe" that components can use to share data
@@ -24,7 +24,7 @@ export function AuthProvider({ children }) {
           login(userData);
         }
       } catch (error) {
-        console.error("Server checkAuthStatus failed:", error.message);
+        console.error('Server checkAuthStatus failed:', error.message);
       } finally {
         setLoading(false);
       }
@@ -45,7 +45,7 @@ export function AuthProvider({ children }) {
     } catch (error) {
       // Even if the server call fails, we should still log the user out on the client.
       console.error(
-        "Server logout failed, logging out locally anyway:",
+        'Server logout failed, logging out locally anyway:',
         error.message
       );
     } finally {

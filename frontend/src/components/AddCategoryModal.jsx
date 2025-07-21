@@ -1,9 +1,9 @@
-import { useState } from "react";
-import * as apiService from "../services/api.service";
+import { useState } from 'react';
+import * as apiService from '../services/api.service';
 
 function AddCategoryModel({ onCategoryCreated, onClose }) {
   const [formData, setFormData] = useState({
-    name: "",
+    name: '',
   });
 
   const [error, setError] = useState(null);
@@ -25,9 +25,9 @@ function AddCategoryModel({ onCategoryCreated, onClose }) {
     try {
       const categoryData = await apiService.createCategory(formData);
       onCategoryCreated();
-      console.log("Category created successfully", categoryData);
+      console.log('Category created successfully', categoryData);
     } catch (error) {
-      console.error("Error creating a new category", error.message);
+      console.error('Error creating a new category', error.message);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -47,7 +47,7 @@ function AddCategoryModel({ onCategoryCreated, onClose }) {
           required
         />
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <button type="button" onClick={onClose}>
           Cancel

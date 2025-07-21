@@ -1,17 +1,17 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import * as apiService from "../services/api.service";
-import * as formatter from "../utils/format";
-import Pagination from "../components/Pagination";
-import ActionMenu from "../components/ActionMenu";
-import ManageCategoriesModal from "../components/ManageCategoriesModal";
-import AddTransactionModal from "../components/AddTransactionModal";
-import EditTransactionModal from "../components/EditTransactionModal";
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import * as apiService from '../services/api.service';
+import * as formatter from '../utils/format';
+import Pagination from '../components/Pagination';
+import ActionMenu from '../components/ActionMenu';
+import ManageCategoriesModal from '../components/ManageCategoriesModal';
+import AddTransactionModal from '../components/AddTransactionModal';
+import EditTransactionModal from '../components/EditTransactionModal';
 
-import SearchIcon from "../icons/SearchIcon";
-import useDebounce from "../hooks/useDebounce";
-import FilterListIcon from "../icons/FilterListIcon";
-import FilterModal from "../components/FilterModal";
+import SearchIcon from '../icons/SearchIcon';
+import useDebounce from '../hooks/useDebounce';
+import FilterListIcon from '../icons/FilterListIcon';
+import FilterModal from '../components/FilterModal';
 
 function DashboardPage() {
   const [categories, setCategories] = useState([]);
@@ -24,21 +24,21 @@ function DashboardPage() {
   const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
   const [transactionError, setTransactionError] = useState({
     id: null,
-    message: "",
+    message: '',
   });
 
   const [isManageCategoriesModalOpen, setIsManageCategoriesModalOpen] =
     useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
-  const [categoryError, setCategoryError] = useState({ id: null, message: "" });
+  const [categoryError, setCategoryError] = useState({ id: null, message: '' });
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [filters, setFilters] = useState({
-    dateRangeFilter: "",
-    categoryFilter: "",
+    dateRangeFilter: '',
+    categoryFilter: '',
   });
 
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState('');
   const debouncedSearchTerm = useDebounce(searchInput, 1000);
   const searchInputRef = useRef(null);
 
@@ -73,7 +73,7 @@ function DashboardPage() {
       setBalance(transactionsData.balance);
       setPagination(transactionsData.pagination);
     } catch (error) {
-      console.error("Error fetching data:", error.message);
+      console.error('Error fetching data:', error.message);
     } finally {
       setLoading(false);
     }
@@ -86,8 +86,8 @@ function DashboardPage() {
   const navigate = useNavigate();
 
   function handleViewFinancialInsights() {
-    console.log("View Financial Insights");
-    navigate("/insights");
+    console.log('View Financial Insights');
+    navigate('/insights');
   }
 
   function handlePageChange(newPageNumber) {
@@ -115,38 +115,38 @@ function DashboardPage() {
 
   // MANAGE CATEGORIES
   function handleManageCategoriesModalOpen() {
-    setCategoryError({ id: null, message: "" });
+    setCategoryError({ id: null, message: '' });
     setIsManageCategoriesModalOpen(true);
   }
 
   function handleCloseManageCategoriesModal() {
-    setCategoryError({ id: null, message: "" });
+    setCategoryError({ id: null, message: '' });
     setIsManageCategoriesModalOpen(false);
   }
 
   function handleCategoryDataRefresh() {
-    setCategoryError({ id: null, message: "" });
+    setCategoryError({ id: null, message: '' });
     fetchData();
   }
 
   // DELETE CATEGORY
   async function handleDeleteCategory(categoryId) {
-    setCategoryError({ id: null, message: "" });
+    setCategoryError({ id: null, message: '' });
 
     try {
       const isConfirmed = window.confirm(
-        "Are you sure you want to delete this category?"
+        'Are you sure you want to delete this category?'
       );
       if (!isConfirmed) {
         return;
       }
 
       const categoryData = await apiService.deleteCategory(categoryId);
-      console.log("Category deleted successfully", categoryData);
+      console.log('Category deleted successfully', categoryData);
 
       fetchData();
     } catch (error) {
-      console.error("Error deleting category:", error.message);
+      console.error('Error deleting category:', error.message);
       setCategoryError({ id: categoryId, message: error.message });
     }
   }
@@ -189,18 +189,18 @@ function DashboardPage() {
   async function handleDeleteTransaction(transactionId) {
     try {
       const isConfirmed = window.confirm(
-        "Are you sure you want to delete this transaction?"
+        'Are you sure you want to delete this transaction?'
       );
       if (!isConfirmed) {
         return;
       }
 
       const transactionData = await apiService.deleteTransaction(transactionId);
-      console.log("Transaction deleted successfully", transactionData);
+      console.log('Transaction deleted successfully', transactionData);
 
       fetchData();
     } catch (error) {
-      console.error("Error deleting transaction:", error.message);
+      console.error('Error deleting transaction:', error.message);
       setTransactionError({ id: transactionId, message: error.message });
     }
   }
@@ -257,7 +257,7 @@ function DashboardPage() {
                 />
                 <SearchIcon
                   className="h-5 w-5"
-                  style={{ width: "24px", height: "24px" }}
+                  style={{ width: '24px', height: '24px' }}
                 />
               </div>
               <button onClick={handleFilterModalOpen}>
@@ -293,7 +293,7 @@ function DashboardPage() {
                       <div>{transaction.category.name}</div>
                       <div>
                         {formatter.formatCurrency(
-                          transaction.type === "EXPENSE"
+                          transaction.type === 'EXPENSE'
                             ? -transaction.amount
                             : transaction.amount
                         )}
@@ -319,7 +319,7 @@ function DashboardPage() {
                       </div>
                     }
                     {transactionError.id === transaction.id && (
-                      <p style={{ color: "red" }}>{transactionError.message}</p>
+                      <p style={{ color: 'red' }}>{transactionError.message}</p>
                     )}
                   </div>
                 </li>

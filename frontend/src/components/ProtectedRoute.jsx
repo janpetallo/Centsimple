@@ -1,5 +1,5 @@
-import { useAuth } from "../context/AuthContext";
-import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
+import { Navigate, Outlet } from 'react-router-dom';
 
 function ProtectedRoute() {
   const { user, loading } = useAuth();
@@ -8,7 +8,8 @@ function ProtectedRoute() {
     return <div>Loading...</div>; // while still checking auth status
   }
 
-  if (user) { // if user is logged in, render PROTECTED routes
+  if (user) {
+    // if user is logged in, render PROTECTED routes
     return <Outlet />; // placeholder where actual protected routes will be rendered
   }
 

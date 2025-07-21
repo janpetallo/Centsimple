@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+
+  /* Primary Role */
+  --color-primary: #6750a4;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #ffffff;
+  --color-on-primary-container: #4f378b;
+
+  --color-primary-dark: #d0bcff;
+  --color-on-primary-dark: #381e72;
+  --color-primary-container-dark: #4f378b;
+  --color-on-primary-container-dark: #eaddff;
+
+  /* Secondary Role */
+  --color-secondary: #625b71;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #e8def8;
+  --color-on-secondary-container: #4a4458;
+
+  --color-secondary-dark: #ccc2dc;
+  --color-on-secondary-dark: #332d41;
+  --color-secondary-container-dark: #4a4458;
+  --color-on-secondary-container-dark: #e8def8;
+
+  /* Tertiary Role */
+  --color-tertiary: #7d5260;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #ffd8e4;
+  --color-on-tertiary-container: #ffd8e4;
+
+  --color-tertiary-dark: #efb8c8;
+  --color-on-tertiary-dark: #492532;
+  --color-tertiary-container-dark: #633b48;
+  --color-on-tertiary-container-dark: #ffd8e4;
+
+  /* Surface Role */
+  --color-surface: #fef7ff;
+  --color-on-surface: #1d1b20;
+  --color-surface-variant: #e7e0ec;
+  --color-on-surface-variant: #49454f;
+  --color-inverse-surface: #322f35;
+  --color-inverse-on-surface: #f5eff7;
+  --color-surface-container: #f3edf7;
+
+  --color-surface-dark: #141218;
+  --color-on-surface-dark: #e6e0e9;
+  --color-surface-variant-dark: #49454f;
+  --color-on-surface-variant-dark: #cac4d0;
+  --color-inverse-surface-dark: #e6e0e9;
+  --color-inverse-on-surface-dark: #322f35;
+  --color-surface-container-dark: #211f26;
+
+  /* Error Role */
+  --color-error: #b3261e;
+  --color-on-error: #ffffff;
+  --color-error-container: #f9dedc;
+  --color-on-error-container: #8c1d18;
+
+  --color-error-dark: #f2b8b5;
+  --color-on-error-dark: #601410;
+  --color-error-container-dark: #8c1d18;
+  --color-on-error-container-dark: #f9dedc;
+
+  /* Outline Role */
+  --color-outline: #79747e;
+  --color-outline-variant: #cac4d0;
+
+  --color-outline-dark: #938f99;
+  --color-outline-variant-dark: #49454f;
+}
+
+@layer base {
+  body {
+    @apply bg-surface font-sans text-on-surface;
+  }
+}
+
+/* We are creating new, reusable utility classes */
+@utility text-display-large {
+  @apply text-4xl font-bold md:text-6xl;
+}
+
+@utility text-headline-medium {
+  @apply text-3xl font-bold;
+}
+
+@utility text-title-large {
+  @apply text-xl font-bold;
+}
+
+@utility text-label-large {
+  @apply text-base font-bold;
+}
+
+@utility text-body-large {
+  @apply text-lg text-gray-600;
+}

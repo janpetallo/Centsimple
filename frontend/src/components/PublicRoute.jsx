@@ -1,5 +1,5 @@
-import { useAuth } from "../context/AuthContext";
-import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
+import { Navigate, Outlet } from 'react-router-dom';
 
 function PublicRoute() {
   const { user, loading } = useAuth();
@@ -8,7 +8,8 @@ function PublicRoute() {
     return <div>Loading...</div>; // while still checking auth status
   }
 
-  if (!user) { // if no user is logged in, render PUBLIC routes
+  if (!user) {
+    // if no user is logged in, render PUBLIC routes
     return <Outlet />; // placeholder where actual PUBLIC routes will be rendered
   }
 
