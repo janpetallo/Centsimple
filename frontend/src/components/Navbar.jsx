@@ -5,34 +5,28 @@ function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <div>
+    <nav className="flex items-center justify-between border-b p-4">
+      <div className="text-lg font-bold">
+        <Link to={user ? '/dashboard' : '/'}>Momentum Money</Link>
+      </div>
+
       {user ? (
-        <nav>
-          <ul>
-            <li>
-              <Link to="/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <button onClick={logout}>Logout</button>
-            </li>
-          </ul>
-        </nav>
+        <ul className="flex items-center gap-4">
+          <li className="font-medium text-gray-600 transition-colors hover:text-gray-900">
+            <button onClick={logout}>Logout</button>
+          </li>
+        </ul>
       ) : (
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/register">Register</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-          </ul>
-        </nav>
+        <ul className="flex items-center gap-4">
+          <li className="font-medium text-gray-600 transition-colors hover:text-gray-900">
+            <Link to="/register">Register</Link>
+          </li>
+          <li className="font-medium text-gray-600 transition-colors hover:text-gray-900">
+            <Link to="/login">Login</Link>
+          </li>
+        </ul>
       )}
-    </div>
+    </nav>
   );
 }
 export default Navbar;

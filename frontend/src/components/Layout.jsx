@@ -3,11 +3,11 @@ import { Outlet } from 'react-router-dom';
 
 function Layout() {
   return (
-    <div>
+    <div className="flex min-h-screen flex-col">
       <header>
         <Navbar />
       </header>
-      <main>
+      <main className="mx-auto w-full max-w-7xl flex-grow px-4 py-8">
         <Outlet /> {/* Placeholder; Child pages will be rendered here */}
       </main>
     </div>
