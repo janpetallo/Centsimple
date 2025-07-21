@@ -27,7 +27,7 @@ async function sendVerificationEmail(userEmail, token) {
 
   // Use the transporter to send the email
   const info = await transporter.sendMail({
-    from: '"Momentum Money" <noreply@momentum.money>', // sender address
+    from: '"Centsimple" <noreply@centsimple.app>', // sender address
     to: userEmail, // list of receivers
     subject: 'Verify Your Email Address', // Subject line
     text: `Please verify your email by clicking this link: ${verificationUrl}`, // plain text body

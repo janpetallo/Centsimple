@@ -7,7 +7,7 @@ function Navbar() {
   return (
     <nav className="flex items-center justify-between border-b p-4">
       <div className="text-lg font-bold">
-        <Link to={user ? '/dashboard' : '/'}>Momentum Money</Link>
+        <Link to={user ? '/dashboard' : '/'}>Centsimple</Link>
       </div>
 
       {user ? (
