@@ -7,7 +7,7 @@ function HomePage() {
   return (
     <div>
       {/* === Hero Section === */}
-      <section className="bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-20">
+      <section>
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-2">
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
             <h1 className="text-4xl font-bold md:text-6xl">
@@ -33,7 +33,7 @@ function HomePage() {
               </div>
 
               <div className="space-y-4">
-                <div className="h-10 w-2/3 rounded-lg bg-gray-200"></div>
+                <div className="h-10 w-2/3 rounded-lg bg-gray-100"></div>
                 <div className="flex items-end gap-2">
                   <div className="h-16 w-8 rounded-md bg-green-300"></div>
                   <div className="h-24 w-8 rounded-md bg-red-300"></div>
@@ -54,14 +54,14 @@ function HomePage() {
         </h2>
         <div className="mx-auto mt-12 grid max-w-7xl grid-cols-1 gap-8 md:grid-cols-3">
           <div className="flex flex-col items-center text-center">
-            <WalletIcon className="text-brand h-12 w-12" />
+            <WalletIcon className="text-brand h-20 w-20" />
             <h3 className="mt-4 text-xl font-bold">Track Everything</h3>
             <p className="mt-2 text-gray-600">
               Log your income and expenses with just a few clicks.
             </p>
           </div>
           <div className="flex flex-col items-center text-center">
-            <BarChartIcon className="text-brand h-12 w-12" />
+            <BarChartIcon className="text-brand h-20 w-20" />
             <h3 className="mt-4 text-xl font-bold">Visualize Your Habits</h3>
             <p className="mt-2 text-gray-600">
               See exactly where your money is going with our insightful charts
@@ -69,7 +69,7 @@ function HomePage() {
             </p>
           </div>
           <div className="flex flex-col items-center text-center">
-            <FolderIcon className="text-brand h-12 w-12" />
+            <FolderIcon className="text-brand h-20 w-20" />
             <h3 className="mt-4 text-xl font-bold">Stay Organized</h3>
             <p className="mt-2 text-gray-600">
               Create custom categories to build a budget that works for you.
