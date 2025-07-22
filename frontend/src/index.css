@@ -7,7 +7,7 @@
   /* Primary Role */
   --color-primary: #6750a4;
   --color-on-primary: #ffffff;
-  --color-primary-container: #ffffff;
+  --color-primary-container: #eaddff;
   --color-on-primary-container: #4f378b;
 
   --color-primary-dark: #d0bcff;
@@ -30,7 +30,7 @@
   --color-tertiary: #7d5260;
   --color-on-tertiary: #ffffff;
   --color-tertiary-container: #ffd8e4;
-  --color-on-tertiary-container: #ffd8e4;
+  --color-on-tertiary-container: #633B48;
 
   --color-tertiary-dark: #efb8c8;
   --color-on-tertiary-dark: #492532;
@@ -75,7 +75,7 @@
 
 @layer base {
   body {
-    @apply bg-surface font-sans text-on-surface;
+    @apply bg-surface text-on-surface font-sans;
   }
 }
 
