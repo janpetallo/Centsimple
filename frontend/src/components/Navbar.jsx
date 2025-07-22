@@ -1,32 +1,67 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Navbar() {
   const { user, logout } = useAuth();
 
-  return (
-    <nav className="flex items-center justify-between border-b p-4">
-      <div className="text-lg font-bold text-brand">
-        <Link to={user ? '/dashboard' : '/'}>Centsimple</Link>
-      </div>
+  // A reusable style for our text-based links
+  const navLinkClasses = ({ isActive }) =>
+    `px-3 py-2 rounded-full transition-colors text-label-large hover:bg-primary-container hover:text-primary ${
+      isActive ? 'text-primary' : 'text-on-surface-variant'
+    }`;
 
-      {user ? (
-        <ul className="flex items-center gap-4">
-          <li className="font-medium text-gray-600 transition-colors hover:text-brand">
-            <button onClick={logout}>Logout</button>
-          </li>
-        </ul>
-      ) : (
-        <ul className="flex items-center gap-4">
-          <li className="font-medium text-gray-600 transition-colors hover:text-brand">
-            <Link to="/register">Register</Link>
-          </li>
-          <li className="font-medium text-gray-600 transition-colors hover:text-brand">
-            <Link to="/login">Login</Link>
-          </li>
-        </ul>
-      )}
+  // A new, specific style for our text-based buttons that RESETS browser defaults
+  const textButtonClasses =
+    'bg-transparent border-none px-3 py-2 rounded-full transition-colors text-label-large text-on-surface-variant hover:bg-primary-container hover:text-primary';
+
+  return (
+    <nav className="bg-surface flex h-16 items-center justify-between p-4 shadow-sm">
+      {/* Brand/Logo Link */}
+      <Link
+        to={user ? '/dashboard' : '/'}
+        className="text-primary text-title-large"
+      >
+        Centsimple
+      </Link>
+
+      {/* Action Links Container */}
+      <div>
+        {user ? (
+          // Logged-in links
+          <ul className="flex items-center gap-2">
+            <li>
+              <NavLink to="/dashboard" className={navLinkClasses}>
+                Dashboard
+              </NavLink>
+            </li>
+            <li>
+              {/* Use the new, specific button style */}
+              <button onClick={logout} className={textButtonClasses}>
+                Logout
+              </button>
+            </li>
+          </ul>
+        ) : (
+          // Logged-out links
+          <ul className="flex items-center gap-2">
+            <li>
+              <NavLink to="/register" className={navLinkClasses}>
+                Register
+              </NavLink>
+            </li>
+            <li>
+              <Link
+                to="/login"
+                className="text-label-large bg-primary-container text-on-primary-container rounded-full px-4 py-2 transition-colors hover:opacity-90 hover:shadow-md"
+              >
+                Login
+              </Link>
+            </li>
+          </ul>
+        )}
+      </div>
     </nav>
   );
 }
+
 export default Navbar;
