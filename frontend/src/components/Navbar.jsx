@@ -6,13 +6,13 @@ function Navbar() {
 
   // A reusable style for our text-based links
   const navLinkClasses = ({ isActive }) =>
-    `px-3 py-2 rounded-full transition-colors text-label-large hover:bg-primary-container hover:text-primary ${
+    `px-3 py-2 rounded-full transition-colors text-label-large hover:bg-primary-container hover:text-on-primary-container ${
       isActive ? 'text-primary' : 'text-on-surface-variant'
     }`;
 
   // A new, specific style for our text-based buttons that RESETS browser defaults
   const textButtonClasses =
-    'bg-transparent border-none px-3 py-2 rounded-full transition-colors text-label-large text-on-surface-variant hover:bg-primary-container hover:text-primary';
+    'bg-transparent border-none px-3 py-2 rounded-full transition-colors text-label-large text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container';
 
   return (
     <nav className="bg-surface flex h-16 items-center justify-between p-4 shadow-sm">
