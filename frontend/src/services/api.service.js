@@ -58,18 +58,25 @@ async function registerUser(formData) {
   }
 }
 
+// This does not use the apiClient above so it correctly displays specific error message
 async function loginUser(formData) {
   try {
-    const url = 'http://localhost:5001/api/auth/login';
-    const options = {
+    const response = await fetch('http://localhost:5001/api/auth/login', {
       method: 'POST',
-      credentials: 'include', // include cookies including the JWT cookie
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData),
-    };
-    const data = await apiClient(url, options);
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // This correctly throws the specific message from the backend
+      throw new Error(data.message || 'Login failed');
+    }
+
     return data;
   } catch (error) {
     console.error('Login error:', error);
