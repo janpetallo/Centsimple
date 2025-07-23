@@ -67,6 +67,12 @@ async function register(req, res) {
     res.status(201).json(user);
   } catch (error) {
     console.error('Registration error:', error);
+
+    // If a user was created before the error happened, delete them.
+    if (newUser) {
+      await prisma.user.delete({ where: { id: newUser.id } });
+    }
+
     res.status(500).json({ message: 'Internal server error' });
   }
 }

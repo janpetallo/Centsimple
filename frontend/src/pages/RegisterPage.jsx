@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import * as apiService from '../services/api.service';
 
@@ -13,6 +13,22 @@ function RegisterPage() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    function validatePassword() {
+      // The `!` is removed. Now it checks if confirmPassword has a value.
+      if (
+        formData.confirmPassword &&
+        formData.password !== formData.confirmPassword
+      ) {
+        setError('Passwords do not match');
+      } else {
+        setError(null);
+      }
+    }
+
+    validatePassword();
+  }, [formData.confirmPassword, formData.password]);
+
   function handleChange(e) {
     setFormData({
       ...formData,
@@ -23,10 +39,7 @@ function RegisterPage() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+    if (error) return;
 
     setError(null);
     setLoading(true);
