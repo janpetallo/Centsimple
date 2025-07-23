@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import * as apiService from '../services/api.service';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -43,33 +43,62 @@ function LoginPage() {
   }
 
   return (
-    <div>
-      <h2>Login Page</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          onChange={handleChange}
-          required
-        />
+    <div className="mx-auto flex max-w-lg flex-col">
+      <h2 className="text-headline-medium mb-8 text-left">Login</h2>
 
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          onChange={handleChange}
-          required
-        />
+      <div className="bg-surface-container rounded-2xl p-8 shadow-sm">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <label
+            htmlFor="email"
+            className="text-label-large text-on-surface-variant"
+          >
+            Email
+          </label>
+          <input
+            className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
+            type="email"
+            id="email"
+            name="email"
+            onChange={handleChange}
+            required
+          />
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+          <label
+            htmlFor="password"
+            className="text-label-large text-on-surface-variant"
+          >
+            Password
+          </label>
+          <input
+            className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
+            type="password"
+            id="password"
+            name="password"
+            onChange={handleChange}
+            required
+          />
 
-        <button type="submit" disabled={loading}>
-          Login
-        </button>
-      </form>
+          {error && (
+            <p className="text-on-error-container bg-error-container mt-2 text-center text-sm rounded-2xl p-2 w-fit">
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-primary text-on-primary text-label-large mt-4 inline-block rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          >
+            Login
+          </button>
+        </form>
+        <p className="text-on-surface-variant text-label-large mt-4">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-primary">
+            Register
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
