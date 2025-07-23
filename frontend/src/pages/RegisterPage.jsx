@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import * as apiService from '../services/api.service';
 
 function RegisterPage() {
@@ -43,65 +44,111 @@ function RegisterPage() {
   }
 
   return (
-    <div>
-      <h2>Register Page</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="firstName">First Name:</label>
-        <input
-          type="text"
-          id="firstName"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleChange}
-          required
-        />
+    <div className="mx-auto flex max-w-lg flex-col">
+      <h2 className="text-headline-medium mb-8 text-left">Register</h2>
+      <div className="bg-surface-container rounded-2xl p-8 shadow-sm">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <label
+            htmlFor="firstName"
+            className="text-label-large text-on-surface-variant"
+          >
+            First Name:
+          </label>
+          <input
+            className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
+            type="text"
+            id="firstName"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
+            required
+          />
 
-        <label htmlFor="lastName">Last Name:</label>
-        <input
-          type="text"
-          id="lastName"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleChange}
-          required
-        />
+          <label
+            htmlFor="lastName"
+            className="text-label-large text-on-surface-variant"
+          >
+            Last Name:
+          </label>
+          <input
+            className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
+            type="text"
+            id="lastName"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+            required
+          />
 
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
+          <label
+            htmlFor="email"
+            className="text-label-large text-on-surface-variant"
+          >
+            Email:
+          </label>
+          <input
+            className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
 
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+          <label
+            htmlFor="password"
+            className="text-label-large text-on-surface-variant"
+          >
+            Password:
+          </label>
+          <input
+            className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
 
-        <label htmlFor="confirmPassword">Confirm Password:</label>
-        <input
-          type="password"
-          id="confirmPassword"
-          name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-        />
+          <label
+            htmlFor="confirmPassword"
+            className="text-label-large text-on-surface-variant"
+          >
+            Confirm Password:
+          </label>
+          <input
+            className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+          {error && (
+            <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+              {error}
+            </p>
+          )}
 
-        <button type="submit" disabled={loading}>
-          Register
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-primary text-on-primary text-label-large mt-4 inline-block rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          >
+            Register
+          </button>
+        </form>
+        <p className="text-on-surface-variant text-label-large mt-4">
+          Already have an account?{' '}
+          <Link to="/login" className="text-primary">
+            Login
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
