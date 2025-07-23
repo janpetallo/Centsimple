@@ -30,7 +30,7 @@
   --color-tertiary: #7d5260;
   --color-on-tertiary: #ffffff;
   --color-tertiary-container: #ffd8e4;
-  --color-on-tertiary-container: #633B48;
+  --color-on-tertiary-container: #633b48;
 
   --color-tertiary-dark: #efb8c8;
   --color-on-tertiary-dark: #492532;
@@ -98,4 +98,17 @@
 
 @utility text-body-large {
   @apply text-lg text-gray-600;
+}
+
+/*
+  This is a professional override to fix the browser's default
+  blue autofill style on form inputs.
+*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #49454f;
+  -webkit-box-shadow: 0 0 0 30px #e7e0ec inset !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
