@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import * as apiService from '../services/api.service';
+import Modal from './Modal';
 
 function AddCategoryModel({ onCategoryCreated, onClose }) {
   const [formData, setFormData] = useState({
@@ -35,8 +36,7 @@ function AddCategoryModel({ onCategoryCreated, onClose }) {
   }
 
   return (
-    <div>
-      <h2>Add Category</h2>
+    <Modal title="Add Category" onClose={onClose}>
       <form onSubmit={handleSubmit}>
         <label htmlFor="name">Name:</label>
         <input
@@ -57,7 +57,7 @@ function AddCategoryModel({ onCategoryCreated, onClose }) {
           Add Category
         </button>
       </form>
-    </div>
+    </Modal>
   );
 }
 
