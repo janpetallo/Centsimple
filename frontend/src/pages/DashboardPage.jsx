@@ -274,6 +274,7 @@ function DashboardPage() {
               <span className="hidden sm:inline">Filters</span>
             </button>
           </div>
+
           {isFilterModalOpen && (
             <FilterModal
               categories={categories}
@@ -288,41 +289,51 @@ function DashboardPage() {
           )}
 
           {transactions.length > 0 && (
-            <ul>
+            <ul className="flex flex-col gap-2">
               {transactions.map((transaction) => (
-                <li key={transaction.id}>
-                  <div>
-                    <div>
-                      <div>{transaction.description}</div>
-                      <div>{formatter.formatDate(transaction.date)}</div>
-                      <div>{transaction.category.name}</div>
-                      <div>
+                <li
+                  key={transaction.id}
+                  className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant rounded-xl border p-4 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex grow flex-col gap-4 md:flex-row">
+                      <p className="font-medium">{transaction.description}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="bg-secondary-container text-on-secondary-container max-w-fit rounded-full px-2 py-1 text-xs">
+                          {formatter.formatDate(transaction.date)}
+                        </p>
+                        <p className="bg-tertiary-container text-on-tertiary-container rounded-full px-2 py-1 text-xs">
+                          {transaction.category.name}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-shrink-0 items-center gap-4">
+                      <p className="text-label-large text-right md:w-28">
                         {formatter.formatCurrency(
                           transaction.type === 'EXPENSE'
                             ? -transaction.amount
                             : transaction.amount
                         )}
-                      </div>
-                    </div>
-                    {
-                      <div>
-                        <ActionMenu
-                          onDelete={() =>
-                            handleDeleteTransaction(transaction.id)
-                          }
-                          onEdit={() => handleEditTransaction(transaction)}
-                        />
+                      </p>
 
-                        {editingTransaction?.id === transaction.id && (
-                          <EditTransactionModal
-                            transaction={transaction}
-                            categories={categories}
-                            onTransactionUpdated={handleTransactionUpdated}
-                            onClose={handleCloseEditTransactionModal}
-                          />
-                        )}
-                      </div>
-                    }
+                      <ActionMenu
+                        onDelete={() => handleDeleteTransaction(transaction.id)}
+                        onEdit={() => handleEditTransaction(transaction)}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    {editingTransaction?.id === transaction.id && (
+                      <EditTransactionModal
+                        transaction={transaction}
+                        categories={categories}
+                        onTransactionUpdated={handleTransactionUpdated}
+                        onClose={handleCloseEditTransactionModal}
+                      />
+                    )}
+
                     {transactionError.id === transaction.id && (
                       <p style={{ color: 'red' }}>{transactionError.message}</p>
                     )}
