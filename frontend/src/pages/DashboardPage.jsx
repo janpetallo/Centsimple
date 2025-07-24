@@ -308,7 +308,7 @@ function DashboardPage() {
                     <div className="flex grow flex-col gap-4 md:flex-row">
                       <p className="font-medium">{transaction.description}</p>
                       <div className="flex items-center gap-2">
-                        <p className="bg-secondary-container whitespace-nowrap text-on-secondary-container max-w-fit rounded-full px-2 py-1 text-xs">
+                        <p className="bg-secondary-container text-on-secondary-container max-w-fit rounded-full px-2 py-1 text-xs whitespace-nowrap">
                           {formatter.formatDate(transaction.date)}
                         </p>
                         <p className="bg-tertiary-container text-on-tertiary-container rounded-full px-2 py-1 text-xs">
@@ -317,7 +317,7 @@ function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className="flex flex-shrink-0 items-center gap-4">
+                    <div className="flex flex-shrink-0 items-start gap-4">
                       <p className="text-label-large text-right md:w-28">
                         {formatter.formatCurrency(
                           transaction.type === 'EXPENSE'
