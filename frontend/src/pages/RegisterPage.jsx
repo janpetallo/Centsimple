@@ -65,7 +65,7 @@ function RegisterPage() {
             htmlFor="firstName"
             className="text-label-large text-on-surface-variant"
           >
-            First Name:
+            First Name
           </label>
           <input
             className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
@@ -81,7 +81,7 @@ function RegisterPage() {
             htmlFor="lastName"
             className="text-label-large text-on-surface-variant"
           >
-            Last Name:
+            Last Name
           </label>
           <input
             className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
@@ -97,7 +97,7 @@ function RegisterPage() {
             htmlFor="email"
             className="text-label-large text-on-surface-variant"
           >
-            Email:
+            Email
           </label>
           <input
             className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
@@ -113,7 +113,7 @@ function RegisterPage() {
             htmlFor="password"
             className="text-label-large text-on-surface-variant"
           >
-            Password:
+            Password
           </label>
           <input
             className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
@@ -129,7 +129,7 @@ function RegisterPage() {
             htmlFor="confirmPassword"
             className="text-label-large text-on-surface-variant"
           >
-            Confirm Password:
+            Confirm Password
           </label>
           <input
             className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
@@ -150,7 +150,7 @@ function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary text-on-primary text-label-large mt-4 inline-block rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            className="bg-primary text-on-primary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
             Register
           </button>

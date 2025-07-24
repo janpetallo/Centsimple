@@ -12,6 +12,7 @@ import SearchIcon from '../icons/SearchIcon';
 import useDebounce from '../hooks/useDebounce';
 import FilterListIcon from '../icons/FilterListIcon';
 import FilterModal from '../components/FilterModal';
+import AddIcon from '../icons/AddIcon';
 
 function DashboardPage() {
   const [categories, setCategories] = useState([]);
@@ -207,22 +208,36 @@ function DashboardPage() {
 
   return (
     <div>
-      <h2>Dashboard Page</h2>
+      <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-headline-medium text-left">Dashboard</h2>
+
+        <div className="flex grow flex-col gap-4 sm:flex-row md:grow-0">
+          <button
+            onClick={handleViewFinancialInsights}
+            className="border-outline text-on-secondary bg-secondary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+          >
+            View Financial Insights
+          </button>
+
+          <button
+            onClick={handleManageCategoriesModalOpen}
+            className="border-outline text-primary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+          >
+            Manage Categories
+          </button>
+        </div>
+      </div>
 
       {loading ? (
         <h3>Loading...</h3>
       ) : (
         <div>
-          <h3>Balance: {formatter.formatCurrency(balance)}</h3>
-
-          <button onClick={handleViewFinancialInsights}>
-            View Financial Insights
-          </button>
-
-          <button onClick={handleManageCategoriesModalOpen}>
-            Manage Categories
-          </button>
-
+          <div className="bg-surface-container flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
+            <p className="text-on-surface-variant text-sm">Balance</p>
+            <p className="text-headline-medium text-on-surface">
+              {formatter.formatCurrency(balance)}
+            </p>
+          </div>
           {isManageCategoriesModalOpen && (
             <ManageCategoriesModal
               categories={categories}
@@ -233,41 +248,41 @@ function DashboardPage() {
             />
           )}
 
-          <h3>Transactions</h3>
-          <button onClick={handleAddTransaction}>Add Transaction</button>
-          {isTransactionModelOpen && (
-            <AddTransactionModal
-              categories={categories}
-              onTransactionCreated={handleTransactionCreated}
-              onClose={handleCloseTransactionModal}
-            />
-          )}
-
-          {
-            <div>
-              <div>
-                <label htmlFor="searchInput">Search:</label>
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  id="searchInput"
-                  placeholder="Search by description or category"
-                  value={searchInput}
-                  onChange={handleSearchInputChange}
-                />
-                <SearchIcon
-                  className="h-5 w-5"
-                  style={{ width: '24px', height: '24px' }}
-                />
+          <div className="my-4 flex items-center gap-2 sm:gap-4">
+            {/* Search Bar Container */}
+            <div className="relative flex-grow">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <SearchIcon className="h-5 w-5 text-gray-400" />
               </div>
-              <button onClick={handleFilterModalOpen}>
-                <div>
-                  <FilterListIcon className="h-5 w-5" />
-                  <span>Filters</span>
-                </div>
-              </button>
+              <input
+                ref={searchInputRef}
+                type="text"
+                id="searchInput"
+                className="bg-surface-variant text-on-surface-variant placeholder:text-on-surface-variant/70 focus:ring-inverse-surface block w-full rounded-full border-0 py-2 pr-3 pl-10 focus:ring-1 focus:ring-inset sm:text-sm"
+                placeholder="Search transactions..."
+                value={searchInput}
+                onChange={handleSearchInputChange}
+              />
             </div>
-          }
+
+            {/* Filters Button */}
+            <button
+              onClick={handleFilterModalOpen}
+              className="border-outline text-primary hover:bg-primary-container hover:text-on-primary-container inline-flex flex-shrink-0 cursor-pointer items-center gap-2 rounded-full border px-4 py-2 transition-colors"
+            >
+              <FilterListIcon className="h-5 w-5" />
+              <span className="hidden sm:inline">Filters</span>
+            </button>
+
+            {/* Add Transaction Button (medium screens)*/}
+            <button
+              onClick={handleAddTransaction}
+              className="bg-primary text-label-large text-on-primary hidden items-center gap-2 rounded-full px-4 py-2 transition-all duration-200 hover:shadow-md md:inline-flex"
+            >
+              <AddIcon className="h-5 w-5" />
+              <span>Add Transaction</span>
+            </button>
+          </div>
 
           {isFilterModalOpen && (
             <FilterModal
@@ -279,47 +294,67 @@ function DashboardPage() {
           )}
 
           {transactions.length === 0 && (
-            <p>No transactions yet. Click "Add Transaction" to get started!</p>
+            <p className="bg-surface-container border-outline/10 mt-4 rounded-xl border p-8">
+              <span className="md:hidden">
+                No transactions yet. Click the "+" button to get started!
+              </span>
+              {/* This span is HIDDEN by default and only appears on medium screens and up */}
+              <span className="hidden md:inline">
+                No transactions yet. Click "Add Transaction" to get started!
+              </span>
+            </p>
           )}
 
           {transactions.length > 0 && (
-            <ul>
+            <ul className="mt-4 flex flex-col gap-2">
               {transactions.map((transaction) => (
-                <li key={transaction.id}>
-                  <div>
-                    <div>
-                      <div>{transaction.description}</div>
-                      <div>{formatter.formatDate(transaction.date)}</div>
-                      <div>{transaction.category.name}</div>
-                      <div>
+                <li
+                  key={transaction.id}
+                  className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant rounded-xl border p-4 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex grow flex-col gap-4 md:flex-row">
+                      <p className="font-medium">{transaction.description}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="bg-secondary-container text-on-secondary-container max-w-fit rounded-full px-2 py-1 text-xs whitespace-nowrap">
+                          {formatter.formatDate(transaction.date)}
+                        </p>
+                        <p className="bg-tertiary-container text-on-tertiary-container rounded-full px-2 py-1 text-xs">
+                          {transaction.category.name}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-shrink-0 items-start gap-4">
+                      <p className="text-label-large text-right md:w-28">
                         {formatter.formatCurrency(
                           transaction.type === 'EXPENSE'
                             ? -transaction.amount
                             : transaction.amount
                         )}
-                      </div>
-                    </div>
-                    {
-                      <div>
-                        <ActionMenu
-                          onDelete={() =>
-                            handleDeleteTransaction(transaction.id)
-                          }
-                          onEdit={() => handleEditTransaction(transaction)}
-                        />
+                      </p>
 
-                        {editingTransaction?.id === transaction.id && (
-                          <EditTransactionModal
-                            transaction={transaction}
-                            categories={categories}
-                            onTransactionUpdated={handleTransactionUpdated}
-                            onClose={handleCloseEditTransactionModal}
-                          />
-                        )}
-                      </div>
-                    }
+                      <ActionMenu
+                        onDelete={() => handleDeleteTransaction(transaction.id)}
+                        onEdit={() => handleEditTransaction(transaction)}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    {editingTransaction?.id === transaction.id && (
+                      <EditTransactionModal
+                        transaction={transaction}
+                        categories={categories}
+                        onTransactionUpdated={handleTransactionUpdated}
+                        onClose={handleCloseEditTransactionModal}
+                      />
+                    )}
+
                     {transactionError.id === transaction.id && (
-                      <p style={{ color: 'red' }}>{transactionError.message}</p>
+                      <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+                        {transactionError.message}
+                      </p>
                     )}
                   </div>
                 </li>
@@ -327,6 +362,21 @@ function DashboardPage() {
             </ul>
           )}
 
+          {/* Add Transaction Button (small screens)*/}
+          <button
+            onClick={handleAddTransaction}
+            className="bg-primary text-on-primary fixed right-8 bottom-8 cursor-pointer rounded-3xl px-4 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg md:hidden"
+          >
+            <AddIcon className="h-8 w-8" />
+          </button>
+
+          {isTransactionModelOpen && (
+            <AddTransactionModal
+              categories={categories}
+              onTransactionCreated={handleTransactionCreated}
+              onClose={handleCloseTransactionModal}
+            />
+          )}
           <Pagination pagination={pagination} onPageChange={handlePageChange} />
         </div>
       )}
