@@ -273,6 +273,15 @@ function DashboardPage() {
               <FilterListIcon className="h-5 w-5" />
               <span className="hidden sm:inline">Filters</span>
             </button>
+
+            {/* Add Transaction Button (medium screens)*/}
+            <button
+              onClick={handleAddTransaction}
+              className="bg-primary text-label-large text-on-primary hidden items-center gap-2 rounded-full px-4 py-2 transition-all duration-200 hover:shadow-md md:inline-flex"
+            >
+              <AddIcon className="h-5 w-5" />
+              <span>Add Transaction</span>
+            </button>
           </div>
 
           {isFilterModalOpen && (
@@ -342,12 +351,15 @@ function DashboardPage() {
               ))}
             </ul>
           )}
+
+          {/* Add Transaction Button (small screens)*/}
           <button
             onClick={handleAddTransaction}
-            className="bg-primary text-on-primary fixed right-8 bottom-8 cursor-pointer rounded-3xl px-4 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            className="bg-primary text-on-primary fixed right-8 bottom-8 cursor-pointer rounded-3xl px-4 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg md:hidden"
           >
             <AddIcon className="h-8 w-8" />
           </button>
+
           {isTransactionModelOpen && (
             <AddTransactionModal
               categories={categories}
