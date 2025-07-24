@@ -1,7 +1,18 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import BackIcon from '../icons/BackIcon';
 
 function Modal({ title, onClose, children }) {
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    // Trigger the animation shortly after the component mounts
+    const timer = setTimeout(() => {
+      setIsAnimating(true);
+    }, 50); // A small delay
+
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, []);
+
   useEffect(() => {
     function handleKeyDown(event) {
       if (event.key === 'Escape') {
@@ -17,7 +28,11 @@ function Modal({ title, onClose, children }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/30" onClick={onClose}>
       <div
-        className="bg-surface text-on-surface flex h-full w-full flex-col shadow-xl sm:mx-auto sm:mt-50 sm:h-auto sm:max-w-lg sm:rounded-2xl"
+        className={`bg-surface text-on-surface flex h-full w-full flex-col shadow-xl transition-all duration-300 ease-in-out sm:mx-auto sm:mt-50 sm:h-auto sm:max-w-lg sm:rounded-2xl ${
+          isAnimating
+            ? 'translate-x-0 opacity-100 sm:scale-100'
+            : 'translate-x-full opacity-0 sm:scale-80 sm:translate-x-0'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-start gap-2 p-4">
@@ -30,7 +45,7 @@ function Modal({ title, onClose, children }) {
           <h2 className="text-title-large">{title}</h2>
         </div>
 
-        <div className="grow overflow-y-auto p-6">{children}</div>
+        <div className="grow overflow-y-auto p-6 pt-4 sm:pt-0">{children}</div>
       </div>
     </div>
   );
