@@ -12,6 +12,7 @@ import SearchIcon from '../icons/SearchIcon';
 import useDebounce from '../hooks/useDebounce';
 import FilterListIcon from '../icons/FilterListIcon';
 import FilterModal from '../components/FilterModal';
+import AddIcon from '../icons/AddIcon';
 
 function DashboardPage() {
   const [categories, setCategories] = useState([]);
@@ -207,22 +208,36 @@ function DashboardPage() {
 
   return (
     <div>
-      <h2>Dashboard Page</h2>
+      <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-headline-medium text-left">Dashboard</h2>
+
+        <div className="flex grow flex-col gap-4 sm:flex-row md:grow-0">
+          <button
+            onClick={handleViewFinancialInsights}
+            className="border-outline text-on-secondary bg-secondary grow rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+          >
+            View Financial Insights
+          </button>
+
+          <button
+            onClick={handleManageCategoriesModalOpen}
+            className="border-outline text-primary grow rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+          >
+            Manage Categories
+          </button>
+        </div>
+      </div>
 
       {loading ? (
         <h3>Loading...</h3>
       ) : (
         <div>
-          <h3>Balance: {formatter.formatCurrency(balance)}</h3>
-
-          <button onClick={handleViewFinancialInsights}>
-            View Financial Insights
-          </button>
-
-          <button onClick={handleManageCategoriesModalOpen}>
-            Manage Categories
-          </button>
-
+          <div className="bg-surface-container flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
+            <p className="text-on-surface-variant text-sm">Balance</p>
+            <p className="text-headline-medium text-on-surface">
+              {formatter.formatCurrency(balance)}
+            </p>
+          </div>
           {isManageCategoriesModalOpen && (
             <ManageCategoriesModal
               categories={categories}
@@ -233,42 +248,32 @@ function DashboardPage() {
             />
           )}
 
-          <h3>Transactions</h3>
-          <button onClick={handleAddTransaction}>Add Transaction</button>
-          {isTransactionModelOpen && (
-            <AddTransactionModal
-              categories={categories}
-              onTransactionCreated={handleTransactionCreated}
-              onClose={handleCloseTransactionModal}
-            />
-          )}
-
-          {
-            <div>
-              <div>
-                <label htmlFor="searchInput">Search:</label>
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  id="searchInput"
-                  placeholder="Search by description or category"
-                  value={searchInput}
-                  onChange={handleSearchInputChange}
-                />
-                <SearchIcon
-                  className="h-5 w-5"
-                  style={{ width: '24px', height: '24px' }}
-                />
+          <div className="my-4 flex items-center gap-2 sm:gap-4">
+            {/* Search Bar Container */}
+            <div className="relative flex-grow">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <SearchIcon className="h-5 w-5 text-gray-400" />
               </div>
-              <button onClick={handleFilterModalOpen}>
-                <div>
-                  <FilterListIcon className="h-5 w-5" />
-                  <span>Filters</span>
-                </div>
-              </button>
+              <input
+                ref={searchInputRef}
+                type="text"
+                id="searchInput"
+                className="bg-surface-variant text-on-surface-variant placeholder:text-on-surface-variant/70 focus:ring-inverse-surface block w-full rounded-full border-0 py-2 pr-3 pl-10 focus:ring-1 focus:ring-inset sm:text-sm"
+                placeholder="Search transactions..."
+                value={searchInput}
+                onChange={handleSearchInputChange}
+              />
             </div>
-          }
 
+            {/* Filters Button */}
+            <button
+              onClick={handleFilterModalOpen}
+              className="border-outline text-primary hover:bg-primary-container hover:text-on-primary-container inline-flex flex-shrink-0 items-center gap-2 rounded-full border px-4 py-2 transition-colors"
+            >
+              <FilterListIcon className="h-5 w-5" />
+              <span className="hidden sm:inline">Filters</span>
+            </button>
+          </div>
           {isFilterModalOpen && (
             <FilterModal
               categories={categories}
@@ -326,7 +331,19 @@ function DashboardPage() {
               ))}
             </ul>
           )}
-
+          <button
+            onClick={handleAddTransaction}
+            className="bg-primary text-on-primary fixed right-8 bottom-8 rounded-3xl px-4 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          >
+            <AddIcon className="h-8 w-8" />
+          </button>
+          {isTransactionModelOpen && (
+            <AddTransactionModal
+              categories={categories}
+              onTransactionCreated={handleTransactionCreated}
+              onClose={handleCloseTransactionModal}
+            />
+          )}
           <Pagination pagination={pagination} onPageChange={handlePageChange} />
         </div>
       )}
