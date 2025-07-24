@@ -79,7 +79,7 @@ function LoginPage() {
           />
 
           {error && (
-            <p className="text-on-error-container bg-error-container mt-2 text-center text-sm rounded-2xl p-2 w-fit">
+            <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
               {error}
             </p>
           )}
@@ -87,7 +87,7 @@ function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary text-on-primary text-label-large mt-4 inline-block rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            className="bg-primary text-on-primary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
             Login
           </button>

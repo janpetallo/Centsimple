@@ -214,14 +214,14 @@ function DashboardPage() {
         <div className="flex grow flex-col gap-4 sm:flex-row md:grow-0">
           <button
             onClick={handleViewFinancialInsights}
-            className="border-outline text-on-secondary bg-secondary grow rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+            className="border-outline text-on-secondary bg-secondary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
           >
             View Financial Insights
           </button>
 
           <button
             onClick={handleManageCategoriesModalOpen}
-            className="border-outline text-primary grow rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+            className="border-outline text-primary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
           >
             Manage Categories
           </button>
@@ -268,7 +268,7 @@ function DashboardPage() {
             {/* Filters Button */}
             <button
               onClick={handleFilterModalOpen}
-              className="border-outline text-primary hover:bg-primary-container hover:text-on-primary-container inline-flex flex-shrink-0 items-center gap-2 rounded-full border px-4 py-2 transition-colors"
+              className="border-outline text-primary hover:bg-primary-container hover:text-on-primary-container inline-flex flex-shrink-0 cursor-pointer items-center gap-2 rounded-full border px-4 py-2 transition-colors"
             >
               <FilterListIcon className="h-5 w-5" />
               <span className="hidden sm:inline">Filters</span>
@@ -333,7 +333,7 @@ function DashboardPage() {
           )}
           <button
             onClick={handleAddTransaction}
-            className="bg-primary text-on-primary fixed right-8 bottom-8 rounded-3xl px-4 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            className="bg-primary text-on-primary fixed right-8 bottom-8 cursor-pointer rounded-3xl px-4 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
             <AddIcon className="h-8 w-8" />
           </button>
