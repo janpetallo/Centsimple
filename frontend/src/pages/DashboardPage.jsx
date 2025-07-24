@@ -294,11 +294,19 @@ function DashboardPage() {
           )}
 
           {transactions.length === 0 && (
-            <p>No transactions yet. Click "Add Transaction" to get started!</p>
+            <p className="bg-surface-container border-outline/10 mt-4 rounded-xl border p-8">
+              <span className="md:hidden">
+                No transactions yet. Click the "+" button to get started!
+              </span>
+              {/* This span is HIDDEN by default and only appears on medium screens and up */}
+              <span className="hidden md:inline">
+                No transactions yet. Click "Add Transaction" to get started!
+              </span>
+            </p>
           )}
 
           {transactions.length > 0 && (
-            <ul className="flex flex-col gap-2">
+            <ul className="mt-4 flex flex-col gap-2">
               {transactions.map((transaction) => (
                 <li
                   key={transaction.id}
@@ -344,7 +352,9 @@ function DashboardPage() {
                     )}
 
                     {transactionError.id === transaction.id && (
-                      <p style={{ color: 'red' }}>{transactionError.message}</p>
+                      <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+                        {transactionError.message}
+                      </p>
                     )}
                   </div>
                 </li>
