@@ -24,19 +24,18 @@ function DashboardPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
 
+  const [isManageCategoriesModalOpen, setIsManageCategoriesModalOpen] =
+    useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [categoryError, setCategoryError] = useState({ id: null, message: '' });
 
   const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState(null);
   const [transactionError, setTransactionError] = useState({
     id: null,
     message: '',
   });
-
-  const [isManageCategoriesModalOpen, setIsManageCategoriesModalOpen] =
-    useState(false);
-  const [editingTransaction, setEditingTransaction] = useState(null);
-  const [categoryError, setCategoryError] = useState({ id: null, message: '' });
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [filters, setFilters] = useState({
@@ -140,6 +139,13 @@ function DashboardPage() {
   function handleOpenEditCategoryModal(category) {
     setIsManageCategoriesModalOpen(false);
     setEditingCategory(category);
+  }
+
+  // This function will close the "Add" or "Edit" modal and re-open the "Manage" modal
+  function handleReturnToManageCategories() {
+    setIsAddCategoryModalOpen(false);
+    setEditingCategory(null);
+    setIsManageCategoriesModalOpen(true);
   }
 
   function handleCategoryCreated() {
@@ -276,7 +282,7 @@ function DashboardPage() {
           {isAddCategoryModalOpen && (
             <AddCategoryModal
               onCategoryCreated={handleCategoryCreated}
-              onClose={() => setIsAddCategoryModalOpen(false)}
+              onClose={handleReturnToManageCategories}
             />
           )}
 
@@ -284,7 +290,7 @@ function DashboardPage() {
             <EditCategoryModal
               category={editingCategory}
               onCategoryUpdated={handleCategoryUpdated}
-              onClose={() => setEditingCategory(null)}
+              onClose={handleReturnToManageCategories}
             />
           )}
 
