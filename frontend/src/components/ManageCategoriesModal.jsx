@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import AddCategoryModal from './AddCategoryModal';
 import EditCategoryModal from './EditCategoryModal';
 import ActionMenu from './ActionMenu';
@@ -7,58 +6,25 @@ import Modal from './Modal';
 function ManageCategoriesModal({
   categories,
   error,
-  onDataRefresh,
   onDeleteCategory,
   onClose,
+  onAddNew,
+  onEdit,
 }) {
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null);
 
-  // CREATE CATEGORY
-  function handleAddCategory() {
-    setIsAddModalOpen(true);
-  }
 
-  function handleCloseCategoryModal() {
-    setIsAddModalOpen(false);
-  }
-
-  function handleCategoryCreated() {
-    setIsAddModalOpen(false);
-    onDataRefresh();
-  }
-
-  // EDIT CATEGORY
-  function handleEditCategory(category) {
-    setEditingCategory(category);
-  }
-
-  function handleCloseEditCategoryModal() {
-    setEditingCategory(null);
-  }
-
-  function handleCategoryUpdated() {
-    setEditingCategory(null);
-    onDataRefresh();
-  }
 
   return (
     <Modal title="Manage Categories" onClose={onClose}>
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-title-large">Categories</h3>
         <button
-          onClick={handleAddCategory}
+          onClick={onAddNew}
           className="border-outline text-primary text-label-large cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105"
         >
           New Category
         </button>
       </div>
-      {isAddModalOpen && (
-        <AddCategoryModal
-          onCategoryCreated={handleCategoryCreated}
-          onClose={handleCloseCategoryModal}
-        />
-      )}
       <ul className="mt-4 flex flex-col gap-2">
         {categories.map((category) => (
           <li
@@ -71,17 +37,9 @@ function ManageCategoriesModal({
               <div>
                 <ActionMenu
                   onDelete={() => onDeleteCategory(category.id)}
-                  onEdit={() => handleEditCategory(category)}
+                  onEdit={() => onEdit(category)}
                 />
               </div>
-            )}
-
-            {editingCategory?.id === category.id && (
-              <EditCategoryModal
-                category={category}
-                onCategoryUpdated={handleCategoryUpdated}
-                onClose={handleCloseEditCategoryModal}
-              />
             )}
 
             {error.id === category.id && (

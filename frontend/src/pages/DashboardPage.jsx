@@ -5,6 +5,8 @@ import * as formatter from '../utils/format';
 import Pagination from '../components/Pagination';
 import ActionMenu from '../components/ActionMenu';
 import ManageCategoriesModal from '../components/ManageCategoriesModal';
+import AddCategoryModal from '../components/AddCategoryModal';
+import EditCategoryModal from '../components/EditCategoryModal';
 import AddTransactionModal from '../components/AddTransactionModal';
 import EditTransactionModal from '../components/EditTransactionModal';
 
@@ -21,6 +23,9 @@ function DashboardPage() {
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+
+  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
 
   const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
   const [transactionError, setTransactionError] = useState({
@@ -125,8 +130,27 @@ function DashboardPage() {
     setIsManageCategoriesModalOpen(false);
   }
 
-  function handleCategoryDataRefresh() {
-    setCategoryError({ id: null, message: '' });
+  // Closes the main modal and opens the "Add" modal
+  function handleOpenAddCategoryModal() {
+    setIsManageCategoriesModalOpen(false);
+    setIsAddCategoryModalOpen(true);
+  }
+
+  // Closes the main modal and opens the "Edit" modal
+  function handleOpenEditCategoryModal(category) {
+    setIsManageCategoriesModalOpen(false);
+    setEditingCategory(category);
+  }
+
+  function handleCategoryCreated() {
+    setIsAddCategoryModalOpen(false);
+    setIsManageCategoriesModalOpen(true);
+    fetchData();
+  }
+
+  function handleCategoryUpdated() {
+    setEditingCategory(null);
+    setIsManageCategoriesModalOpen(true);
     fetchData();
   }
 
@@ -242,9 +266,25 @@ function DashboardPage() {
             <ManageCategoriesModal
               categories={categories}
               error={categoryError}
-              onDataRefresh={handleCategoryDataRefresh}
               onDeleteCategory={handleDeleteCategory}
               onClose={handleCloseManageCategoriesModal}
+              onAddNew={handleOpenAddCategoryModal}
+              onEdit={handleOpenEditCategoryModal}
+            />
+          )}
+
+          {isAddCategoryModalOpen && (
+            <AddCategoryModal
+              onCategoryCreated={handleCategoryCreated}
+              onClose={() => setIsAddCategoryModalOpen(false)}
+            />
+          )}
+
+          {editingCategory && (
+            <EditCategoryModal
+              category={editingCategory}
+              onCategoryUpdated={handleCategoryUpdated}
+              onClose={() => setEditingCategory(null)}
             />
           )}
 

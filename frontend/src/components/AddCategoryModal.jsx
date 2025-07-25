@@ -58,11 +58,11 @@ function AddCategoryModel({ onCategoryCreated, onClose }) {
             {error}
           </p>
         )}
-        <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-end grow">
+        <div className="mt-6 flex grow flex-col items-center gap-4 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-fit border sm:border-none border-outline text-label-large cursor-pointer hover:bg-surface-container rounded-full px-6 py-2 transition-colors"
+            className="border-outline text-label-large hover:bg-surface-container w-full cursor-pointer rounded-full border px-6 py-2 transition-colors sm:w-fit sm:border-none"
           >
             Cancel
           </button>
@@ -70,7 +70,7 @@ function AddCategoryModel({ onCategoryCreated, onClose }) {
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary w-full sm:w-fit text-on-primary text-label-large inline-block cursor-pointer rounded-full px-6 py-2 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            className="bg-primary text-on-primary text-label-large inline-block w-full cursor-pointer rounded-full px-6 py-2 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg sm:w-fit"
           >
             Add
           </button>
