@@ -323,7 +323,7 @@ function DashboardPage() {
             {/* Add Transaction Button (medium screens)*/}
             <button
               onClick={handleAddTransaction}
-              className="bg-primary text-label-large text-on-primary hidden items-center gap-2 rounded-full px-4 py-2 transition-all duration-200 hover:shadow-md md:inline-flex"
+              className="bg-primary text-label-large text-on-primary hidden items-center gap-2 rounded-full px-4 py-2 transition-all duration-300 hover:scale-105 hover:shadow-lg md:inline-flex"
             >
               <AddIcon className="h-5 w-5" />
               <span>Add Transaction</span>
