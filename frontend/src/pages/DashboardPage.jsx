@@ -145,7 +145,7 @@ function DashboardPage() {
   function handleReturnToManageCategories() {
     setIsAddCategoryModalOpen(false);
     setEditingCategory(null);
-    setIsManageCategoriesModalOpen(true);
+    handleManageCategoriesModalOpen();
   }
 
   function handleCategoryCreated() {
