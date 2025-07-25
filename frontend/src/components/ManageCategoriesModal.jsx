@@ -11,9 +11,6 @@ function ManageCategoriesModal({
   onAddNew,
   onEdit,
 }) {
-
-
-
   return (
     <Modal title="Manage Categories" onClose={onClose}>
       <div className="mb-4 flex items-center justify-between">
@@ -29,23 +26,28 @@ function ManageCategoriesModal({
         {categories.map((category) => (
           <li
             key={category.id}
-            className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-between rounded-xl border p-4 transition-colors"
+            className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-start justify-between rounded-xl border p-4 transition-colors"
           >
-            <div>{category.name}</div>
+            <div>
+              <p>{category.name}</p>{' '}
+              {error.id === category.id && (
+                <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+                  {error.message}
+                </p>
+              )}
+            </div>
 
-            {category.userId && (
-              <div>
-                <ActionMenu
-                  onDelete={() => onDeleteCategory(category.id)}
-                  onEdit={() => onEdit(category)}
-                />
-              </div>
+            {!category.userId && (
+              <p className="bg-tertiary text-on-tertiary rounded-full px-2 py-1 text-xs">
+                Default
+              </p>
             )}
 
-            {error.id === category.id && (
-              <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
-                {error.message}
-              </p>
+            {category.userId && (
+              <ActionMenu
+                onDelete={() => onDeleteCategory(category.id)}
+                onEdit={() => onEdit(category)}
+              />
             )}
           </li>
         ))}
