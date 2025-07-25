@@ -28,17 +28,17 @@ function Modal({ title, onClose, children }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/30" onClick={onClose}>
       <div
-        className={`bg-surface text-on-surface flex h-full w-full flex-col shadow-xl transition-all duration-300 ease-in-out sm:mx-auto sm:mt-50 sm:h-auto sm:max-w-lg sm:rounded-2xl ${
+        className={`bg-surface text-on-surface flex h-full w-full flex-col shadow-xl transition-all duration-300 ease-in-out sm:mx-auto sm:mt-20 sm:h-auto sm:max-h-[80vh] sm:max-w-lg sm:rounded-2xl ${
           isAnimating
             ? 'translate-x-0 opacity-100 sm:scale-100'
-            : 'translate-x-full opacity-0 sm:scale-80 sm:translate-x-0'
+            : 'translate-x-full opacity-0 sm:translate-x-0 sm:scale-80'
         }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-start gap-2 p-4">
           <button
             onClick={onClose}
-            className="hover:bg-surface-container rounded-full p-2 cursor-pointer transition-colors"
+            className="hover:bg-surface-container cursor-pointer rounded-full p-2 transition-colors"
           >
             <BackIcon className="h-6 w-6" />
           </button>
