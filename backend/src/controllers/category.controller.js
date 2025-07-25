@@ -58,6 +58,7 @@ async function getCategories(req, res) {
       where: {
         OR: [{ userId: userId }, { userId: null }],
       },
+      orderBy: [{ userId: 'desc' }, { name: 'asc' }],
     });
 
     res.status(200).json({
