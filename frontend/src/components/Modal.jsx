@@ -45,7 +45,7 @@ function Modal({ title, onClose, children }) {
           <h2 className="text-title-large">{title}</h2>
         </div>
 
-        <div className="grow overflow-y-auto p-6 pt-4 sm:pt-0">{children}</div>
+        <div className="grow overflow-y-auto p-6 pt-2">{children}</div>
       </div>
     </div>
   );
