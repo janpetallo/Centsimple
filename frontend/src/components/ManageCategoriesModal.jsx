@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import AddCategoryModal from '../components/AddCategoryModal';
-import EditCategoryModal from '../components/EditCategoryModal';
-import ActionMenu from '../components/ActionMenu';
+import AddCategoryModal from './AddCategoryModal';
+import EditCategoryModal from './EditCategoryModal';
+import ActionMenu from './ActionMenu';
+import Modal from './Modal';
+
 
 function ManageCategoriesModal({
   categories,
