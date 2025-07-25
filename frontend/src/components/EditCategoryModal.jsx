@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import * as apiService from '../services/api.service';
+import Modal from './Modal';
 
 function EditCategoryModal({ category, onCategoryUpdated, onClose }) {
   const [formData, setFormData] = useState({
@@ -38,11 +39,16 @@ function EditCategoryModal({ category, onCategoryUpdated, onClose }) {
   }
 
   return (
-    <div>
-      <h2>Edit Category</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="name">Name:</label>
+    <Modal title="Edit Category" onClose={onClose}>
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <label
+          htmlFor="name"
+          className="text-label-large text-on-surface-variant"
+        >
+          Name
+        </label>
         <input
+          className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
           type="text"
           id="name"
           name="name"
@@ -51,17 +57,31 @@ function EditCategoryModal({ category, onCategoryUpdated, onClose }) {
           required
         />
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && (
+          <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+            {error}
+          </p>
+        )}
 
-        <button type="button" onClick={onClose}>
-          Cancel
-        </button>
+        <div className="mt-6 flex grow flex-col items-center gap-4 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            className="border-outline text-label-large hover:bg-surface-container w-full cursor-pointer rounded-full border px-6 py-2 transition-colors sm:w-fit sm:border-none"
+          >
+            Cancel
+          </button>
 
-        <button type="submit" disabled={loading}>
-          Update Category
-        </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-primary text-on-primary text-label-large inline-block w-full cursor-pointer rounded-full px-6 py-2 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg sm:w-fit"
+          >
+            Update
+          </button>
+        </div>
       </form>
-    </div>
+    </Modal>
   );
 }
 
