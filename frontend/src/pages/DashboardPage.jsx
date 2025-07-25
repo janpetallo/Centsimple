@@ -371,8 +371,8 @@ function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className="flex flex-shrink-0 items-start gap-4">
-                      <p className="text-label-large text-right md:w-28">
+                    <div className="flex flex-shrink-0 gap-4">
+                      <p className="text-label-large p-1 text-right md:w-28">
                         {formatter.formatCurrency(
                           transaction.type === 'EXPENSE'
                             ? -transaction.amount
