@@ -38,7 +38,7 @@ function Modal({ title, onClose, children }) {
         <div className="flex items-center justify-start gap-2 p-4">
           <button
             onClick={onClose}
-            className="hover:bg-surface-container rounded-full p-2"
+            className="hover:bg-surface-container rounded-full p-2 cursor-pointer transition-colors"
           >
             <BackIcon className="h-6 w-6" />
           </button>
