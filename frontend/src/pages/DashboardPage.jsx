@@ -15,6 +15,7 @@ import SearchIcon from '../icons/SearchIcon';
 import useDebounce from '../hooks/useDebounce';
 import FilterListIcon from '../icons/FilterListIcon';
 import FilterModal from '../components/FilterModal';
+import ActiveFilters from '../components/ActiveFilters';
 import AddIcon from '../icons/AddIcon';
 
 function DashboardPage() {
@@ -124,6 +125,21 @@ function DashboardPage() {
     setFilters(draftFilters);
     setCurrentPage(1);
     setIsFilterModalOpen(false);
+  }
+
+  function handleClearSearch() {
+    setSearchInput('');
+    setCurrentPage(1);
+  }
+
+  function handleClearDateRangeFilter() {
+    setFilters({ ...filters, dateRangeFilter: '' });
+    setCurrentPage(1);
+  }
+
+  function handleClearCategoryFilter() {
+    setFilters({ ...filters, categoryFilter: '' });
+    setCurrentPage(1);
   }
 
   // MANAGE CATEGORIES
@@ -370,6 +386,17 @@ function DashboardPage() {
                 onClose={handleFilterModalClose}
               />
             )}
+
+            <div>
+              <ActiveFilters
+                categories={categories}
+                filters={filters}
+                searchTerm={searchInput}
+                onClearSearch={handleClearSearch}
+                onClearCategoryFilter={handleClearCategoryFilter}
+                onClearDateRangeFilter={handleClearDateRangeFilter}
+              />
+            </div>
 
             {transactions.length === 0 && (
               <p className="bg-surface-container border-outline/10 mt-4 rounded-xl border p-8">
