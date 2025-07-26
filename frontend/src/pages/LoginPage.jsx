@@ -43,7 +43,7 @@ function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col">
+    <div className="mx-auto flex w-full max-w-lg flex-col">
       <h2 className="text-headline-medium mb-8 text-left">Login</h2>
 
       <div className="bg-surface-container rounded-2xl p-8 shadow-sm">

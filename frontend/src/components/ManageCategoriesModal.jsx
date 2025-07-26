@@ -1,90 +1,65 @@
-import { useState } from 'react';
-import AddCategoryModal from '../components/AddCategoryModal';
-import EditCategoryModal from '../components/EditCategoryModal';
-import ActionMenu from '../components/ActionMenu';
+import ActionMenu from './ActionMenu';
+import Modal from './Modal';
 
 function ManageCategoriesModal({
   categories,
   error,
-  onDataRefresh,
-  onDeleteCategory,
   onClose,
+  onAddNew,
+  onEdit,
+  onDelete,
 }) {
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null);
-
-  // CREATE CATEGORY
-  function handleAddCategory() {
-    setIsAddModalOpen(true);
-  }
-
-  function handleCloseCategoryModal() {
-    setIsAddModalOpen(false);
-  }
-
-  function handleCategoryCreated() {
-    setIsAddModalOpen(false);
-    onDataRefresh();
-  }
-
-  // EDIT CATEGORY
-  function handleEditCategory(category) {
-    setEditingCategory(category);
-  }
-
-  function handleCloseEditCategoryModal() {
-    setEditingCategory(null);
-  }
-
-  function handleCategoryUpdated() {
-    setEditingCategory(null);
-    onDataRefresh();
-  }
-
   return (
-    <div>
-      <h3>Categories</h3>
-      <button onClick={handleAddCategory}>Add Category</button>
-      {isAddModalOpen && (
-        <AddCategoryModal
-          onCategoryCreated={handleCategoryCreated}
-          onClose={handleCloseCategoryModal}
-        />
-      )}
-      <ul>
+    <Modal title="Manage Categories" onClose={onClose}>
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-title-large">Categories</h3>
+        <button
+          onClick={onAddNew}
+          className="border-outline text-primary text-label-large cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105"
+        >
+          New Category
+        </button>
+      </div>
+      <ul className="mt-4 flex flex-col gap-2">
         {categories.map((category) => (
-          <li key={category.id}>
-            {
-              <div>
-                {category.name}
+          <li
+            key={category.id}
+            className="bg-surface-container border-outline/10 min-h-13 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-between rounded-xl border p-2 transition-colors"
+          >
+            <div>
+              <p>{category.name}</p>{' '}
+              {error.id === category.id && (
+                <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+                  {error.message}
+                </p>
+              )}
+            </div>
 
-                {category.userId && (
-                  <div>
-                    <ActionMenu
-                      onDelete={() => onDeleteCategory(category.id)}
-                      onEdit={() => handleEditCategory(category)}
-                    />
+            {!category.userId && (
+              <p className="bg-tertiary text-on-tertiary rounded-full px-2 py-1  text-xs">
+                Default
+              </p>
+            )}
 
-                    {editingCategory?.id === category.id && (
-                      <EditCategoryModal
-                        category={category}
-                        onCategoryUpdated={handleCategoryUpdated}
-                        onClose={handleCloseEditCategoryModal}
-                      />
-                    )}
-                  </div>
-                )}
-
-                {error.id === category.id && (
-                  <p style={{ color: 'red' }}>{error.message}</p>
-                )}
-              </div>
-            }
+            {category.userId && (
+              <ActionMenu
+                onDelete={() => onDelete(category.id)}
+                onEdit={() => onEdit(category)}
+              />
+            )}
           </li>
         ))}
       </ul>
-      <button onClick={onClose}>Done</button>
-    </div>
+
+      <div className="mt-6 flex grow flex-col items-center gap-4 sm:flex-row sm:justify-end">
+        <button
+          onClick={onClose}
+          className="bg-primary text-on-primary text-label-large inline-block w-full cursor-pointer rounded-full px-6 py-2 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg sm:w-fit"
+        >
+          Done
+        </button>
+      </div>
+    </Modal>
   );
 }
 
