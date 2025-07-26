@@ -127,18 +127,12 @@ function DashboardPage() {
     setIsFilterModalOpen(false);
   }
 
-  function handleClearSearch() {
-    setSearchInput('');
-    setCurrentPage(1);
-  }
-
-  function handleClearDateRangeFilter() {
-    setFilters({ ...filters, dateRangeFilter: '' });
-    setCurrentPage(1);
-  }
-
-  function handleClearCategoryFilter() {
-    setFilters({ ...filters, categoryFilter: '' });
+  function handleClearFilter(filterName) {
+    if (filterName === 'searchTerm') {
+      setSearchInput('');
+    } else {
+      setFilters((prevFilters) => ({ ...prevFilters, [filterName]: '' }));
+    }
     setCurrentPage(1);
   }
 
@@ -391,10 +385,8 @@ function DashboardPage() {
               <ActiveFilters
                 categories={categories}
                 filters={filters}
-                searchTerm={searchInput}
-                onClearSearch={handleClearSearch}
-                onClearCategoryFilter={handleClearCategoryFilter}
-                onClearDateRangeFilter={handleClearDateRangeFilter}
+                searchTerm={debouncedSearchTerm}
+                onClearFilter={handleClearFilter}
               />
             </div>
 

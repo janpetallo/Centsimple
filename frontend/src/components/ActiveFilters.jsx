@@ -1,19 +1,20 @@
+import { useMemo } from 'react';
 import FilterPill from './FilterPill';
 
-function ActiveFilters({
-  categories,
-  filters,
-  searchTerm,
-  onClearSearch,
-  onClearCategoryFilter,
-  onClearDateRangeFilter,
-}) {
+function ActiveFilters({ categories, filters, searchTerm, onClearFilter }) {
+  // Create a category map only when the categories array changes
+  const categoryMap = useMemo(() => {
+    const map = new Map();
+    categories.forEach((category) => {
+      map.set(category.id, category.name);
+    });
+    return map;
+  }, [categories]);
+
   function findCategoryName(categoryId) {
     const filterCategoryId = parseInt(categoryId, 10);
-    const category = categories.find(
-      (category) => category.id === filterCategoryId
-    );
-    return category ? category.name : 'Unknown';
+    const category = categoryMap.get(filterCategoryId) || 'Unknown';
+    return category;
   }
   function findDateRange(dateRange) {
     let range = 'Unknown';
@@ -61,22 +62,25 @@ function ActiveFilters({
   }
 
   return (
-    <div className='flex gap-2 '>
+    <div className="flex gap-2">
       {searchTerm && (
-        <FilterPill label={`"${searchTerm}"`} onClear={onClearSearch} />
+        <FilterPill
+          label={`"${searchTerm}"`}
+          onClear={() => onClearFilter('searchTerm')}
+        />
       )}
 
       {filters.dateRangeFilter && (
         <FilterPill
           label={` ${findDateRange(filters.dateRangeFilter)}`}
-          onClear={onClearDateRangeFilter}
+          onClear={() => onClearFilter('dateRangeFilter')}
         />
       )}
 
       {filters.categoryFilter && (
         <FilterPill
           label={`${findCategoryName(filters.categoryFilter)}`}
-          onClear={onClearCategoryFilter}
+          onClear={() => onClearFilter('categoryFilter')}
         />
       )}
     </div>
