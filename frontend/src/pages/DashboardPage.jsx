@@ -410,16 +410,6 @@ function DashboardPage() {
                           }
                           onEdit={() => handleEditTransaction(transaction)}
                         />
-
-                        {confirmationState.isOpen && (
-                          <ConfirmationDialog
-                            isOpen={confirmationState.isOpen}
-                            title={confirmationState.title}
-                            message={confirmationState.message}
-                            onConfirm={confirmationState.onConfirm}
-                            onCancel={handleCloseConfirmationDialog}
-                          />
-                        )}
                       </div>
                     </div>
 
@@ -467,6 +457,15 @@ function DashboardPage() {
             />
           </div>
         </div>
+      )}
+      {confirmationState.isOpen && (
+        <ConfirmationDialog
+          isOpen={confirmationState.isOpen}
+          title={confirmationState.title}
+          message={confirmationState.message}
+          onConfirm={confirmationState.onConfirm}
+          onCancel={handleCloseConfirmationDialog}
+        />
       )}
     </>
   );
