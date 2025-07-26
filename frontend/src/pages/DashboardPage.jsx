@@ -246,6 +246,8 @@ function DashboardPage() {
   }
 
   async function handleDeleteTransaction(transactionId) {
+    setTransactionError({ id: null, message: '' });
+
     try {
       const transactionData = await apiService.deleteTransaction(transactionId);
       console.log('Transaction deleted successfully', transactionData);
