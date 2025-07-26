@@ -15,6 +15,7 @@ import SearchIcon from '../icons/SearchIcon';
 import useDebounce from '../hooks/useDebounce';
 import FilterListIcon from '../icons/FilterListIcon';
 import FilterModal from '../components/FilterModal';
+import ActiveFilters from '../components/ActiveFilters';
 import AddIcon from '../icons/AddIcon';
 
 function DashboardPage() {
@@ -124,6 +125,15 @@ function DashboardPage() {
     setFilters(draftFilters);
     setCurrentPage(1);
     setIsFilterModalOpen(false);
+  }
+
+  function handleClearFilter(filterName) {
+    if (filterName === 'searchTerm') {
+      setSearchInput('');
+    } else {
+      setFilters((prevFilters) => ({ ...prevFilters, [filterName]: '' }));
+    }
+    setCurrentPage(1);
   }
 
   // MANAGE CATEGORIES
@@ -370,6 +380,15 @@ function DashboardPage() {
                 onClose={handleFilterModalClose}
               />
             )}
+
+            <div>
+              <ActiveFilters
+                categories={categories}
+                filters={filters}
+                searchTerm={debouncedSearchTerm}
+                onClearFilter={handleClearFilter}
+              />
+            </div>
 
             {transactions.length === 0 && (
               <p className="bg-surface-container border-outline/10 mt-4 rounded-xl border p-8">
