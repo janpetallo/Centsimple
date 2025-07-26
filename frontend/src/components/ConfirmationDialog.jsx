@@ -2,7 +2,7 @@ import Modal from './Modal';
 function ConfirmationDialog({ isOpen, title, message, onConfirm, onCancel }) {
   return (
     isOpen && (
-      <Modal title={title} onClose={onCancel}>
+      <Modal title={title} onClose={onCancel} isDialog={true}>
         <p className="text-on-surface-variant">{message}</p>
         <div className="mt-6 flex items-center justify-end gap-2">
           <button
