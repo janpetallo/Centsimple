@@ -24,7 +24,7 @@ function ManageCategoriesModal({
         {categories.map((category) => (
           <li
             key={category.id}
-            className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-start justify-between rounded-xl border p-4 transition-colors"
+            className="bg-surface-container border-outline/10 min-h-13 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-between rounded-xl border p-2 transition-colors"
           >
             <div>
               <p>{category.name}</p>{' '}
@@ -36,7 +36,7 @@ function ManageCategoriesModal({
             </div>
 
             {!category.userId && (
-              <p className="bg-tertiary text-on-tertiary rounded-full px-2 py-1 text-xs">
+              <p className="bg-tertiary text-on-tertiary rounded-full px-2 py-1  text-xs">
                 Default
               </p>
             )}
