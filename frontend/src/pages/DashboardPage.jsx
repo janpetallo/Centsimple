@@ -187,14 +187,18 @@ function DashboardPage() {
     });
   }
 
+  function handleConfirmationDialogSuccess() {
+    handleCloseConfirmationDialog();
+    fetchData();
+  }
+
   async function handleDeleteCategory(categoryId) {
     setCategoryError({ id: null, message: '' });
 
     try {
       const categoryData = await apiService.deleteCategory(categoryId);
       console.log('Category deleted successfully', categoryData);
-      handleCloseConfirmationDialog();
-      fetchData();
+      handleConfirmationDialogSuccess();
     } catch (error) {
       console.error('Error deleting category:', error.message);
       setCategoryError({ id: categoryId, message: error.message });
@@ -252,8 +256,7 @@ function DashboardPage() {
     try {
       const transactionData = await apiService.deleteTransaction(transactionId);
       console.log('Transaction deleted successfully', transactionData);
-      handleCloseConfirmationDialog();
-      fetchData();
+      handleConfirmationDialogSuccess();
     } catch (error) {
       console.error('Error deleting transaction:', error.message);
       setTransactionError({ id: transactionId, message: error.message });
