@@ -314,7 +314,7 @@ function DashboardPage() {
             {/* Filters Button */}
             <button
               onClick={handleFilterModalOpen}
-              className="border-outline text-primary hover:bg-primary-container hover:text-on-primary-container inline-flex flex-shrink-0 cursor-pointer items-center gap-2 rounded-full border px-4 py-2 transition-colors"
+              className="border-outline hover:bg-primary-container hover:text-on-primary-container inline-flex flex-shrink-0 cursor-pointer items-center gap-2 rounded-full border px-4 py-2 transition-colors"
             >
               <FilterListIcon className="h-5 w-5" />
               <span className="hidden sm:inline">Filters</span>
@@ -323,7 +323,7 @@ function DashboardPage() {
             {/* Add Transaction Button (medium screens)*/}
             <button
               onClick={handleAddTransaction}
-              className="bg-primary text-label-large text-on-primary hidden items-center gap-2 rounded-full px-4 py-2 transition-all duration-300 hover:scale-105 hover:shadow-lg md:inline-flex"
+              className="bg-primary border-primary text-label-large text-on-primary hidden cursor-pointer items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 hover:shadow-lg md:inline-flex"
             >
               <AddIcon className="h-5 w-5" />
               <span>Add Transaction</span>
