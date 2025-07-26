@@ -4,16 +4,16 @@ function ConfirmationDialog({ isOpen, title, message, onConfirm, onCancel }) {
     isOpen && (
       <Modal title={title} onClose={onCancel}>
         <p className="text-on-surface-variant">{message}</p>
-        <div className="mt-6 flex items-center justify-end gap-4">
+        <div className="mt-6 flex items-center justify-end gap-2">
           <button
             onClick={onCancel}
-            className="text-primary hover:bg-primary-container hover:text-on-primary-container w-full rounded-full px-6 py-2"
+            className="text-primary text-label-large hover:bg-primary-container hover:text-on-primary-container w-fit rounded-full px-6 py-2"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="text-primary hover:bg-primary-container hover:text-on-primary-container w-full rounded-full px-6 py-2"
+            className="text-primary text-label-large hover:bg-primary-container hover:text-on-primary-container w-fit rounded-full px-6 py-2"
           >
             Confirm
           </button>
