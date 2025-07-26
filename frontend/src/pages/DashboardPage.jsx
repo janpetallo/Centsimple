@@ -291,7 +291,8 @@ function DashboardPage() {
           <h3>Loading...</h3>
         </div>
       ) : (
-        <div className="flex grow flex-col">
+        // Add padding to the bottom on mobile, and remove it on medium screens and up.
+        <div className="flex grow flex-col pb-24 xl:pb-0">
           <div className="grow">
             <div className="bg-surface-container flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
               <p className="text-on-surface-variant text-sm">Balance</p>
@@ -354,7 +355,7 @@ function DashboardPage() {
               {/* Add Transaction Button (medium screens)*/}
               <button
                 onClick={handleAddTransaction}
-                className="bg-primary border-primary text-label-large text-on-primary hidden cursor-pointer items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 hover:shadow-lg md:inline-flex"
+                className="bg-primary border-primary text-label-large text-on-primary hidden cursor-pointer items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 hover:shadow-lg xl:inline-flex"
               >
                 <AddIcon className="h-5 w-5" />
                 <span>Add Transaction</span>
@@ -444,9 +445,9 @@ function DashboardPage() {
             {/* Add Transaction Button (small screens)*/}
             <button
               onClick={handleAddTransaction}
-              className="bg-primary text-on-primary fixed right-8 bottom-8 cursor-pointer rounded-3xl px-4 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg md:hidden"
+              className="bg-primary text-on-primary fixed right-8 bottom-8 cursor-pointer rounded-3xl px-4 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg xl:hidden"
             >
-              <AddIcon className="h-8 w-8" />
+              <AddIcon className="h-12 w-12 md:h-16 md:w-16" />
             </button>
 
             {isTransactionModelOpen && (
