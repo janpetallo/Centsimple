@@ -57,7 +57,7 @@ function RegisterPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-lg flex-col">
+    <div className="mx-auto w-full flex max-w-lg flex-col">
       <h2 className="text-headline-medium mb-8 text-left">Register</h2>
       <div className="bg-surface-container rounded-2xl p-8 shadow-sm">
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
