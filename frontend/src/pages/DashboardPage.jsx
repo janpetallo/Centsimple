@@ -198,6 +198,7 @@ function DashboardPage() {
     } catch (error) {
       console.error('Error deleting category:', error.message);
       setCategoryError({ id: categoryId, message: error.message });
+      handleCloseConfirmationDialog();
     }
   }
 
@@ -256,6 +257,7 @@ function DashboardPage() {
     } catch (error) {
       console.error('Error deleting transaction:', error.message);
       setTransactionError({ id: transactionId, message: error.message });
+      handleCloseConfirmationDialog();
     }
   }
 
