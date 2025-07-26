@@ -9,6 +9,7 @@ import AddCategoryModal from '../components/AddCategoryModal';
 import EditCategoryModal from '../components/EditCategoryModal';
 import AddTransactionModal from '../components/AddTransactionModal';
 import EditTransactionModal from '../components/EditTransactionModal';
+import ConfirmationDialog from '../components/ConfirmationDialog';
 
 import SearchIcon from '../icons/SearchIcon';
 import useDebounce from '../hooks/useDebounce';
@@ -46,6 +47,13 @@ function DashboardPage() {
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearchTerm = useDebounce(searchInput, 1000);
   const searchInputRef = useRef(null);
+
+  const [confirmationState, setConfirmationState] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+  });
 
   useEffect(() => {
     // This effect runs every time the transactions list is updated.
@@ -161,20 +169,31 @@ function DashboardPage() {
   }
 
   // DELETE CATEGORY
+  function handleDeleteCategoryConfirmation(categoryId) {
+    setConfirmationState({
+      isOpen: true,
+      title: 'Delete Category?',
+      message: 'This will permanently delete the category.',
+      onConfirm: () => handleDeleteCategory(categoryId),
+    });
+  }
+
+  function handleCloseConfirmationDialog() {
+    setConfirmationState({
+      isOpen: false,
+      title: '',
+      message: '',
+      onConfirm: null,
+    });
+  }
+
   async function handleDeleteCategory(categoryId) {
     setCategoryError({ id: null, message: '' });
 
     try {
-      const isConfirmed = window.confirm(
-        'Are you sure you want to delete this category?'
-      );
-      if (!isConfirmed) {
-        return;
-      }
-
       const categoryData = await apiService.deleteCategory(categoryId);
       console.log('Category deleted successfully', categoryData);
-
+      handleCloseConfirmationDialog();
       fetchData();
     } catch (error) {
       console.error('Error deleting category:', error.message);
@@ -217,18 +236,20 @@ function DashboardPage() {
   }
 
   // DELETE TRANSACTION
+  function handleDeleteTransactionConfirmation(transactionId) {
+    setConfirmationState({
+      isOpen: true,
+      title: 'Delete Transaction?',
+      message: 'This will permanently delete the transaction.',
+      onConfirm: () => handleDeleteTransaction(transactionId),
+    });
+  }
+
   async function handleDeleteTransaction(transactionId) {
     try {
-      const isConfirmed = window.confirm(
-        'Are you sure you want to delete this transaction?'
-      );
-      if (!isConfirmed) {
-        return;
-      }
-
       const transactionData = await apiService.deleteTransaction(transactionId);
       console.log('Transaction deleted successfully', transactionData);
-
+      handleCloseConfirmationDialog();
       fetchData();
     } catch (error) {
       console.error('Error deleting transaction:', error.message);
@@ -275,10 +296,10 @@ function DashboardPage() {
               <ManageCategoriesModal
                 categories={categories}
                 error={categoryError}
-                onDeleteCategory={handleDeleteCategory}
                 onClose={handleCloseManageCategoriesModal}
                 onAddNew={handleOpenAddCategoryModal}
                 onEdit={handleOpenEditCategoryModal}
+                onDelete={handleDeleteCategoryConfirmation}
               />
             )}
 
@@ -385,10 +406,20 @@ function DashboardPage() {
 
                         <ActionMenu
                           onDelete={() =>
-                            handleDeleteTransaction(transaction.id)
+                            handleDeleteTransactionConfirmation(transaction.id)
                           }
                           onEdit={() => handleEditTransaction(transaction)}
                         />
+
+                        {confirmationState.isOpen && (
+                          <ConfirmationDialog
+                            isOpen={confirmationState.isOpen}
+                            title={confirmationState.title}
+                            message={confirmationState.message}
+                            onConfirm={confirmationState.onConfirm}
+                            onCancel={handleCloseConfirmationDialog}
+                          />
+                        )}
                       </div>
                     </div>
 

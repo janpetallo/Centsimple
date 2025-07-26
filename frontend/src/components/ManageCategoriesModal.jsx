@@ -1,15 +1,13 @@
-import AddCategoryModal from './AddCategoryModal';
-import EditCategoryModal from './EditCategoryModal';
 import ActionMenu from './ActionMenu';
 import Modal from './Modal';
 
 function ManageCategoriesModal({
   categories,
   error,
-  onDeleteCategory,
   onClose,
   onAddNew,
   onEdit,
+  onDelete,
 }) {
   return (
     <Modal title="Manage Categories" onClose={onClose}>
@@ -45,7 +43,7 @@ function ManageCategoriesModal({
 
             {category.userId && (
               <ActionMenu
-                onDelete={() => onDeleteCategory(category.id)}
+                onDelete={() => onDelete(category.id)}
                 onEdit={() => onEdit(category)}
               />
             )}
