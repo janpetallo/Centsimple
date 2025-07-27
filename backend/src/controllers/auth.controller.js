@@ -22,6 +22,7 @@ function getCookieOptions() {
 }
 
 async function register(req, res) {
+  let newUser; 
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -42,7 +43,7 @@ async function register(req, res) {
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
 
-    const newUser = await prisma.user.create({
+    newUser = await prisma.user.create({
       data: {
         firstName: firstName,
         lastName: lastName,
