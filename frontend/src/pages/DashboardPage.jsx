@@ -10,7 +10,7 @@ import EditCategoryModal from '../components/EditCategoryModal';
 import AddTransactionModal from '../components/AddTransactionModal';
 import EditTransactionModal from '../components/EditTransactionModal';
 import ConfirmationDialog from '../components/ConfirmationDialog';
-
+import TransactionListItem from '../components/TransactionListItem';
 import SearchIcon from '../icons/SearchIcon';
 import useDebounce from '../hooks/useDebounce';
 import FilterListIcon from '../icons/FilterListIcon';
@@ -336,6 +336,15 @@ function DashboardPage() {
               />
             )}
 
+            {editingTransaction && (
+              <EditTransactionModal
+                transaction={editingTransaction}
+                categories={categories}
+                onTransactionUpdated={handleTransactionUpdated}
+                onClose={handleCloseEditTransactionModal}
+              />
+            )}
+
             <div className="my-4 flex items-center gap-2 sm:gap-4">
               {/* Search Bar Container */}
               <div className="relative flex-grow">
@@ -405,58 +414,13 @@ function DashboardPage() {
             {transactions.length > 0 && (
               <ul className="mt-4 flex flex-col gap-2">
                 {transactions.map((transaction) => (
-                  <li
+                  <TransactionListItem
                     key={transaction.id}
-                    className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant rounded-xl border p-4 transition-colors"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex grow flex-col gap-4 md:flex-row">
-                        <p className="font-medium">{transaction.description}</p>
-                        <div className="flex items-center gap-2">
-                          <p className="bg-secondary-container text-on-secondary-container max-w-fit rounded-full px-2 py-1 text-xs whitespace-nowrap">
-                            {formatter.formatDate(transaction.date)}
-                          </p>
-                          <p className="bg-tertiary-container text-on-tertiary-container rounded-full px-2 py-1 text-xs">
-                            {transaction.category.name}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-shrink-0 gap-4">
-                        <p className="text-label-large p-1 text-right md:w-28">
-                          {formatter.formatCurrency(
-                            transaction.type === 'EXPENSE'
-                              ? -transaction.amount
-                              : transaction.amount
-                          )}
-                        </p>
-
-                        <ActionMenu
-                          onDelete={() =>
-                            handleDeleteTransactionConfirmation(transaction.id)
-                          }
-                          onEdit={() => handleEditTransaction(transaction)}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      {editingTransaction?.id === transaction.id && (
-                        <EditTransactionModal
-                          transaction={transaction}
-                          categories={categories}
-                          onTransactionUpdated={handleTransactionUpdated}
-                          onClose={handleCloseEditTransactionModal}
-                        />
-                      )}
-
-                      {transactionError.id === transaction.id && (
-                        <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
-                          {transactionError.message}
-                        </p>
-                      )}
-                    </div>
-                  </li>
+                    transaction={transaction}
+                    onEdit={handleEditTransaction}
+                    onDelete={handleDeleteTransactionConfirmation}
+                    error={transactionError}
+                  />
                 ))}
               </ul>
             )}
