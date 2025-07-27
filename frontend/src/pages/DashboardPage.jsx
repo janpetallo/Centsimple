@@ -25,7 +25,7 @@ function DashboardPage() {
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]); 
+  const [categories, setCategories] = useState([]);
   const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [transactionError, setTransactionError] = useState({
@@ -89,7 +89,7 @@ function DashboardPage() {
     handleCategoryCreated,
     handleCategoryUpdated,
     handleDeleteCategory,
-  } = useCategoryManager(fetchData); 
+  } = useCategoryManager(fetchData);
 
   useEffect(() => {
     // This effect runs every time the transactions list is updated.

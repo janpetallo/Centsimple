@@ -36,13 +36,13 @@ export function useCategoryManager(onSuccess) {
 
   function handleCategoryCreated() {
     setIsAddCategoryModalOpen(false);
-    setIsManageCategoriesModalOpen(true);
+    handleManageCategoriesModalOpen();
     onSuccess(); // Call the callback to refetch data
   }
 
   function handleCategoryUpdated() {
     setEditingCategory(null);
-    setIsManageCategoriesModalOpen(true);
+    handleManageCategoriesModalOpen();
     onSuccess(); // Call the callback to refetch data
   }
 
