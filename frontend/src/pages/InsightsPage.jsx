@@ -4,12 +4,15 @@ import * as formatter from '../utils/format';
 import IncomeExpenseChart from '../components/IncomeExpenseBarChart';
 import ExpensePieChart from '../components/ExpensePieChart';
 import LoadingSpinner from '../components/LoadingSpinner';
+import BackIcon from '../icons/BackIcon';
+import { useNavigate } from 'react-router-dom';
 
 function InsightsPage() {
   const [reportData, setReportData] = useState(null);
   const [dateRange, setDateRange] = useState('last30days'); // Default to last 30 days'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchReportData() {
@@ -34,10 +37,22 @@ function InsightsPage() {
     setDateRange(e.target.value);
   }
 
+  function handleBackButtonClick() {
+    navigate('/dashboard');
+  }
+
   return (
     <>
       <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <h2 className="text-headline-medium text-left">Insights</h2>
+        <div className="flex items-center justify-start gap-2">
+          <button
+            onClick={handleBackButtonClick}
+            className="hover:bg-surface-container cursor-pointer rounded-full p-2 transition-colors"
+          >
+            <BackIcon className="h-6 w-6" />
+          </button>
+          <h2 className="text-headline-medium text-left">Insights</h2>
+        </div>
 
         <div className="flex grow flex-col justify-center gap-4 sm:flex-row sm:items-center sm:justify-start md:grow-0 md:justify-end">
           <label
