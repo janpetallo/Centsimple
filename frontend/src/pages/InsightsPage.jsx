@@ -3,6 +3,7 @@ import * as apiService from '../services/api.service';
 import * as formatter from '../utils/format';
 import IncomeExpenseChart from '../components/IncomeExpenseBarChart';
 import ExpensePieChart from '../components/ExpensePieChart';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function InsightsPage() {
   const [reportData, setReportData] = useState(null);
@@ -34,7 +35,7 @@ function InsightsPage() {
   }
 
   return (
-    <div>
+    <>
       <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <h2 className="text-headline-medium text-left">Insights</h2>
 
@@ -65,7 +66,7 @@ function InsightsPage() {
 
       {loading ? (
         <div className="flex grow items-center justify-center">
-          <h3>Loading...</h3>
+          <LoadingSpinner className="text-on-primary-container bg-primary-container h-16 w-16 rounded-full" />
         </div>
       ) : (
         <div>
@@ -122,7 +123,7 @@ function InsightsPage() {
           {error}
         </p>
       )}
-    </div>
+    </>
   );
 }
 

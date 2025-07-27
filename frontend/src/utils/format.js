@@ -10,7 +10,12 @@ function formatCurrency(amount) {
 
 function formatDate(dateString) {
   const date = new Date(dateString);
-  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const options = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  };
   return new Intl.DateTimeFormat('en-CA', options).format(date);
 }
 
