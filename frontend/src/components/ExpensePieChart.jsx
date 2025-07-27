@@ -4,10 +4,12 @@ import {
   ArcElement, // Required for Pie and Doughnut charts
   Tooltip,
   Legend,
+  Title,
 } from 'chart.js';
 import tinycolor from 'tinycolor2';
+import ExpenseBreakdown from './ExpenseBreakdown'; // Import the new component
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 function ExpensePieChart({ reportData }) {
   // Get a comprehensive set of theme colors from your CSS variables
@@ -121,16 +123,7 @@ function ExpensePieChart({ reportData }) {
     cutout: '50%', // This turns the Pie chart into a Doughnut chart
     plugins: {
       legend: {
-        position: 'right', 
-        labels: {
-          font: {
-            family: 'Inter, sans-serif',
-            size: 14,
-          },
-          color: themeColors.onSurface,
-          boxWidth: 20,
-          padding: 20,
-        },
+        display: false, // Hide the default legend
       },
       title: {
         display: true,
@@ -142,7 +135,7 @@ function ExpensePieChart({ reportData }) {
         },
         color: themeColors.onSurface,
         padding: {
-          bottom: 20,
+          bottom: 30,
         },
       },
       tooltip: {
@@ -161,8 +154,14 @@ function ExpensePieChart({ reportData }) {
   };
 
   return (
-    <div className="h-96 w-full">
-      <Pie data={data} options={options} />
+    <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-2">
+      <div className="h-96 w-full">
+        <Pie data={data} options={options} />
+      </div>
+      <ExpenseBreakdown
+        breakdown={reportData.expenseBreakdown}
+        colors={dynamicPieColors}
+      />
     </div>
   );
 }
