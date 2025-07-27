@@ -195,40 +195,6 @@ function DashboardPage() {
                 {formatter.formatCurrency(balance)}
               </p>
             </div>
-            {isManageCategoriesModalOpen && (
-              <ManageCategoriesModal
-                categories={categories}
-                error={categoryError}
-                onClose={handleCloseManageCategoriesModal}
-                onAddNew={handleOpenAddCategoryModal}
-                onEdit={handleOpenEditCategoryModal}
-                onDelete={handleDeleteCategoryConfirmation}
-              />
-            )}
-
-            {isAddCategoryModalOpen && (
-              <AddCategoryModal
-                onCategoryCreated={handleCategoryCreated}
-                onClose={handleReturnToManageCategories}
-              />
-            )}
-
-            {editingCategory && (
-              <EditCategoryModal
-                category={editingCategory}
-                onCategoryUpdated={handleCategoryUpdated}
-                onClose={handleReturnToManageCategories}
-              />
-            )}
-
-            {editingTransaction && (
-              <EditTransactionModal
-                transaction={editingTransaction}
-                categories={categories}
-                onTransactionUpdated={handleTransactionUpdated}
-                onClose={handleCloseEditTransactionModal}
-              />
-            )}
 
             <div className="my-4 flex items-center gap-2 sm:gap-4">
               {/* Search Bar Container */}
@@ -265,15 +231,6 @@ function DashboardPage() {
                 <span>Add Transaction</span>
               </button>
             </div>
-
-            {isFilterModalOpen && (
-              <FilterModal
-                categories={categories}
-                currentFilters={filters}
-                onApply={applyFilters}
-                onClose={closeFilterModal}
-              />
-            )}
 
             <div>
               <ActiveFilters
@@ -317,14 +274,6 @@ function DashboardPage() {
             >
               <AddIcon className="h-12 w-12 md:h-16 md:w-16" />
             </button>
-
-            {isTransactionModalOpen && (
-              <AddTransactionModal
-                categories={categories}
-                onTransactionCreated={handleTransactionCreated}
-                onClose={handleCloseTransactionModal}
-              />
-            )}
           </div>
           <div>
             <Pagination
@@ -334,6 +283,127 @@ function DashboardPage() {
           </div>
         </div>
       )}
+      {/* All modals are now rendered by this single, clean component */}
+      <DashboardModals
+        // Category Modals
+        isManageCategoriesModalOpen={isManageCategoriesModalOpen}
+        isAddCategoryModalOpen={isAddCategoryModalOpen}
+        editingCategory={editingCategory}
+        categoryError={categoryError}
+        handleCloseManageCategoriesModal={handleCloseManageCategoriesModal}
+        handleOpenAddCategoryModal={handleOpenAddCategoryModal}
+        handleOpenEditCategoryModal={handleOpenEditCategoryModal}
+        handleDeleteCategoryConfirmation={handleDeleteCategoryConfirmation}
+        handleCategoryCreated={handleCategoryCreated}
+        handleReturnToManageCategories={handleReturnToManageCategories}
+        handleCategoryUpdated={handleCategoryUpdated}
+        // Transaction Modals
+        isTransactionModalOpen={isTransactionModalOpen}
+        editingTransaction={editingTransaction}
+        handleTransactionCreated={handleTransactionCreated}
+        handleCloseTransactionModal={handleCloseTransactionModal}
+        handleTransactionUpdated={handleTransactionUpdated}
+        handleCloseEditTransactionModal={handleCloseEditTransactionModal}
+        // Filter Modal
+        isFilterModalOpen={isFilterModalOpen}
+        filters={filters}
+        applyFilters={applyFilters}
+        closeFilterModal={closeFilterModal}
+        // Confirmation Dialog
+        confirmationState={confirmationState}
+        closeConfirmationDialog={closeConfirmationDialog}
+        // Shared Data
+        categories={categories}
+      />
+    </>
+  );
+}
+
+function DashboardModals({
+  // Category Modals
+  isManageCategoriesModalOpen,
+  isAddCategoryModalOpen,
+  editingCategory,
+  categoryError,
+  handleCloseManageCategoriesModal,
+  handleOpenAddCategoryModal,
+  handleOpenEditCategoryModal,
+  handleDeleteCategoryConfirmation,
+  handleCategoryCreated,
+  handleReturnToManageCategories,
+  handleCategoryUpdated,
+  // Transaction Modals
+  isTransactionModalOpen,
+  editingTransaction,
+  handleTransactionCreated,
+  handleCloseTransactionModal,
+  handleTransactionUpdated,
+  handleCloseEditTransactionModal,
+  // Filter Modal
+  isFilterModalOpen,
+  filters,
+  applyFilters,
+  closeFilterModal,
+  // Confirmation Dialog
+  confirmationState,
+  closeConfirmationDialog,
+  // Shared Data
+  categories,
+}) {
+  return (
+    <>
+      {isManageCategoriesModalOpen && (
+        <ManageCategoriesModal
+          categories={categories}
+          error={categoryError}
+          onClose={handleCloseManageCategoriesModal}
+          onAddNew={handleOpenAddCategoryModal}
+          onEdit={handleOpenEditCategoryModal}
+          onDelete={handleDeleteCategoryConfirmation}
+        />
+      )}
+
+      {isAddCategoryModalOpen && (
+        <AddCategoryModal
+          onCategoryCreated={handleCategoryCreated}
+          onClose={handleReturnToManageCategories}
+        />
+      )}
+
+      {editingCategory && (
+        <EditCategoryModal
+          category={editingCategory}
+          onCategoryUpdated={handleCategoryUpdated}
+          onClose={handleReturnToManageCategories}
+        />
+      )}
+
+      {editingTransaction && (
+        <EditTransactionModal
+          transaction={editingTransaction}
+          categories={categories}
+          onTransactionUpdated={handleTransactionUpdated}
+          onClose={handleCloseEditTransactionModal}
+        />
+      )}
+
+      {isTransactionModalOpen && (
+        <AddTransactionModal
+          categories={categories}
+          onTransactionCreated={handleTransactionCreated}
+          onClose={handleCloseTransactionModal}
+        />
+      )}
+
+      {isFilterModalOpen && (
+        <FilterModal
+          categories={categories}
+          currentFilters={filters}
+          onApply={applyFilters}
+          onClose={closeFilterModal}
+        />
+      )}
+
       {confirmationState.isOpen && (
         <ConfirmationDialog
           isOpen={confirmationState.isOpen}
