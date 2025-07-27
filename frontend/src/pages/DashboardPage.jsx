@@ -18,6 +18,7 @@ import ActiveFilters from '../components/ActiveFilters';
 import AddIcon from '../icons/AddIcon';
 import { useCategoryManager } from '../hooks/useCategoryManager';
 import { useTransactionManager } from '../hooks/useTransactionManager';
+import { useConfirmationDialog } from '../hooks/useConfirmationDialog'; // Import the new hook
 import LoadingSpinner from '../components/LoadingSpinner';
 
 function DashboardPage() {
@@ -38,12 +39,11 @@ function DashboardPage() {
   const debouncedSearchTerm = useDebounce(searchInput, 1000);
   const searchInputRef = useRef(null);
 
-  const [confirmationState, setConfirmationState] = useState({
-    isOpen: false,
-    title: '',
-    message: '',
-    onConfirm: null,
-  });
+  const {
+    confirmationState,
+    askForConfirmation,
+    closeConfirmationDialog,
+  } = useConfirmationDialog();
 
   // This new success handler can be passed to both hooks.
   // It intelligently handles data refreshing, including resetting to page 1.
@@ -165,40 +165,21 @@ function DashboardPage() {
 
   // DELETE CATEGORY CONFIRMATION
   function handleDeleteCategoryConfirmation(categoryId) {
-    setConfirmationState({
-      isOpen: true,
+    askForConfirmation({
       title: 'Delete category?',
       message:
         'This will permanently delete the category. This action cannot be undone.',
-      onConfirm: async () => {
-        // The hook's handleDeleteCategory will call fetchData on success.
-        await handleDeleteCategory(categoryId);
-        // The component's only job is to close the dialog.
-        handleCloseConfirmationDialog();
-      },
-    });
-  }
-
-  function handleCloseConfirmationDialog() {
-    setConfirmationState({
-      isOpen: false,
-      title: '',
-      message: '',
-      onConfirm: null,
+      onConfirm: () => handleDeleteCategory(categoryId),
     });
   }
 
   // DELETE TRANSACTION
   function handleDeleteTransactionConfirmation(transactionId) {
-    setConfirmationState({
-      isOpen: true,
+    askForConfirmation({
       title: 'Delete transaction?',
       message:
         'This will permanently delete the transaction. This action cannot be undone.',
-      onConfirm: async () => {
-        await handleDeleteTransaction(transactionId); // This now calls the hook's function
-        handleCloseConfirmationDialog();
-      },
+      onConfirm: () => handleDeleteTransaction(transactionId),
     });
   }
 
@@ -383,7 +364,7 @@ function DashboardPage() {
           title={confirmationState.title}
           message={confirmationState.message}
           onConfirm={confirmationState.onConfirm}
-          onCancel={handleCloseConfirmationDialog}
+          onCancel={closeConfirmationDialog}
         />
       )}
     </>
