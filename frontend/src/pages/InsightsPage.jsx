@@ -35,59 +35,93 @@ function InsightsPage() {
 
   return (
     <div>
-      <h2>Insights Page</h2>
+      <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-headline-medium text-left">Insights</h2>
 
-      <label htmlFor="dateRange">Date Range:</label>
-      <select id="dateRange" value={dateRange} onChange={handleDateRangeChange}>
-        <option value="">All Time</option>
-        <option value="last7days">Last 7 Days</option>
-        <option value="last30days">Last 30 Days</option>
-        <option value="last90days">Last 90 Days</option>
-        <option value="thisMonth">This Month</option>
-        <option value="lastMonth">Last Month</option>
-        <option value="thisYear">This Year</option>
-        <option value="lastYear">Last Year</option>
-      </select>
+        <div className="flex grow flex-col justify-center gap-4 sm:flex-row sm:items-center sm:justify-start md:grow-0 md:justify-end">
+          <label
+            htmlFor="dateRange"
+            className="text-label-large text-on-surface-variant"
+          >
+            Date Range
+          </label>
+          <select
+            className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface grow rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
+            id="dateRange"
+            value={dateRange}
+            onChange={handleDateRangeChange}
+          >
+            <option value="">All Time</option>
+            <option value="last7days">Last 7 Days</option>
+            <option value="last30days">Last 30 Days</option>
+            <option value="last90days">Last 90 Days</option>
+            <option value="thisMonth">This Month</option>
+            <option value="lastMonth">Last Month</option>
+            <option value="thisYear">This Year</option>
+            <option value="lastYear">Last Year</option>
+          </select>
+        </div>
+      </div>
 
       {loading ? (
-        <h3>Loading...</h3>
+        <div className="flex grow items-center justify-center">
+          <h3>Loading...</h3>
+        </div>
       ) : (
         <div>
           {reportData ? (
             <div>
-              <div>Balance: {formatter.formatCurrency(reportData.balance)}</div>
-              {reportData.startDate && (
-                <div>
-                  From {formatter.formatDate(reportData.startDate)} to{' '}
-                  {reportData.endDate
-                    ? formatter.formatDate(
-                        // Create a new Date object from the endDate string,
-                        // then get its time in milliseconds and subtract one day's worth of milliseconds.
-                        new Date(
-                          new Date(reportData.endDate).getTime() -
-                            24 * 60 * 60 * 1000
+              <div className="bg-surface-container flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
+                <p className="text-on-surface-variant text-sm">Balance</p>
+                <p className="text-headline-medium text-on-surface">
+                  {formatter.formatCurrency(reportData.balance)}
+                </p>
+
+                {reportData.startDate && (
+                  <div className="text-on-surface-variant text-body-large">
+                    From {formatter.formatDate(reportData.startDate)} to{' '}
+                    {reportData.endDate
+                      ? formatter.formatDate(
+                          // Create a new Date object from the endDate string,
+                          // then get its time in milliseconds and subtract one day's worth of milliseconds.
+                          new Date(
+                            new Date(reportData.endDate).getTime() -
+                              24 * 60 * 60 * 1000
+                          )
                         )
-                      )
-                    : 'Present'}
-                </div>
-              )}
+                      : 'Present'}
+                  </div>
+                )}
+              </div>
 
               {reportData.totalIncome > 0 || reportData.totalExpense > 0 ? ( // If there is data, show the charts
-                <div>
-                  <IncomeExpenseChart reportData={reportData} />
-                  <ExpensePieChart reportData={reportData} />
+                <div className="mt-4 grid grid-cols-1 gap-8 lg:grid-cols-2">
+                  <div className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-center rounded-xl border p-4 transition-colors">
+                    <IncomeExpenseChart reportData={reportData} />
+                  </div>
+                  <div className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-center rounded-xl border p-4 transition-colors">
+                    <ExpensePieChart reportData={reportData} />
+                  </div>
                 </div>
               ) : (
                 // If there is no data, show a helpful message
-                <p>No transaction data available for the selected period.</p>
+                <p className="bg-surface-container border-outline/10 mt-4 rounded-xl border p-8">
+                  No transaction data available for the selected period.
+                </p>
               )}
             </div>
           ) : (
-            <p>No data available for the selected period.</p>
+            <p className="bg-surface-container border-outline/10 mt-4 rounded-xl border p-8">
+              No data available for the selected period.
+            </p>
           )}
         </div>
       )}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && (
+        <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
