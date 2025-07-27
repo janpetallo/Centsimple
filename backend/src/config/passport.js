@@ -90,11 +90,11 @@ passport.use(
           verificationTokenExpires: ___,
           ...sanitizedUser
         } = user;
-        
+
         return done(null, sanitizedUser); // send the user back to passport.authenticate()
       } else {
         return done(null, false, {
-          message: 'User not found',
+          message: 'Your session is invalid. Please log in again.',
         });
       }
     } catch (error) {

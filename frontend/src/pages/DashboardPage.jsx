@@ -182,8 +182,9 @@ function DashboardPage() {
   function handleDeleteCategoryConfirmation(categoryId) {
     setConfirmationState({
       isOpen: true,
-      title: 'Delete Category?',
-      message: 'This will permanently delete the category.',
+      title: 'Delete category?',
+      message:
+        'This will permanently delete the category. This action cannot be undone.',
       onConfirm: () => handleDeleteCategory(categoryId),
     });
   }
@@ -211,7 +212,11 @@ function DashboardPage() {
       handleConfirmationDialogSuccess();
     } catch (error) {
       console.error('Error deleting category:', error.message);
-      setCategoryError({ id: categoryId, message: error.message });
+      setCategoryError({
+        id: categoryId,
+        message:
+          error.message || 'Could not delete category. Please try again.',
+      });
       handleCloseConfirmationDialog();
     }
   }
@@ -254,8 +259,9 @@ function DashboardPage() {
   function handleDeleteTransactionConfirmation(transactionId) {
     setConfirmationState({
       isOpen: true,
-      title: 'Delete Transaction?',
-      message: 'This will permanently delete the transaction.',
+      title: 'Delete transaction?',
+      message:
+        'This will permanently delete the transaction. This action cannot be undone.',
       onConfirm: () => handleDeleteTransaction(transactionId),
     });
   }
@@ -269,7 +275,11 @@ function DashboardPage() {
       handleConfirmationDialogSuccess();
     } catch (error) {
       console.error('Error deleting transaction:', error.message);
-      setTransactionError({ id: transactionId, message: error.message });
+      setTransactionError({
+        id: transactionId,
+        message:
+          error.message || 'Could not delete transaction. Please try again.',
+      });
       handleCloseConfirmationDialog();
     }
   }

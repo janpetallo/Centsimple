@@ -121,7 +121,7 @@ async function getSummaryReport(req, res) {
     }));
 
     res.status(200).json({
-      message: 'Summary report fetched successfully',
+      message: 'Summary report fetched successfully.',
       balance: balance,
       totalIncome: totalIncome,
       totalExpense: totalExpense,
@@ -131,7 +131,9 @@ async function getSummaryReport(req, res) {
     });
   } catch (error) {
     console.error('Error fetching summary report', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not load your report. Please try again.' });
   }
 }
 

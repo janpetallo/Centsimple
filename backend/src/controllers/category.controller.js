@@ -47,7 +47,9 @@ async function createCategory(req, res) {
       });
     }
     console.error('Error creating a category', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not create category. Please try again.' });
   }
 }
 
@@ -62,12 +64,14 @@ async function getCategories(req, res) {
     });
 
     res.status(200).json({
-      message: 'Categories fetched successfully',
+      message: 'Categories fetched successfully.',
       categories: categories,
     });
   } catch (error) {
     console.error('Error fetching all categories', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not load categories. Please try again.' });
   }
 }
 
@@ -124,7 +128,7 @@ async function updateCategory(req, res) {
     });
 
     res.status(200).json({
-      message: 'Category updated successfully',
+      message: 'Category updated successfully.',
       category: updatedCategory,
     });
   } catch (error) {
@@ -143,7 +147,9 @@ async function updateCategory(req, res) {
       });
     }
     console.error('Error updating a category', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not update category. Please try again.' });
   }
 }
 
@@ -168,8 +174,7 @@ async function deleteCategory(req, res) {
     // STEP 2: If the category is in use, send back a specific error.
     if (transactionCount > 0) {
       return res.status(409).json({
-        message:
-          'Cannot delete category because it is still in use by transactions.',
+        message: 'This category is in use and cannot be deleted.',
       });
     }
 
@@ -180,7 +185,7 @@ async function deleteCategory(req, res) {
     });
 
     res.status(200).json({
-      message: 'Category deleted successfully',
+      message: 'Category deleted successfully.',
       category: deletedCategory,
     });
   } catch (error) {
@@ -192,7 +197,9 @@ async function deleteCategory(req, res) {
       });
     }
     console.error('Error deleting a category', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not delete category. Please try again.' });
   }
 }
 

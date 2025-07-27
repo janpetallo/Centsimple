@@ -44,12 +44,14 @@ async function createTransaction(req, res) {
     });
 
     res.status(201).json({
-      message: 'Transaction created successfully',
+      message: 'Transaction created successfully.',
       transaction: transaction,
     });
   } catch (error) {
     console.error('Error creating a transaction', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not create transaction. Please try again.' });
   }
 }
 
@@ -174,7 +176,7 @@ async function getTransactions(req, res) {
     });
 
     res.status(200).json({
-      message: 'Transactions fetched successfully',
+      message: 'Transactions fetched successfully.',
       transactions: transactions,
       balance: balance,
       pagination: {
@@ -186,7 +188,9 @@ async function getTransactions(req, res) {
     });
   } catch (error) {
     console.error('Error fetching all transactions', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not load transactions. Please try again.' });
   }
 }
 
@@ -239,7 +243,7 @@ async function updateTransaction(req, res) {
     });
 
     res.status(200).json({
-      message: 'Transaction updated successfully',
+      message: 'Transaction updated successfully.',
       transaction: updatedTransaction,
     });
   } catch (error) {
@@ -253,7 +257,9 @@ async function updateTransaction(req, res) {
     }
 
     console.error('Error updating a transaction', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not update transaction. Please try again.' });
   }
 }
 
@@ -276,7 +282,7 @@ async function deleteTransaction(req, res) {
     });
 
     res.status(200).json({
-      message: 'Transaction deleted successfully',
+      message: 'Transaction deleted successfully.',
       transaction: deletedTransaction,
     });
   } catch (error) {
@@ -288,7 +294,9 @@ async function deleteTransaction(req, res) {
       });
     }
     console.error('Error deleting a transaction', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not delete transaction. Please try again.' });
   }
 }
 
