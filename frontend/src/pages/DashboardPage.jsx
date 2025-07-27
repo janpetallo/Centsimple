@@ -17,6 +17,7 @@ import FilterModal from '../components/FilterModal';
 import ActiveFilters from '../components/ActiveFilters';
 import AddIcon from '../icons/AddIcon';
 import { useCategoryManager } from '../hooks/useCategoryManager';
+import { useTransactionManager } from '../hooks/useTransactionManager';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 function DashboardPage() {
@@ -26,12 +27,6 @@ function DashboardPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
-  const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState(null);
-  const [transactionError, setTransactionError] = useState({
-    id: null,
-    message: '',
-  });
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [filters, setFilters] = useState({
@@ -49,6 +44,16 @@ function DashboardPage() {
     message: '',
     onConfirm: null,
   });
+
+  // This new success handler can be passed to both hooks.
+  // It intelligently handles data refreshing, including resetting to page 1.
+  const handleSuccess = ({ shouldResetPage = false } = {}) => {
+    if (shouldResetPage && currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      fetchData();
+    }
+  };
 
   // Wrap fetchData in useCallback
   const fetchData = useCallback(async () => {
@@ -75,7 +80,6 @@ function DashboardPage() {
     }
   }, [currentPage, filters, debouncedSearchTerm]); // fetchData will only be re-created if any of these changes
 
-  // All category management logic is now in this hook
   const {
     isManageCategoriesModalOpen,
     isAddCategoryModalOpen,
@@ -89,7 +93,20 @@ function DashboardPage() {
     handleCategoryCreated,
     handleCategoryUpdated,
     handleDeleteCategory,
-  } = useCategoryManager(fetchData);
+  } = useCategoryManager(handleSuccess);
+
+  const {
+    isTransactionModalOpen,
+    editingTransaction,
+    transactionError,
+    handleAddTransaction,
+    handleCloseTransactionModal,
+    handleTransactionCreated,
+    handleEditTransaction,
+    handleCloseEditTransactionModal,
+    handleTransactionUpdated,
+    handleDeleteTransaction,
+  } = useTransactionManager(handleSuccess);
 
   useEffect(() => {
     // This effect runs every time the transactions list is updated.
@@ -171,40 +188,6 @@ function DashboardPage() {
     });
   }
 
-  // ADD TRANSACTION
-  function handleAddTransaction() {
-    setIsTransactionModalOpen(true);
-  }
-
-  function handleCloseTransactionModal() {
-    setIsTransactionModalOpen(false);
-  }
-
-  function handleTransactionCreated() {
-    setIsTransactionModalOpen(false);
-    // By setting the page to 1, we trigger the useEffect to run again automatically.
-    // If we are already on page 1, we can call fetchData directly.
-    if (currentPage === 1) {
-      fetchData();
-    } else {
-      setCurrentPage(1);
-    }
-  }
-
-  // EDIT TRANSACTION
-  function handleEditTransaction(transaction) {
-    setEditingTransaction(transaction);
-  }
-
-  function handleCloseEditTransactionModal() {
-    setEditingTransaction(null);
-  }
-
-  function handleTransactionUpdated() {
-    setEditingTransaction(null);
-    fetchData();
-  }
-
   // DELETE TRANSACTION
   function handleDeleteTransactionConfirmation(transactionId) {
     setConfirmationState({
@@ -213,27 +196,10 @@ function DashboardPage() {
       message:
         'This will permanently delete the transaction. This action cannot be undone.',
       onConfirm: async () => {
-        await handleDeleteTransaction(transactionId);
+        await handleDeleteTransaction(transactionId); // This now calls the hook's function
         handleCloseConfirmationDialog();
       },
     });
-  }
-
-  async function handleDeleteTransaction(transactionId) {
-    setTransactionError({ id: null, message: '' });
-
-    try {
-      await apiService.deleteTransaction(transactionId);
-      console.log('Transaction deleted successfully');
-      fetchData(); // Refetch data on success
-    } catch (error) {
-      console.error('Error deleting transaction:', error.message);
-      setTransactionError({
-        id: transactionId,
-        message:
-          error.message || 'Could not delete transaction. Please try again.',
-      });
-    }
   }
 
   return (
@@ -395,7 +361,7 @@ function DashboardPage() {
               <AddIcon className="h-12 w-12 md:h-16 md:w-16" />
             </button>
 
-            {isTransactionModelOpen && (
+            {isTransactionModalOpen && (
               <AddTransactionModal
                 categories={categories}
                 onTransactionCreated={handleTransactionCreated}
