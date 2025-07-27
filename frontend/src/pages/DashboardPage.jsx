@@ -16,22 +16,16 @@ import FilterListIcon from '../icons/FilterListIcon';
 import FilterModal from '../components/FilterModal';
 import ActiveFilters from '../components/ActiveFilters';
 import AddIcon from '../icons/AddIcon';
+import { useCategoryManager } from '../hooks/useCategoryManager';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 function DashboardPage() {
-  const [categories, setCategories] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
-
-  const [isManageCategoriesModalOpen, setIsManageCategoriesModalOpen] =
-    useState(false);
-  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null);
-  const [categoryError, setCategoryError] = useState({ id: null, message: '' });
-
+  const [categories, setCategories] = useState([]); 
   const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [transactionError, setTransactionError] = useState({
@@ -55,18 +49,6 @@ function DashboardPage() {
     message: '',
     onConfirm: null,
   });
-
-  useEffect(() => {
-    // This effect runs every time the transactions list is updated.
-    // We check if the search input is the currently active element.
-    // If it's not, we re-apply focus to it.
-    if (document.activeElement !== searchInputRef.current) {
-      // We can add a check here to only re-focus if there was a search term
-      if (searchInput) {
-        searchInputRef.current.focus();
-      }
-    }
-  }, [transactions, searchInput]); // Run this effect when transactions or searchInput changes
 
   // Wrap fetchData in useCallback
   const fetchData = useCallback(async () => {
@@ -92,6 +74,34 @@ function DashboardPage() {
       setLoading(false);
     }
   }, [currentPage, filters, debouncedSearchTerm]); // fetchData will only be re-created if any of these changes
+
+  // All category management logic is now in this hook
+  const {
+    isManageCategoriesModalOpen,
+    isAddCategoryModalOpen,
+    editingCategory,
+    categoryError,
+    handleManageCategoriesModalOpen,
+    handleCloseManageCategoriesModal,
+    handleOpenAddCategoryModal,
+    handleOpenEditCategoryModal,
+    handleReturnToManageCategories,
+    handleCategoryCreated,
+    handleCategoryUpdated,
+    handleDeleteCategory,
+  } = useCategoryManager(fetchData); 
+
+  useEffect(() => {
+    // This effect runs every time the transactions list is updated.
+    // We check if the search input is the currently active element.
+    // If it's not, we re-apply focus to it.
+    if (document.activeElement !== searchInputRef.current) {
+      // We can add a check here to only re-focus if there was a search term
+      if (searchInput) {
+        searchInputRef.current.focus();
+      }
+    }
+  }, [transactions, searchInput]); // Run this effect when transactions or searchInput changes
 
   useEffect(() => {
     fetchData();
@@ -136,56 +146,19 @@ function DashboardPage() {
     setCurrentPage(1);
   }
 
-  // MANAGE CATEGORIES
-  function handleManageCategoriesModalOpen() {
-    setCategoryError({ id: null, message: '' });
-    setIsManageCategoriesModalOpen(true);
-  }
-
-  function handleCloseManageCategoriesModal() {
-    setCategoryError({ id: null, message: '' });
-    setIsManageCategoriesModalOpen(false);
-  }
-
-  // Closes the main modal and opens the "Add" modal
-  function handleOpenAddCategoryModal() {
-    setIsManageCategoriesModalOpen(false);
-    setIsAddCategoryModalOpen(true);
-  }
-
-  // Closes the main modal and opens the "Edit" modal
-  function handleOpenEditCategoryModal(category) {
-    setIsManageCategoriesModalOpen(false);
-    setEditingCategory(category);
-  }
-
-  // This function will close the "Add" or "Edit" modal and re-open the "Manage" modal
-  function handleReturnToManageCategories() {
-    setIsAddCategoryModalOpen(false);
-    setEditingCategory(null);
-    handleManageCategoriesModalOpen();
-  }
-
-  function handleCategoryCreated() {
-    setIsAddCategoryModalOpen(false);
-    setIsManageCategoriesModalOpen(true);
-    fetchData();
-  }
-
-  function handleCategoryUpdated() {
-    setEditingCategory(null);
-    setIsManageCategoriesModalOpen(true);
-    fetchData();
-  }
-
-  // DELETE CATEGORY
+  // DELETE CATEGORY CONFIRMATION
   function handleDeleteCategoryConfirmation(categoryId) {
     setConfirmationState({
       isOpen: true,
       title: 'Delete category?',
       message:
         'This will permanently delete the category. This action cannot be undone.',
-      onConfirm: () => handleDeleteCategory(categoryId),
+      onConfirm: async () => {
+        // The hook's handleDeleteCategory will call fetchData on success.
+        await handleDeleteCategory(categoryId);
+        // The component's only job is to close the dialog.
+        handleCloseConfirmationDialog();
+      },
     });
   }
 
@@ -196,29 +169,6 @@ function DashboardPage() {
       message: '',
       onConfirm: null,
     });
-  }
-
-  function handleConfirmationDialogSuccess() {
-    handleCloseConfirmationDialog();
-    fetchData();
-  }
-
-  async function handleDeleteCategory(categoryId) {
-    setCategoryError({ id: null, message: '' });
-
-    try {
-      const categoryData = await apiService.deleteCategory(categoryId);
-      console.log('Category deleted successfully', categoryData);
-      handleConfirmationDialogSuccess();
-    } catch (error) {
-      console.error('Error deleting category:', error.message);
-      setCategoryError({
-        id: categoryId,
-        message:
-          error.message || 'Could not delete category. Please try again.',
-      });
-      handleCloseConfirmationDialog();
-    }
   }
 
   // ADD TRANSACTION
@@ -262,7 +212,10 @@ function DashboardPage() {
       title: 'Delete transaction?',
       message:
         'This will permanently delete the transaction. This action cannot be undone.',
-      onConfirm: () => handleDeleteTransaction(transactionId),
+      onConfirm: async () => {
+        await handleDeleteTransaction(transactionId);
+        handleCloseConfirmationDialog();
+      },
     });
   }
 
@@ -270,9 +223,9 @@ function DashboardPage() {
     setTransactionError({ id: null, message: '' });
 
     try {
-      const transactionData = await apiService.deleteTransaction(transactionId);
-      console.log('Transaction deleted successfully', transactionData);
-      handleConfirmationDialogSuccess();
+      await apiService.deleteTransaction(transactionId);
+      console.log('Transaction deleted successfully');
+      fetchData(); // Refetch data on success
     } catch (error) {
       console.error('Error deleting transaction:', error.message);
       setTransactionError({
@@ -280,7 +233,6 @@ function DashboardPage() {
         message:
           error.message || 'Could not delete transaction. Please try again.',
       });
-      handleCloseConfirmationDialog();
     }
   }
 
