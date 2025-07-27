@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as apiService from '../services/api.service';
 import * as formatter from '../utils/format';
@@ -11,14 +11,14 @@ import EditTransactionModal from '../components/EditTransactionModal';
 import ConfirmationDialog from '../components/ConfirmationDialog';
 import TransactionListItem from '../components/TransactionListItem';
 import SearchIcon from '../icons/SearchIcon';
-import useDebounce from '../hooks/useDebounce';
 import FilterListIcon from '../icons/FilterListIcon';
 import FilterModal from '../components/FilterModal';
 import ActiveFilters from '../components/ActiveFilters';
 import AddIcon from '../icons/AddIcon';
 import { useCategoryManager } from '../hooks/useCategoryManager';
 import { useTransactionManager } from '../hooks/useTransactionManager';
-import { useConfirmationDialog } from '../hooks/useConfirmationDialog'; // Import the new hook
+import { useConfirmationDialog } from '../hooks/useConfirmationDialog';
+import { useDashboardFilters } from '../hooks/useDashboardFilters';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 function DashboardPage() {
@@ -29,21 +29,25 @@ function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
 
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    dateRangeFilter: '',
-    categoryFilter: '',
-  });
+  const { confirmationState, askForConfirmation, closeConfirmationDialog } =
+    useConfirmationDialog();
 
-  const [searchInput, setSearchInput] = useState('');
-  const debouncedSearchTerm = useDebounce(searchInput, 1000);
-  const searchInputRef = useRef(null);
+  const handleFilterChange = () => {
+    setCurrentPage(1);
+  };
 
   const {
-    confirmationState,
-    askForConfirmation,
-    closeConfirmationDialog,
-  } = useConfirmationDialog();
+    isFilterModalOpen,
+    filters,
+    searchInput,
+    debouncedSearchTerm,
+    searchInputRef,
+    handleSearchInputChange,
+    openFilterModal,
+    closeFilterModal,
+    applyFilters,
+    clearFilter,
+  } = useDashboardFilters(handleFilterChange);
 
   // This new success handler can be passed to both hooks.
   // It intelligently handles data refreshing, including resetting to page 1.
@@ -118,7 +122,7 @@ function DashboardPage() {
         searchInputRef.current.focus();
       }
     }
-  }, [transactions, searchInput]); // Run this effect when transactions or searchInput changes
+  }, [transactions, searchInput, searchInputRef]); // Run this effect when transactions or searchInput changes
 
   useEffect(() => {
     fetchData();
@@ -133,34 +137,6 @@ function DashboardPage() {
 
   function handlePageChange(newPageNumber) {
     setCurrentPage(newPageNumber);
-  }
-
-  function handleSearchInputChange(e) {
-    setSearchInput(e.target.value);
-    setCurrentPage(1);
-  }
-
-  function handleFilterModalOpen() {
-    setIsFilterModalOpen(true);
-  }
-
-  function handleFilterModalClose() {
-    setIsFilterModalOpen(false);
-  }
-
-  function handleFilterApplied(draftFilters) {
-    setFilters(draftFilters);
-    setCurrentPage(1);
-    setIsFilterModalOpen(false);
-  }
-
-  function handleClearFilter(filterName) {
-    if (filterName === 'searchTerm') {
-      setSearchInput('');
-    } else {
-      setFilters((prevFilters) => ({ ...prevFilters, [filterName]: '' }));
-    }
-    setCurrentPage(1);
   }
 
   // DELETE CATEGORY CONFIRMATION
@@ -273,7 +249,7 @@ function DashboardPage() {
 
               {/* Filters Button */}
               <button
-                onClick={handleFilterModalOpen}
+                onClick={openFilterModal}
                 className="border-outline hover:bg-primary-container hover:text-on-primary-container inline-flex flex-shrink-0 cursor-pointer items-center gap-2 rounded-full border px-4 py-2 transition-colors"
               >
                 <FilterListIcon className="h-5 w-5" />
@@ -294,8 +270,8 @@ function DashboardPage() {
               <FilterModal
                 categories={categories}
                 currentFilters={filters}
-                onApply={handleFilterApplied}
-                onClose={handleFilterModalClose}
+                onApply={applyFilters}
+                onClose={closeFilterModal}
               />
             )}
 
@@ -304,7 +280,7 @@ function DashboardPage() {
                 categories={categories}
                 filters={filters}
                 searchTerm={debouncedSearchTerm}
-                onClearFilter={handleClearFilter}
+                onClearFilter={clearFilter}
               />
             </div>
 
