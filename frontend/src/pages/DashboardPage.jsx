@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import * as apiService from '../services/api.service';
 import * as formatter from '../utils/format';
 import Pagination from '../components/Pagination';
-import ActionMenu from '../components/ActionMenu';
 import ManageCategoriesModal from '../components/ManageCategoriesModal';
 import AddCategoryModal from '../components/AddCategoryModal';
 import EditCategoryModal from '../components/EditCategoryModal';
@@ -17,6 +16,7 @@ import FilterListIcon from '../icons/FilterListIcon';
 import FilterModal from '../components/FilterModal';
 import ActiveFilters from '../components/ActiveFilters';
 import AddIcon from '../icons/AddIcon';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function DashboardPage() {
   const [categories, setCategories] = useState([]);
@@ -298,7 +298,7 @@ function DashboardPage() {
 
       {loading ? (
         <div className="flex grow items-center justify-center">
-          <h3>Loading...</h3>
+          <LoadingSpinner className="text-on-primary-container bg-primary-container h-16 w-16 rounded-full" />
         </div>
       ) : (
         // Add padding to the bottom on mobile, and remove it on medium screens and up.
