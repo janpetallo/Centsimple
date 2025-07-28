@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import MoreVertIcon from '../icons/MoreVertIcon';
+import EditIcon from '../icons/EditIcon';
+import DeleteIcon from '../icons/DeleteIcon';
 import useOnClickOutside from '../hooks/useOnClickOutside';
 
 function ActionMenu({ onDelete, onEdit }) {
@@ -34,17 +36,19 @@ function ActionMenu({ onDelete, onEdit }) {
       </button>
 
       {isOpen && (
-        <div className="bg-surface absolute right-0 z-10 w-28 rounded-lg shadow-lg">
+        <div className="bg-surface absolute right-0 z-10 rounded-lg shadow-lg">
           <button
             onClick={handleEditClick}
-            className="hover:bg-surface-container flex w-full cursor-pointer justify-start rounded-t-lg px-4 py-2 transition-colors"
+            className="hover:bg-surface-container flex w-full cursor-pointer items-center justify-start gap-1 rounded-t-lg pl-4 pr-10 py-2 whitespace-nowrap transition-colors"
           >
+            <EditIcon className="h-4 w-4" />
             Edit
           </button>
           <button
             onClick={handleDeleteClick}
-            className="hover:bg-error-container hover:text-on-error-container flex w-full cursor-pointer justify-start rounded-b-lg px-4 py-2 transition-colors"
+            className="hover:bg-error-container hover:text-on-error-container flex w-full cursor-pointer items-center justify-start gap-1 rounded-b-lg pl-4 pr-10 py-2 whitespace-nowrap transition-colors"
           >
+            <DeleteIcon className="h-4 w-4" />
             Delete
           </button>
         </div>

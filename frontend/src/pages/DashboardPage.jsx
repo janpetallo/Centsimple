@@ -15,6 +15,8 @@ import FilterListIcon from '../icons/FilterListIcon';
 import FilterModal from '../components/FilterModal';
 import ActiveFilters from '../components/ActiveFilters';
 import AddIcon from '../icons/AddIcon';
+import InsightsIcon from '../icons/InsightsIcon';
+import CategoryIcon from '../icons/CategoryIcon';
 import { useCategoryManager } from '../hooks/useCategoryManager';
 import { useTransactionManager } from '../hooks/useTransactionManager';
 import { useConfirmationDialog } from '../hooks/useConfirmationDialog';
@@ -167,15 +169,17 @@ function DashboardPage() {
         <div className="flex grow flex-col gap-4 sm:flex-row md:grow-0">
           <button
             onClick={handleViewFinancialInsights}
-            className="border-outline text-on-secondary bg-secondary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+            className="border-outline flex items-center gap-2 justify-center text-on-secondary bg-secondary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
           >
+            <InsightsIcon className="h-5 w-5" />
             View Financial Insights
           </button>
 
           <button
             onClick={handleManageCategoriesModalOpen}
-            className="border-outline text-primary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+            className="border-outline flex items-center gap-2 justify-center text-primary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
           >
+            <CategoryIcon className="h-5 w-5" />
             Manage Categories
           </button>
         </div>
