@@ -1,5 +1,6 @@
 import ActionMenu from './ActionMenu';
 import Modal from './Modal';
+import AddIcon from '../icons/AddIcon';
 
 function ManageCategoriesModal({
   categories,
@@ -15,8 +16,9 @@ function ManageCategoriesModal({
         <h3 className="text-title-large">Categories</h3>
         <button
           onClick={onAddNew}
-          className="border-outline text-primary text-label-large cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105"
+          className="border-outline text-primary text-label-large flex cursor-pointer items-center justify-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105"
         >
+          <AddIcon className="h-5 w-5" />
           New Category
         </button>
       </div>
@@ -24,7 +26,7 @@ function ManageCategoriesModal({
         {categories.map((category) => (
           <li
             key={category.id}
-            className="bg-surface-container border-outline/10 min-h-13 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-between rounded-xl border p-2 transition-colors"
+            className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex min-h-13 items-center justify-between rounded-xl border p-2 transition-colors"
           >
             <div>
               <p>{category.name}</p>{' '}
@@ -36,7 +38,7 @@ function ManageCategoriesModal({
             </div>
 
             {!category.userId && (
-              <p className="bg-tertiary text-on-tertiary rounded-full px-2 py-1  text-xs">
+              <p className="bg-tertiary text-on-tertiary rounded-full px-2 py-1 text-xs">
                 Default
               </p>
             )}
