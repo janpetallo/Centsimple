@@ -9,7 +9,7 @@ export function useDashboardFilters(onFilterChange) {
   });
 
   const [searchInput, setSearchInput] = useState('');
-  const debouncedSearchTerm = useDebounce(searchInput, 1000);
+  const debouncedSearchTerm = useDebounce(searchInput, 500);
   const searchInputRef = useRef(null);
 
   function handleSearchInputChange(e) {
