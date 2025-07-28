@@ -33,4 +33,11 @@ categoryRouter.delete(
   categoryController.deleteCategory
 );
 
+categoryRouter.put(
+  '/:categoryId/pin',
+  passport.authenticate('jwt', { session: false }),
+  validators.validateCategoryId,
+  categoryController.togglePinCategory
+);
+
 module.exports = categoryRouter;
