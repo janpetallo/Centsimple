@@ -95,9 +95,12 @@ async function getCategories(req, res) {
       return a.name.localeCompare(b.name);
     });
 
+    const pinnedIds = Array.from(pinnedCategoryIds);
+
     res.status(200).json({
       message: 'Categories fetched successfully.',
       categories: categories,
+      pinnedIds: pinnedIds,
     });
   } catch (error) {
     console.error('Error fetching all categories', error);
