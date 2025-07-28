@@ -22,6 +22,7 @@ function getCookieOptions() {
 }
 
 async function register(req, res) {
+  let newUser;
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -35,14 +36,16 @@ async function register(req, res) {
       },
     });
     if (existingUser) {
-      return res.status(409).json({ message: 'User already exists' });
+      return res
+        .status(409)
+        .json({ message: 'An account with this email already exists.' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
 
-    const newUser = await prisma.user.create({
+    newUser = await prisma.user.create({
       data: {
         firstName: firstName,
         lastName: lastName,
@@ -73,7 +76,9 @@ async function register(req, res) {
       await prisma.user.delete({ where: { id: newUser.id } });
     }
 
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not create your account. Please try again.' });
   }
 }
 
@@ -90,7 +95,9 @@ async function verifyEmail(req, res) {
     });
 
     if (!user) {
-      return res.status(400).json({ message: 'Invalid or expired token' });
+      return res
+        .status(400)
+        .json({ message: 'This verification link is invalid or has expired.' });
     }
 
     await prisma.user.update({
@@ -105,11 +112,13 @@ async function verifyEmail(req, res) {
     });
 
     res.status(200).json({
-      message: 'Email verified successfully',
+      message: 'Email verified successfully. You can now log in.',
     });
   } catch (error) {
     console.error('Email verification error', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not verify your email. Please try again.' });
   }
 }
 
@@ -135,17 +144,17 @@ async function login(req, res) {
     res.status(200).json(req.user);
   } catch (error) {
     console.error('Login error', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
 }
 
 async function logout(req, res) {
   try {
     res.clearCookie('token', getCookieOptions());
-    res.status(200).json({ message: 'Logged out successfully' });
+    res.status(200).json({ message: 'You have been logged out.' });
   } catch (error) {
     console.error('Logout error', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
 }
 
@@ -155,7 +164,9 @@ async function profile(req, res) {
     res.status(200).json(req.user);
   } catch (error) {
     console.error('Profile access error', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res
+      .status(500)
+      .json({ message: 'Could not load your profile. Please try again.' });
   }
 }
 

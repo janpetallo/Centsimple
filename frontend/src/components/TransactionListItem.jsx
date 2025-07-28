@@ -11,7 +11,7 @@ function TransactionListItem({ transaction, onEdit, onDelete, error }) {
             <p className="bg-secondary-container text-on-secondary-container max-w-fit rounded-full px-2 py-1 text-xs whitespace-nowrap">
               {formatter.formatDate(transaction.date)}
             </p>
-            <p className="bg-tertiary-container text-on-tertiary-container rounded-full px-2 py-1 text-xs">
+            <p className="bg-tertiary-container text-on-tertiary-container truncate rounded-full px-2 py-1 text-xs whitespace-nowrap">
               {transaction.category.name}
             </p>
           </div>

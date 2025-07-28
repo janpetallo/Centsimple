@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import IncomeExpenseDetails from './IncomeExpenseDetails';
 
 ChartJS.register(
   CategoryScale,
@@ -66,14 +67,7 @@ function IncomeExpenseChart({ reportData }) {
     maintainAspectRatio: false, // Allows the chart to fill its container
     plugins: {
       legend: {
-        position: 'bottom',
-        labels: {
-          font: {
-            family: 'Inter, sans-serif',
-            size: 14,
-          },
-          color: themeColors.onSurface,
-        },
+        display: false, // Hide the legend as we have a separate component
       },
       title: {
         display: true,
@@ -85,7 +79,7 @@ function IncomeExpenseChart({ reportData }) {
         },
         color: themeColors.onSurface,
         padding: {
-          bottom: 20,
+          bottom: 30,
         },
       },
       tooltip: {
@@ -128,9 +122,17 @@ function IncomeExpenseChart({ reportData }) {
   };
 
   return (
-    // Give the container a height so the chart can fill it
-    <div className="h-96 w-full">
-      <Bar data={data} options={options} />
+    <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-2">
+      <div className="h-96 w-full">
+        <Bar data={data} options={options} />
+      </div>
+      <IncomeExpenseDetails
+        reportData={reportData}
+        colors={{
+          income: themeColors.primary,
+          expense: themeColors.tertiary,
+        }}
+      />
     </div>
   );
 }

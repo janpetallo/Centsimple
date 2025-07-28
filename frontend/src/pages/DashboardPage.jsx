@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as apiService from '../services/api.service';
 import * as formatter from '../utils/format';
@@ -11,62 +11,55 @@ import EditTransactionModal from '../components/EditTransactionModal';
 import ConfirmationDialog from '../components/ConfirmationDialog';
 import TransactionListItem from '../components/TransactionListItem';
 import SearchIcon from '../icons/SearchIcon';
-import useDebounce from '../hooks/useDebounce';
 import FilterListIcon from '../icons/FilterListIcon';
 import FilterModal from '../components/FilterModal';
 import ActiveFilters from '../components/ActiveFilters';
 import AddIcon from '../icons/AddIcon';
+import InsightsIcon from '../icons/InsightsIcon';
+import CategoryIcon from '../icons/CategoryIcon';
+import { useCategoryManager } from '../hooks/useCategoryManager';
+import { useTransactionManager } from '../hooks/useTransactionManager';
+import { useConfirmationDialog } from '../hooks/useConfirmationDialog';
+import { useDashboardFilters } from '../hooks/useDashboardFilters';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 function DashboardPage() {
-  const [categories, setCategories] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
 
-  const [isManageCategoriesModalOpen, setIsManageCategoriesModalOpen] =
-    useState(false);
-  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null);
-  const [categoryError, setCategoryError] = useState({ id: null, message: '' });
+  const { confirmationState, askForConfirmation, closeConfirmationDialog } =
+    useConfirmationDialog();
 
-  const [isTransactionModelOpen, setIsTransactionModalOpen] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState(null);
-  const [transactionError, setTransactionError] = useState({
-    id: null,
-    message: '',
-  });
+  const handleFilterChange = () => {
+    setCurrentPage(1);
+  };
 
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    dateRangeFilter: '',
-    categoryFilter: '',
-  });
+  const {
+    isFilterModalOpen,
+    filters,
+    searchInput,
+    debouncedSearchTerm,
+    searchInputRef,
+    handleSearchInputChange,
+    openFilterModal,
+    closeFilterModal,
+    applyFilters,
+    clearFilter,
+  } = useDashboardFilters(handleFilterChange);
 
-  const [searchInput, setSearchInput] = useState('');
-  const debouncedSearchTerm = useDebounce(searchInput, 1000);
-  const searchInputRef = useRef(null);
-
-  const [confirmationState, setConfirmationState] = useState({
-    isOpen: false,
-    title: '',
-    message: '',
-    onConfirm: null,
-  });
-
-  useEffect(() => {
-    // This effect runs every time the transactions list is updated.
-    // We check if the search input is the currently active element.
-    // If it's not, we re-apply focus to it.
-    if (document.activeElement !== searchInputRef.current) {
-      // We can add a check here to only re-focus if there was a search term
-      if (searchInput) {
-        searchInputRef.current.focus();
-      }
+  // This new success handler can be passed to both hooks.
+  // It intelligently handles data refreshing, including resetting to page 1.
+  const handleSuccess = ({ shouldResetPage = false } = {}) => {
+    if (shouldResetPage && currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      fetchData();
     }
-  }, [transactions, searchInput]); // Run this effect when transactions or searchInput changes
+  };
 
   // Wrap fetchData in useCallback
   const fetchData = useCallback(async () => {
@@ -93,6 +86,46 @@ function DashboardPage() {
     }
   }, [currentPage, filters, debouncedSearchTerm]); // fetchData will only be re-created if any of these changes
 
+  const {
+    isManageCategoriesModalOpen,
+    isAddCategoryModalOpen,
+    editingCategory,
+    categoryError,
+    handleManageCategoriesModalOpen,
+    handleCloseManageCategoriesModal,
+    handleOpenAddCategoryModal,
+    handleOpenEditCategoryModal,
+    handleReturnToManageCategories,
+    handleCategoryCreated,
+    handleCategoryUpdated,
+    handleDeleteCategory,
+  } = useCategoryManager(handleSuccess);
+
+  const {
+    isTransactionModalOpen,
+    editingTransaction,
+    transactionError,
+    handleAddTransaction,
+    handleCloseTransactionModal,
+    handleTransactionCreated,
+    handleEditTransaction,
+    handleCloseEditTransactionModal,
+    handleTransactionUpdated,
+    handleDeleteTransaction,
+  } = useTransactionManager(handleSuccess);
+
+  useEffect(() => {
+    // This effect runs every time the transactions list is updated.
+    // We check if the search input is the currently active element.
+    // If it's not, we re-apply focus to it.
+    if (document.activeElement !== searchInputRef.current) {
+      // We can add a check here to only re-focus if there was a search term
+      if (searchInput) {
+        searchInputRef.current.focus();
+      }
+    }
+  }, [transactions, searchInput, searchInputRef]); // Run this effect when transactions or searchInput changes
+
   useEffect(() => {
     fetchData();
   }, [fetchData]); // only run useEffect when fetchData changes/recreated
@@ -108,170 +141,24 @@ function DashboardPage() {
     setCurrentPage(newPageNumber);
   }
 
-  function handleSearchInputChange(e) {
-    setSearchInput(e.target.value);
-    setCurrentPage(1);
-  }
-
-  function handleFilterModalOpen() {
-    setIsFilterModalOpen(true);
-  }
-
-  function handleFilterModalClose() {
-    setIsFilterModalOpen(false);
-  }
-
-  function handleFilterApplied(draftFilters) {
-    setFilters(draftFilters);
-    setCurrentPage(1);
-    setIsFilterModalOpen(false);
-  }
-
-  function handleClearFilter(filterName) {
-    if (filterName === 'searchTerm') {
-      setSearchInput('');
-    } else {
-      setFilters((prevFilters) => ({ ...prevFilters, [filterName]: '' }));
-    }
-    setCurrentPage(1);
-  }
-
-  // MANAGE CATEGORIES
-  function handleManageCategoriesModalOpen() {
-    setCategoryError({ id: null, message: '' });
-    setIsManageCategoriesModalOpen(true);
-  }
-
-  function handleCloseManageCategoriesModal() {
-    setCategoryError({ id: null, message: '' });
-    setIsManageCategoriesModalOpen(false);
-  }
-
-  // Closes the main modal and opens the "Add" modal
-  function handleOpenAddCategoryModal() {
-    setIsManageCategoriesModalOpen(false);
-    setIsAddCategoryModalOpen(true);
-  }
-
-  // Closes the main modal and opens the "Edit" modal
-  function handleOpenEditCategoryModal(category) {
-    setIsManageCategoriesModalOpen(false);
-    setEditingCategory(category);
-  }
-
-  // This function will close the "Add" or "Edit" modal and re-open the "Manage" modal
-  function handleReturnToManageCategories() {
-    setIsAddCategoryModalOpen(false);
-    setEditingCategory(null);
-    handleManageCategoriesModalOpen();
-  }
-
-  function handleCategoryCreated() {
-    setIsAddCategoryModalOpen(false);
-    setIsManageCategoriesModalOpen(true);
-    fetchData();
-  }
-
-  function handleCategoryUpdated() {
-    setEditingCategory(null);
-    setIsManageCategoriesModalOpen(true);
-    fetchData();
-  }
-
-  // DELETE CATEGORY
+  // DELETE CATEGORY CONFIRMATION
   function handleDeleteCategoryConfirmation(categoryId) {
-    setConfirmationState({
-      isOpen: true,
-      title: 'Delete Category?',
-      message: 'This will permanently delete the category.',
+    askForConfirmation({
+      title: 'Delete category?',
+      message:
+        'This will permanently delete the category. This action cannot be undone.',
       onConfirm: () => handleDeleteCategory(categoryId),
     });
   }
 
-  function handleCloseConfirmationDialog() {
-    setConfirmationState({
-      isOpen: false,
-      title: '',
-      message: '',
-      onConfirm: null,
-    });
-  }
-
-  function handleConfirmationDialogSuccess() {
-    handleCloseConfirmationDialog();
-    fetchData();
-  }
-
-  async function handleDeleteCategory(categoryId) {
-    setCategoryError({ id: null, message: '' });
-
-    try {
-      const categoryData = await apiService.deleteCategory(categoryId);
-      console.log('Category deleted successfully', categoryData);
-      handleConfirmationDialogSuccess();
-    } catch (error) {
-      console.error('Error deleting category:', error.message);
-      setCategoryError({ id: categoryId, message: error.message });
-      handleCloseConfirmationDialog();
-    }
-  }
-
-  // ADD TRANSACTION
-  function handleAddTransaction() {
-    setIsTransactionModalOpen(true);
-  }
-
-  function handleCloseTransactionModal() {
-    setIsTransactionModalOpen(false);
-  }
-
-  function handleTransactionCreated() {
-    setIsTransactionModalOpen(false);
-    // By setting the page to 1, we trigger the useEffect to run again automatically.
-    // If we are already on page 1, we can call fetchData directly.
-    if (currentPage === 1) {
-      fetchData();
-    } else {
-      setCurrentPage(1);
-    }
-  }
-
-  // EDIT TRANSACTION
-  function handleEditTransaction(transaction) {
-    setEditingTransaction(transaction);
-  }
-
-  function handleCloseEditTransactionModal() {
-    setEditingTransaction(null);
-  }
-
-  function handleTransactionUpdated() {
-    setEditingTransaction(null);
-    fetchData();
-  }
-
   // DELETE TRANSACTION
   function handleDeleteTransactionConfirmation(transactionId) {
-    setConfirmationState({
-      isOpen: true,
-      title: 'Delete Transaction?',
-      message: 'This will permanently delete the transaction.',
+    askForConfirmation({
+      title: 'Delete transaction?',
+      message:
+        'This will permanently delete the transaction. This action cannot be undone.',
       onConfirm: () => handleDeleteTransaction(transactionId),
     });
-  }
-
-  async function handleDeleteTransaction(transactionId) {
-    setTransactionError({ id: null, message: '' });
-
-    try {
-      const transactionData = await apiService.deleteTransaction(transactionId);
-      console.log('Transaction deleted successfully', transactionData);
-      handleConfirmationDialogSuccess();
-    } catch (error) {
-      console.error('Error deleting transaction:', error.message);
-      setTransactionError({ id: transactionId, message: error.message });
-      handleCloseConfirmationDialog();
-    }
   }
 
   return (
@@ -282,15 +169,17 @@ function DashboardPage() {
         <div className="flex grow flex-col gap-4 sm:flex-row md:grow-0">
           <button
             onClick={handleViewFinancialInsights}
-            className="border-outline text-on-secondary bg-secondary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+            className="border-outline flex items-center gap-2 justify-center text-on-secondary bg-secondary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
           >
+            <InsightsIcon className="h-5 w-5" />
             View Financial Insights
           </button>
 
           <button
             onClick={handleManageCategoriesModalOpen}
-            className="border-outline text-primary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+            className="border-outline flex items-center gap-2 justify-center text-primary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
           >
+            <CategoryIcon className="h-5 w-5" />
             Manage Categories
           </button>
         </div>
@@ -310,40 +199,6 @@ function DashboardPage() {
                 {formatter.formatCurrency(balance)}
               </p>
             </div>
-            {isManageCategoriesModalOpen && (
-              <ManageCategoriesModal
-                categories={categories}
-                error={categoryError}
-                onClose={handleCloseManageCategoriesModal}
-                onAddNew={handleOpenAddCategoryModal}
-                onEdit={handleOpenEditCategoryModal}
-                onDelete={handleDeleteCategoryConfirmation}
-              />
-            )}
-
-            {isAddCategoryModalOpen && (
-              <AddCategoryModal
-                onCategoryCreated={handleCategoryCreated}
-                onClose={handleReturnToManageCategories}
-              />
-            )}
-
-            {editingCategory && (
-              <EditCategoryModal
-                category={editingCategory}
-                onCategoryUpdated={handleCategoryUpdated}
-                onClose={handleReturnToManageCategories}
-              />
-            )}
-
-            {editingTransaction && (
-              <EditTransactionModal
-                transaction={editingTransaction}
-                categories={categories}
-                onTransactionUpdated={handleTransactionUpdated}
-                onClose={handleCloseEditTransactionModal}
-              />
-            )}
 
             <div className="my-4 flex items-center gap-2 sm:gap-4">
               {/* Search Bar Container */}
@@ -364,7 +219,7 @@ function DashboardPage() {
 
               {/* Filters Button */}
               <button
-                onClick={handleFilterModalOpen}
+                onClick={openFilterModal}
                 className="border-outline hover:bg-primary-container hover:text-on-primary-container inline-flex flex-shrink-0 cursor-pointer items-center gap-2 rounded-full border px-4 py-2 transition-colors"
               >
                 <FilterListIcon className="h-5 w-5" />
@@ -381,21 +236,12 @@ function DashboardPage() {
               </button>
             </div>
 
-            {isFilterModalOpen && (
-              <FilterModal
-                categories={categories}
-                currentFilters={filters}
-                onApply={handleFilterApplied}
-                onClose={handleFilterModalClose}
-              />
-            )}
-
             <div>
               <ActiveFilters
                 categories={categories}
                 filters={filters}
                 searchTerm={debouncedSearchTerm}
-                onClearFilter={handleClearFilter}
+                onClearFilter={clearFilter}
               />
             </div>
 
@@ -432,14 +278,6 @@ function DashboardPage() {
             >
               <AddIcon className="h-12 w-12 md:h-16 md:w-16" />
             </button>
-
-            {isTransactionModelOpen && (
-              <AddTransactionModal
-                categories={categories}
-                onTransactionCreated={handleTransactionCreated}
-                onClose={handleCloseTransactionModal}
-              />
-            )}
           </div>
           <div>
             <Pagination
@@ -449,13 +287,134 @@ function DashboardPage() {
           </div>
         </div>
       )}
+      {/* All modals are now rendered by this single, clean component */}
+      <DashboardModals
+        // Category Modals
+        isManageCategoriesModalOpen={isManageCategoriesModalOpen}
+        isAddCategoryModalOpen={isAddCategoryModalOpen}
+        editingCategory={editingCategory}
+        categoryError={categoryError}
+        handleCloseManageCategoriesModal={handleCloseManageCategoriesModal}
+        handleOpenAddCategoryModal={handleOpenAddCategoryModal}
+        handleOpenEditCategoryModal={handleOpenEditCategoryModal}
+        handleDeleteCategoryConfirmation={handleDeleteCategoryConfirmation}
+        handleCategoryCreated={handleCategoryCreated}
+        handleReturnToManageCategories={handleReturnToManageCategories}
+        handleCategoryUpdated={handleCategoryUpdated}
+        // Transaction Modals
+        isTransactionModalOpen={isTransactionModalOpen}
+        editingTransaction={editingTransaction}
+        handleTransactionCreated={handleTransactionCreated}
+        handleCloseTransactionModal={handleCloseTransactionModal}
+        handleTransactionUpdated={handleTransactionUpdated}
+        handleCloseEditTransactionModal={handleCloseEditTransactionModal}
+        // Filter Modal
+        isFilterModalOpen={isFilterModalOpen}
+        filters={filters}
+        applyFilters={applyFilters}
+        closeFilterModal={closeFilterModal}
+        // Confirmation Dialog
+        confirmationState={confirmationState}
+        closeConfirmationDialog={closeConfirmationDialog}
+        // Shared Data
+        categories={categories}
+      />
+    </>
+  );
+}
+
+function DashboardModals({
+  // Category Modals
+  isManageCategoriesModalOpen,
+  isAddCategoryModalOpen,
+  editingCategory,
+  categoryError,
+  handleCloseManageCategoriesModal,
+  handleOpenAddCategoryModal,
+  handleOpenEditCategoryModal,
+  handleDeleteCategoryConfirmation,
+  handleCategoryCreated,
+  handleReturnToManageCategories,
+  handleCategoryUpdated,
+  // Transaction Modals
+  isTransactionModalOpen,
+  editingTransaction,
+  handleTransactionCreated,
+  handleCloseTransactionModal,
+  handleTransactionUpdated,
+  handleCloseEditTransactionModal,
+  // Filter Modal
+  isFilterModalOpen,
+  filters,
+  applyFilters,
+  closeFilterModal,
+  // Confirmation Dialog
+  confirmationState,
+  closeConfirmationDialog,
+  // Shared Data
+  categories,
+}) {
+  return (
+    <>
+      {isManageCategoriesModalOpen && (
+        <ManageCategoriesModal
+          categories={categories}
+          error={categoryError}
+          onClose={handleCloseManageCategoriesModal}
+          onAddNew={handleOpenAddCategoryModal}
+          onEdit={handleOpenEditCategoryModal}
+          onDelete={handleDeleteCategoryConfirmation}
+        />
+      )}
+
+      {isAddCategoryModalOpen && (
+        <AddCategoryModal
+          onCategoryCreated={handleCategoryCreated}
+          onClose={handleReturnToManageCategories}
+        />
+      )}
+
+      {editingCategory && (
+        <EditCategoryModal
+          category={editingCategory}
+          onCategoryUpdated={handleCategoryUpdated}
+          onClose={handleReturnToManageCategories}
+        />
+      )}
+
+      {editingTransaction && (
+        <EditTransactionModal
+          transaction={editingTransaction}
+          categories={categories}
+          onTransactionUpdated={handleTransactionUpdated}
+          onClose={handleCloseEditTransactionModal}
+        />
+      )}
+
+      {isTransactionModalOpen && (
+        <AddTransactionModal
+          categories={categories}
+          onTransactionCreated={handleTransactionCreated}
+          onClose={handleCloseTransactionModal}
+        />
+      )}
+
+      {isFilterModalOpen && (
+        <FilterModal
+          categories={categories}
+          currentFilters={filters}
+          onApply={applyFilters}
+          onClose={closeFilterModal}
+        />
+      )}
+
       {confirmationState.isOpen && (
         <ConfirmationDialog
           isOpen={confirmationState.isOpen}
           title={confirmationState.title}
           message={confirmationState.message}
           onConfirm={confirmationState.onConfirm}
-          onCancel={handleCloseConfirmationDialog}
+          onCancel={closeConfirmationDialog}
         />
       )}
     </>

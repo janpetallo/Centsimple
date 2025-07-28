@@ -1,38 +1,36 @@
 const { body, param } = require('express-validator');
-const lengthErr = 'must be at least 2 characters';
-const emailErr = 'must be a valid email';
 
 const validateUser = [
   body('firstName')
     .trim() // Remove whitespace
     .isLength({ min: 2 })
-    .withMessage(`First name ${lengthErr}`)
+    .withMessage('First name must be at least 2 characters.')
     .escape(), // Sanitize to prevent XSS
   body('lastName')
     .trim()
     .isLength({ min: 2 })
-    .withMessage(`Last name ${lengthErr}`)
+    .withMessage('Last name must be at least 2 characters.')
     .escape(),
   body('email')
     .trim()
     .isEmail()
-    .withMessage(`Email ${emailErr}`)
+    .withMessage('Please enter a valid email.')
     .normalizeEmail(),
   body('password')
     .trim()
     .isLength({ min: 8 })
-    .withMessage('Password must be at least 8 characters long')
+    .withMessage('Password must be at least 8 characters long.')
     .matches(/\d/)
-    .withMessage('Password must contain at least one number')
+    .withMessage('Password must contain at least one number.')
     .matches(/[a-z]/)
-    .withMessage('Password must contain at least one lowercase letter')
+    .withMessage('Password must contain at least one lowercase letter.')
     .matches(/[A-Z]/)
-    .withMessage('Password must contain at least one uppercase letter')
+    .withMessage('Password must contain at least one uppercase letter.')
     .matches(/[^\w\s]/)
-    .withMessage('Password must contain at least one symbol'),
+    .withMessage('Password must contain at least one symbol.'),
   body('confirmPassword').custom((value, { req }) => {
     if (value !== req.body.password) {
-      throw new Error('Passwords do not match');
+      throw new Error('Passwords do not match.');
     }
     return true;
   }),
@@ -42,9 +40,9 @@ const validateCategory = [
   body('name')
     .trim()
     .notEmpty()
-    .withMessage('Category name is required')
+    .withMessage('Category name is required.')
     .isLength({ min: 2 })
-    .withMessage(`Category name ${lengthErr}`)
+    .withMessage('Category name must be at least 2 characters.')
     .escape(),
 ];
 
@@ -52,43 +50,40 @@ const validateTransaction = [
   body('amount')
     .trim()
     .notEmpty()
-    .withMessage('Amount is required')
+    .withMessage('Amount is required.')
     .isFloat({ gt: 0 })
-    .withMessage('Amount must be a positive number'),
+    .withMessage('Amount must be a positive number.'),
   body('description')
     .trim()
     .notEmpty()
-    .withMessage('Description is required')
+    .withMessage('Description is required.')
     .escape(),
   body('categoryId')
     .trim()
     .notEmpty()
-    .withMessage('Category is required')
+    .withMessage('Category is required.')
     .isInt()
-    .withMessage('Category ID must be an integer'),
+    .withMessage('Invalid category selected.'),
   body('date')
     .trim()
     .notEmpty()
-    .withMessage('Date is required')
+    .withMessage('Date is required.')
     .isISO8601()
-    .withMessage('Invalid date format'),
+    .withMessage('Please use a valid date format.'),
   body('type')
     .trim()
     .notEmpty()
-    .withMessage('Type is required')
+    .withMessage('Type is required.')
     .isIn(['INCOME', 'EXPENSE'])
-    .withMessage('Invalid type')
-    .escape(),
+    .withMessage('Invalid transaction type.'),
 ];
 
 const validateCategoryId = [
-  param('categoryId').isInt().withMessage('Category ID must be an integer'),
+  param('categoryId').isInt().withMessage('Invalid category ID.'),
 ];
 
 const validateTransactionId = [
-  param('transactionId')
-    .isInt()
-    .withMessage('Transaction ID must be an integer'),
+  param('transactionId').isInt().withMessage('Invalid transaction ID.'),
 ];
 
 module.exports = {
