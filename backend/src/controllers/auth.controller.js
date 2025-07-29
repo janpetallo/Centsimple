@@ -144,7 +144,9 @@ async function login(req, res) {
     res.status(200).json(req.user);
   } catch (error) {
     console.error('Login error', error);
-    res.status(500).json({ message: 'Something went wrong. Please try again.' });
+    res
+      .status(500)
+      .json({ message: 'Something went wrong. Please try again.' });
   }
 }
 
@@ -154,7 +156,9 @@ async function logout(req, res) {
     res.status(200).json({ message: 'You have been logged out.' });
   } catch (error) {
     console.error('Logout error', error);
-    res.status(500).json({ message: 'Something went wrong. Please try again.' });
+    res
+      .status(500)
+      .json({ message: 'Something went wrong. Please try again.' });
   }
 }
 

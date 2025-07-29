@@ -58,6 +58,24 @@ async function registerUser(formData) {
   }
 }
 
+async function verifyEmail(token) {
+  try {
+    const link = new URL('http://localhost:5001/api/auth/verify-email');
+    link.searchParams.append('token', token);
+    const url = link.toString();
+    const options = {
+      method: 'GET',
+      credentials: 'include',
+    };
+
+    const data = await apiClient(url, options);
+    return data;
+  } catch (error) {
+    console.error('Verify email error:', error);
+    throw error;
+  }
+}
+
 // This does not use the apiClient above so it correctly displays specific error message
 async function loginUser(formData) {
   try {
@@ -333,6 +351,7 @@ async function toggleCategoryPin(categoryId) {
 export {
   setupApiInterceptor,
   registerUser,
+  verifyEmail,
   loginUser,
   logoutUser,
   checkAuthStatus,
