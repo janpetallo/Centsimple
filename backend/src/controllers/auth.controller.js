@@ -36,6 +36,28 @@ async function register(req, res) {
       },
     });
     if (existingUser) {
+      // If user exists but is not verified, resend their verification email.
+      if (!existingUser.isVerified) {
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+        await prisma.user.update({
+          where: { email: email },
+          data: {
+            verificationToken: verificationToken,
+            verificationTokenExpires: expiresAt,
+          },
+        });
+
+        await emailService.sendVerificationEmail(email, verificationToken);
+
+        // Let the user know a new link was sent.
+        return res.status(200).json({
+          message:
+            'An unverified account with this email already exists. A new verification link has been sent.',
+        });
+      }
+      // If user exists and is verified, then it's a conflict.
       return res
         .status(409)
         .json({ message: 'An account with this email already exists.' });
@@ -222,4 +244,11 @@ async function profile(req, res) {
   }
 }
 
-module.exports = { register, verifyEmail, resendVerificationEmail, login, logout, profile };
+module.exports = {
+  register,
+  verifyEmail,
+  resendVerificationEmail,
+  login,
+  logout,
+  profile,
+};
