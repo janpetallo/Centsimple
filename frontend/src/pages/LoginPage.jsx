@@ -19,6 +19,8 @@ function LoginPage() {
   const navigate = useNavigate();
 
   function handleChange(e) {
+    setError(null);
+    setInfoMessage('');
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
