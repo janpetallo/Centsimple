@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import * as apiService from '../services/api.service';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -57,7 +58,7 @@ function RegisterPage() {
   }
 
   return (
-    <div className="mx-auto w-full flex max-w-lg flex-col">
+    <div className="mx-auto flex w-full max-w-lg flex-col">
       <h2 className="text-headline-medium mb-8 text-left">Register</h2>
       <div className="bg-surface-container rounded-2xl p-8 shadow-sm">
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -150,9 +151,15 @@ function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary text-on-primary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            className="bg-primary text-on-primary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            Register
+            {loading ? (
+              <div className="flex grow items-center justify-center">
+                <LoadingSpinner className="text-on-primary-container bg-primary-container h-6 w-6 rounded-full" />
+              </div>
+            ) : (
+              'Register'
+            )}
           </button>
         </form>
         <p className="text-on-surface-variant text-label-large mt-4">
