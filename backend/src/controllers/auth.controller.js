@@ -122,6 +122,61 @@ async function verifyEmail(req, res) {
   }
 }
 
+async function resendVerificationEmail(req, res) {
+  const { email } = req.body;
+  try {
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    if (!existingUser) {
+      // We send a generic success message even if the user doesn't exist.
+      // This prevents "user enumeration", where an attacker could guess valid emails.
+      return res.status(200).json({
+        message:
+          'If an account with this email exists, a new verification link has been sent.',
+      });
+    }
+
+    // Add a check to see if the user is already verified.
+    if (existingUser.isVerified) {
+      return res
+        .status(409)
+        .json({ message: 'This account has already been verified.' });
+    }
+
+    // Generate a new token and expiry date.
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+
+    await prisma.user.update({
+      where: {
+        id: existingUser.id,
+      },
+      data: {
+        verificationToken: verificationToken,
+        verificationTokenExpires: expiresAt,
+      },
+    });
+
+    // Send the new verification email.
+    await emailService.sendVerificationEmail(email, verificationToken);
+
+    // Add the missing success response.
+    return res.status(200).json({
+      message:
+        'A new verification link has been sent to your email address.',
+    });
+  } catch (error) {
+    console.error('Resend verification email error', error);
+    res.status(500).json({
+      message: 'Could not resend verification email. Please try again.',
+    });
+  }
+}
+
 async function login(req, res) {
   try {
     const userPayload = {
@@ -174,4 +229,4 @@ async function profile(req, res) {
   }
 }
 
-module.exports = { register, verifyEmail, login, logout, profile };
+module.exports = { register, verifyEmail, resendVerificationEmail, login, logout, profile };
