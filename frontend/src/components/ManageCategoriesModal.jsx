@@ -1,14 +1,18 @@
 import ActionMenu from './ActionMenu';
 import Modal from './Modal';
 import AddIcon from '../icons/AddIcon';
+import PinIcon from '../icons/PinIcon';
+import PinIconFilled from '../icons/PinIconFilled';
 
 function ManageCategoriesModal({
   categories,
+  pinnedCategoryIds,
   error,
   onClose,
   onAddNew,
   onEdit,
   onDelete,
+  onTogglePin,
 }) {
   return (
     <Modal title="Manage Categories" onClose={onClose}>
@@ -29,7 +33,19 @@ function ManageCategoriesModal({
             className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex min-h-13 items-center justify-between rounded-xl border p-2 transition-colors"
           >
             <div>
-              <p>{category.name}</p>{' '}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => onTogglePin(category.id)}
+                  className="hover:bg-surface-container cursor-pointer rounded-full p-1 transition-colors"
+                >
+                  {pinnedCategoryIds.has(category.id) ? (
+                    <PinIconFilled className="text-primary h-6 w-6" />
+                  ) : (
+                    <PinIcon className="text-on-surface-variant h-6 w-6" />
+                  )}
+                </button>
+                <p>{category.name}</p>
+              </div>
               {error.id === category.id && (
                 <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
                   {error.message}
