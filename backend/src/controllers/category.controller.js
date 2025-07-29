@@ -56,16 +56,51 @@ async function createCategory(req, res) {
 async function getCategories(req, res) {
   try {
     const userId = req.user.id;
+
+    // STEP 1: Get a list of all category IDs that the user has pinned.
+    const pinnedCategories = await prisma.userPinnedCategory.findMany({
+      where: {
+        userId: userId,
+      },
+      select: {
+        categoryId: true,
+      },
+    });
+
+    // Create a Set for fast lookups (O(1) complexity).
+    const pinnedCategoryIds = new Set(
+      pinnedCategories.map((pc) => pc.categoryId)
+    );
+
+    // STEP 2: Fetch ALL categories relevant to the user (their own + all defaults).
     const categories = await prisma.category.findMany({
       where: {
         OR: [{ userId: userId }, { userId: null }],
       },
-      orderBy: [{ userId: 'desc' }, { name: 'asc' }],
     });
+
+    // STEP 3: Sort the categories in JavaScript.
+    // Pinned categories will be at the top, followed by unpinned categories.
+    // Within each group, categories are sorted alphabetically.
+    categories.sort((a, b) => {
+      const aIsPinned = pinnedCategoryIds.has(a.id);
+      const bIsPinned = pinnedCategoryIds.has(b.id);
+
+      // If one is pinned and the other is not, the pinned one comes first.
+      if (aIsPinned !== bIsPinned) {
+        return aIsPinned ? -1 : 1;
+      }
+
+      // If both are pinned or both are unpinned, sort by name alphabetically.
+      return a.name.localeCompare(b.name);
+    });
+
+    const pinnedIds = Array.from(pinnedCategoryIds);
 
     res.status(200).json({
       message: 'Categories fetched successfully.',
       categories: categories,
+      pinnedIds: pinnedIds,
     });
   } catch (error) {
     console.error('Error fetching all categories', error);
@@ -203,9 +238,80 @@ async function deleteCategory(req, res) {
   }
 }
 
+async function togglePinCategory(req, res) {
+  const categoryId = parseInt(req.params.categoryId, 10);
+  const userId = req.user.id;
+
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // STEP 1: Verify the category exists and is accessible to the user (default or their own).
+    const category = await prisma.category.findFirst({
+      where: {
+        id: categoryId,
+        OR: [{ userId: userId }, { userId: null }],
+      },
+    });
+
+    if (!category) {
+      return res.status(404).json({
+        message: 'Category not found or you do not have permission to pin it.',
+      });
+    }
+
+    // STEP 2: Check if the pin already exists in the correct table.
+    const existingPin = await prisma.userPinnedCategory.findUnique({
+      where: {
+        userId_categoryId: {
+          userId: userId,
+          categoryId: categoryId,
+        },
+      },
+    });
+
+    // STEP 3: If the pin exists, delete it to "unpin".
+    if (existingPin) {
+      await prisma.userPinnedCategory.delete({
+        where: {
+          userId_categoryId: {
+            userId: userId,
+            categoryId: categoryId,
+          },
+        },
+      });
+      return res.status(200).json({
+        message: 'Category unpinned successfully.',
+        category: category,
+      });
+    }
+
+    // STEP 4: If the pin does not exist, create it.
+    await prisma.userPinnedCategory.create({
+      data: {
+        userId: userId,
+        categoryId: categoryId,
+      },
+    });
+
+    return res.status(201).json({
+      message: 'Category pinned successfully.',
+      category: category,
+    });
+  } catch (error) {
+    console.error('Error toggling pin for a category', error);
+    res
+      .status(500)
+      .json({ message: 'Could not toggle pin. Please try again.' });
+  }
+}
+
 module.exports = {
   createCategory,
   getCategories,
   updateCategory,
   deleteCategory,
+  togglePinCategory,
 };

@@ -314,6 +314,22 @@ async function getSummaryReport(dateRange) {
   }
 }
 
+async function toggleCategoryPin(categoryId) {
+  try {
+    const link = 'http://localhost:5001/api/categories/' + categoryId + '/pin';
+    const options = {
+      method: 'PUT',
+      credentials: 'include',
+    };
+
+    const data = await apiClient(link, options);
+    return data;
+  } catch (error) {
+    console.error('Toggle category pin error:', error);
+    throw error;
+  }
+}
+
 export {
   setupApiInterceptor,
   registerUser,
@@ -329,4 +345,5 @@ export {
   deleteCategory,
   deleteTransaction,
   getSummaryReport,
+  toggleCategoryPin,
 };

@@ -30,6 +30,7 @@ function DashboardPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
+  const [pinnedCategoryIds, setPinnedCategoryIds] = useState(new Set());
 
   const { confirmationState, askForConfirmation, closeConfirmationDialog } =
     useConfirmationDialog();
@@ -76,6 +77,7 @@ function DashboardPage() {
       ]);
 
       setCategories(categoriesData.categories);
+      setPinnedCategoryIds(new Set(categoriesData.pinnedIds));
       setTransactions(transactionsData.transactions);
       setBalance(transactionsData.balance);
       setPagination(transactionsData.pagination);
@@ -99,6 +101,7 @@ function DashboardPage() {
     handleCategoryCreated,
     handleCategoryUpdated,
     handleDeleteCategory,
+    handleTogglePinCategory,
   } = useCategoryManager(handleSuccess);
 
   const {
@@ -169,7 +172,7 @@ function DashboardPage() {
         <div className="flex grow flex-col gap-4 sm:flex-row md:grow-0">
           <button
             onClick={handleViewFinancialInsights}
-            className="border-outline flex items-center gap-2 justify-center text-on-secondary bg-secondary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+            className="border-outline text-on-secondary bg-secondary flex grow cursor-pointer items-center justify-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
           >
             <InsightsIcon className="h-5 w-5" />
             View Financial Insights
@@ -177,7 +180,7 @@ function DashboardPage() {
 
           <button
             onClick={handleManageCategoriesModalOpen}
-            className="border-outline flex items-center gap-2 justify-center text-primary grow cursor-pointer rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+            className="border-outline text-primary flex grow cursor-pointer items-center justify-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
           >
             <CategoryIcon className="h-5 w-5" />
             Manage Categories
@@ -294,6 +297,7 @@ function DashboardPage() {
         isAddCategoryModalOpen={isAddCategoryModalOpen}
         editingCategory={editingCategory}
         categoryError={categoryError}
+        pinnedCategoryIds={pinnedCategoryIds}
         handleCloseManageCategoriesModal={handleCloseManageCategoriesModal}
         handleOpenAddCategoryModal={handleOpenAddCategoryModal}
         handleOpenEditCategoryModal={handleOpenEditCategoryModal}
@@ -301,6 +305,7 @@ function DashboardPage() {
         handleCategoryCreated={handleCategoryCreated}
         handleReturnToManageCategories={handleReturnToManageCategories}
         handleCategoryUpdated={handleCategoryUpdated}
+        handleTogglePinCategory={handleTogglePinCategory}
         // Transaction Modals
         isTransactionModalOpen={isTransactionModalOpen}
         editingTransaction={editingTransaction}
@@ -329,6 +334,7 @@ function DashboardModals({
   isAddCategoryModalOpen,
   editingCategory,
   categoryError,
+  pinnedCategoryIds,
   handleCloseManageCategoriesModal,
   handleOpenAddCategoryModal,
   handleOpenEditCategoryModal,
@@ -336,6 +342,7 @@ function DashboardModals({
   handleCategoryCreated,
   handleReturnToManageCategories,
   handleCategoryUpdated,
+  handleTogglePinCategory,
   // Transaction Modals
   isTransactionModalOpen,
   editingTransaction,
@@ -359,11 +366,13 @@ function DashboardModals({
       {isManageCategoriesModalOpen && (
         <ManageCategoriesModal
           categories={categories}
+          pinnedCategoryIds={pinnedCategoryIds}
           error={categoryError}
           onClose={handleCloseManageCategoriesModal}
           onAddNew={handleOpenAddCategoryModal}
           onEdit={handleOpenEditCategoryModal}
           onDelete={handleDeleteCategoryConfirmation}
+          onTogglePin={handleTogglePinCategory}
         />
       )}
 

@@ -27,17 +27,28 @@ model User {
 
   customCategories Category[]
   transactions     Transaction[]
+  pinnedBy         UserPinnedCategory[]
 }
 
 model Category {
-  id           Int           @id @default(autoincrement())
+  id           Int                  @id @default(autoincrement())
   name         String
-  user         User?         @relation(fields: [userId], references: [id])
+  user         User?                @relation(fields: [userId], references: [id])
   userId       Int? // optional; only when category is created by the user
   transactions Transaction[]
+  pinnedBy     UserPinnedCategory[]
 
   // Each user can only have one category with the same name
   @@unique([name, userId]) // The combination must be unique. 
+}
+
+model UserPinnedCategory {
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  @@id([userId, categoryId]) // The combination must be unique. 
 }
 
 enum TransactionType {

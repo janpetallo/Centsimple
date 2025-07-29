@@ -63,6 +63,20 @@ export function useCategoryManager(onSuccess) {
     }
   }
 
+  async function handleTogglePinCategory(categoryId) {
+    setCategoryError({ id: null, message: '' });
+    try {
+      await apiService.toggleCategoryPin(categoryId);
+      onSuccess();
+    } catch (error) {
+      console.error('Error toggling pin for category:', error.message);
+      setCategoryError({
+        id: categoryId,
+        message: error.message || 'Could not toggle pin. Please try again.',
+      });
+    }
+  }
+
   return {
     isManageCategoriesModalOpen,
     isAddCategoryModalOpen,
@@ -76,5 +90,6 @@ export function useCategoryManager(onSuccess) {
     handleCategoryCreated,
     handleCategoryUpdated,
     handleDeleteCategory,
+    handleTogglePinCategory,
   };
 }
