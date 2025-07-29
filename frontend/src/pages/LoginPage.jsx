@@ -11,6 +11,9 @@ function LoginPage() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const [showResendLink, setShowResendLink] = useState(false);
+  const [infoMessage, setInfoMessage] = useState('');
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -25,6 +28,7 @@ function LoginPage() {
     e.preventDefault();
 
     setError(null);
+    setInfoMessage('');
     setLoading(true);
 
     try {
@@ -36,8 +40,28 @@ function LoginPage() {
       navigate('/dashboard');
     } catch (error) {
       console.error('Error logging in user', error.message);
+      if (error.message == 'Please verify your email to log in.') {
+        setShowResendLink(true);
+      }
       setError(error.message);
     } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleResend() {
+    setError(null);
+    setInfoMessage('');
+    setLoading(true);
+
+    try {
+      const data = await apiService.resendVerificationEmail(formData.email);
+      setInfoMessage(data.message); // if successful, show message
+    } catch (error) {
+      console.error('Error resending verification email', error.message);
+      setError(error.message);
+    } finally {
+      setShowResendLink(false);
       setLoading(false);
     }
   }
@@ -84,13 +108,31 @@ function LoginPage() {
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-primary text-on-primary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
-          >
-            Login
-          </button>
+          {infoMessage && (
+            <p className="bg-primary-container text-on-primary-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+              {infoMessage}
+            </p>
+          )}
+
+          {showResendLink && (
+            <button
+              type="button"
+              onClick={handleResend}
+              className="text-on-secondary bg-secondary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            >
+              Resend Verification Email
+            </button>
+          )}
+
+          {!showResendLink && (
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-primary text-on-primary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
+            >
+              Login
+            </button>
+          )}
         </form>
         <p className="text-on-surface-variant text-label-large mt-4">
           Don't have an account?{' '}

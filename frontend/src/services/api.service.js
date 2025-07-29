@@ -76,6 +76,26 @@ async function verifyEmail(token) {
   }
 }
 
+async function resendVerificationEmail(email) {
+  try {
+    const url = 'http://localhost:5001/api/auth/resend-verification';
+    const options = {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: email }),
+    };
+
+    const data = await apiClient(url, options);
+    return data;
+  } catch (error) {
+    console.error('Resend verification email error:', error);
+    throw error;
+  }
+}
+
 // This does not use the apiClient above so it correctly displays specific error message
 async function loginUser(formData) {
   try {
@@ -352,6 +372,7 @@ export {
   setupApiInterceptor,
   registerUser,
   verifyEmail,
+  resendVerificationEmail,
   loginUser,
   logoutUser,
   checkAuthStatus,
