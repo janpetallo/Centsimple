@@ -54,7 +54,7 @@ function ManageCategoriesModal({
             </div>
 
             {!category.userId && (
-              <p className="bg-tertiary text-on-tertiary rounded-full px-2 py-1 text-xs">
+              <p className="border border-outline bg-surface-container rounded-full px-2 py-1 text-xs">
                 Default
               </p>
             )}
