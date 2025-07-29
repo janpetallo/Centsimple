@@ -1,11 +1,16 @@
 import { useAuth } from '../context/AuthContext';
 import { Navigate, Outlet } from 'react-router-dom';
+import LoadingSpinner from './LoadingSpinner';
 
 function ProtectedRoute() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>; // while still checking auth status
+    return (
+      <div className="flex grow items-center justify-center">
+        <LoadingSpinner className="text-on-primary-container bg-primary-container h-16 w-16 rounded-full" />
+      </div>
+    ); // while still checking auth status
   }
 
   if (user) {
