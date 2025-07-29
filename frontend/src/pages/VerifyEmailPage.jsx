@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import * as apiService from '../services/api.service';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -10,8 +10,16 @@ function VerifyEmailPage() {
   const [status, setStatus] = useState('loading'); // 'loading', 'success', 'error'
   const [message, setMessage] = useState('Verifying your email...');
   const [searchParams] = useSearchParams();
+  const effectRan = useRef(false);
 
   useEffect(() => {
+    // In development, with StrictMode, this effect runs twice.
+    // This check ensures the verification logic only runs once.
+    if (effectRan.current) {
+      return;
+    }
+    effectRan.current = true;
+
     const token = searchParams.get('token');
 
     if (!token) {
