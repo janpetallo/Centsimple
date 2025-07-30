@@ -31,10 +31,12 @@ async function register(req, res) {
 
     const { firstName, lastName, email, password } = req.body;
     const existingUser = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
+      where: { email: email },
     });
+
+    const successMessage =
+      'Your registration request has been processed. Please check your email for next steps.';
+
     if (existingUser) {
       // If user exists but is not verified, resend their verification email.
       if (!existingUser.isVerified) {
@@ -51,16 +53,12 @@ async function register(req, res) {
 
         await emailService.sendVerificationEmail(email, verificationToken);
 
-        // Let the user know a new link was sent.
-        return res.status(200).json({
-          message:
-            'An unverified account with this email already exists. A new verification link has been sent.',
-        });
+        // Return a 200 OK with the same generic message.
+        return res.status(200).json({ message: successMessage });
       }
-      // If user exists and is verified, then it's a conflict.
-      return res
-        .status(409)
-        .json({ message: 'An account with this email already exists.' });
+
+      // If user exists and is verified, return the SAME message as a new registration.
+      return res.status(201).json({ message: successMessage });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -90,8 +88,7 @@ async function register(req, res) {
     } = newUser;
 
     res.status(201).json({
-      message:
-        'Registration successful! Check your email to verify your account.',
+      message: successMessage,
       user: user,
     });
   } catch (error) {
@@ -160,17 +157,12 @@ async function resendVerificationEmail(req, res) {
     const genericSuccessMessage =
       'If an account with this email exists, a new verification link has been sent.';
 
-    if (!existingUser) {
-      // User does not exist, but we send the generic success message to prevent enumeration.
+    // If user doesn't exist or is already verified, we do nothing but send the generic message.
+    if (!existingUser || existingUser.isVerified) {
       return res.status(200).json({ message: genericSuccessMessage });
     }
 
-    if (existingUser.isVerified) {
-      return res
-        .status(409)
-        .json({ message: 'This account has already been verified.' });
-    }
-
+    // This block now only runs if the user exists AND is not verified.
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
 

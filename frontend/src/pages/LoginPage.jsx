@@ -165,15 +165,19 @@ function LoginPage() {
 
       {/* Show this block ONLY when an info message is set */}
       {infoMessage && (
-        <div className="bg-surface-container rounded-2xl p-8 shadow-sm flex flex-col items-center justify-center gap-4">
+        <div className="bg-surface-container flex flex-col items-center justify-center gap-4 rounded-2xl p-8 shadow-sm">
           <CheckCircleIcon className="text-primary h-16 w-16" />
 
           <h2 className="text-headline-medium">Verification Email Sent</h2>
 
-          <p className="bg-primary-container text-on-primary-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+          <h3 className="text-on-surface-variant text-body-large">
+            {formData.email}
+          </h3>
+
+          <p className="bg-primary-container text-on-primary-container w-fit rounded-2xl p-2 text-center text-sm">
             {infoMessage}
           </p>
-        </div>        
+        </div>
       )}
     </div>
   );
