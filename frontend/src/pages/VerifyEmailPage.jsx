@@ -155,7 +155,11 @@ function VerifyEmailPage() {
                   Verification Email Sent
                 </h2>
 
-                <p className="bg-primary-container text-on-primary-container mt-2 w-full rounded-2xl p-2 text-center text-sm">
+                <h3 className="text-on-surface-variant text-body-large">
+                  {email}
+                </h3>
+
+                <p className="bg-primary-container text-on-primary-container w-fit rounded-2xl p-2 text-center text-sm">
                   {infoMessage}
                 </p>
               </>
