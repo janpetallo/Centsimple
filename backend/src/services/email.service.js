@@ -23,8 +23,7 @@ const transporter = nodemailer.createTransport({
 
 async function sendVerificationEmail(userEmail, token) {
   // The verification URL your user will click
-  const verificationUrl = `http://localhost:5001/api/auth/verify-email?token=${token}`;
-
+  const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
   // Use the transporter to send the email
   const info = await transporter.sendMail({
     from: '"Centsimple" <noreply@centsimple.app>', // sender address

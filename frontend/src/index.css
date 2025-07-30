@@ -97,7 +97,7 @@
 }
 
 @utility text-body-large {
-  @apply text-lg text-gray-600;
+  @apply text-on-surface-variant text-lg;
 }
 
 /*

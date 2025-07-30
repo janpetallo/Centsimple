@@ -36,6 +36,28 @@ async function register(req, res) {
       },
     });
     if (existingUser) {
+      // If user exists but is not verified, resend their verification email.
+      if (!existingUser.isVerified) {
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+        await prisma.user.update({
+          where: { email: email },
+          data: {
+            verificationToken: verificationToken,
+            verificationTokenExpires: expiresAt,
+          },
+        });
+
+        await emailService.sendVerificationEmail(email, verificationToken);
+
+        // Let the user know a new link was sent.
+        return res.status(200).json({
+          message:
+            'An unverified account with this email already exists. A new verification link has been sent.',
+        });
+      }
+      // If user exists and is verified, then it's a conflict.
       return res
         .status(409)
         .json({ message: 'An account with this email already exists.' });
@@ -122,6 +144,54 @@ async function verifyEmail(req, res) {
   }
 }
 
+async function resendVerificationEmail(req, res) {
+  const { email } = req.body;
+  try {
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    const genericSuccessMessage =
+      'If an account with this email exists, a new verification link has been sent.';
+
+    if (!existingUser) {
+      // User does not exist, but we send the generic success message to prevent enumeration.
+      return res.status(200).json({ message: genericSuccessMessage });
+    }
+
+    if (existingUser.isVerified) {
+      return res
+        .status(409)
+        .json({ message: 'This account has already been verified.' });
+    }
+
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+
+    await prisma.user.update({
+      where: {
+        id: existingUser.id,
+      },
+      data: {
+        verificationToken: verificationToken,
+        verificationTokenExpires: expiresAt,
+      },
+    });
+
+    await emailService.sendVerificationEmail(email, verificationToken);
+
+    // User exists and is not verified, so we send the same generic success message.
+    return res.status(200).json({ message: genericSuccessMessage });
+  } catch (error) {
+    console.error('Resend verification email error', error);
+    res.status(500).json({
+      message: 'Could not resend verification email. Please try again.',
+    });
+  }
+}
+
 async function login(req, res) {
   try {
     const userPayload = {
@@ -144,7 +214,9 @@ async function login(req, res) {
     res.status(200).json(req.user);
   } catch (error) {
     console.error('Login error', error);
-    res.status(500).json({ message: 'Something went wrong. Please try again.' });
+    res
+      .status(500)
+      .json({ message: 'Something went wrong. Please try again.' });
   }
 }
 
@@ -154,7 +226,9 @@ async function logout(req, res) {
     res.status(200).json({ message: 'You have been logged out.' });
   } catch (error) {
     console.error('Logout error', error);
-    res.status(500).json({ message: 'Something went wrong. Please try again.' });
+    res
+      .status(500)
+      .json({ message: 'Something went wrong. Please try again.' });
   }
 }
 
@@ -170,4 +244,11 @@ async function profile(req, res) {
   }
 }
 
-module.exports = { register, verifyEmail, login, logout, profile };
+module.exports = {
+  register,
+  verifyEmail,
+  resendVerificationEmail,
+  login,
+  logout,
+  profile,
+};
