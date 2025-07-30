@@ -21,6 +21,7 @@ function LoginPage() {
   function handleChange(e) {
     setError(null);
     setInfoMessage('');
+    setShowResendLink(false);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -73,90 +74,102 @@ function LoginPage() {
     <div className="mx-auto flex w-full max-w-lg flex-col">
       <h2 className="text-headline-medium mb-8 text-left">Login</h2>
 
-      <div className="bg-surface-container rounded-2xl p-8 shadow-sm">
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          <label
-            htmlFor="email"
-            className="text-label-large text-on-surface-variant"
-          >
-            Email
-          </label>
-          <input
-            className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
-            type="email"
-            id="email"
-            name="email"
-            onChange={handleChange}
-            required
-          />
-
-          <label
-            htmlFor="password"
-            className="text-label-large text-on-surface-variant"
-          >
-            Password
-          </label>
-          <input
-            className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
-            type="password"
-            id="password"
-            name="password"
-            onChange={handleChange}
-            required
-          />
-
-          {error && (
-            <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
-              {error}
-            </p>
-          )}
-
-          {infoMessage && (
-            <p className="bg-primary-container text-on-primary-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
-              {infoMessage}
-            </p>
-          )}
-
-          {showResendLink && (
-            <button
-              type="button"
-              disabled={loading}
-              onClick={handleResend}
-              className="text-on-secondary bg-secondary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:cursor-not-allowed disabled:hover:scale-100"
+      {/* Hide the form if an info message exists (i.e., after successful resend) */}
+      {!infoMessage && (
+        <div className="bg-surface-container rounded-2xl p-8 shadow-sm">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+            <label
+              htmlFor="email"
+              className="text-label-large text-on-surface-variant"
             >
-              {loading ? (
-                <div className="flex grow items-center justify-center">
-                  <LoadingSpinner className="text-on-primary-container bg-primary-container h-6 w-6 rounded-full" />
-                </div>
-              ) : (
-                'Resend Verification Email'
-              )}
-            </button>
-          )}
+              Email
+            </label>
+            <input
+              className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
+              type="email"
+              id="email"
+              name="email"
+              onChange={handleChange}
+              required
+            />
 
-          {!showResendLink && !infoMessage && (
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-primary text-on-primary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:cursor-not-allowed disabled:hover:scale-100"
+            <label
+              htmlFor="password"
+              className="text-label-large text-on-surface-variant"
             >
-              {loading ? (
-                <div className="flex grow items-center justify-center">
-                  <LoadingSpinner className="text-on-primary-container bg-primary-container h-6 w-6 rounded-full" />
-                </div>
-              ) : (
-                'Login'
-              )}
-            </button>
-          )}
-        </form>
-        <p className="text-on-surface-variant text-label-large mt-4">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-primary">
-            Register
-          </Link>
-        </p>
-      </div>
+              Password
+            </label>
+            <input
+              className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
+              type="password"
+              id="password"
+              name="password"
+              onChange={handleChange}
+              required
+            />
+
+            {error && (
+              <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+                {error}
+              </p>
+            )}
+
+            {infoMessage && (
+              <p className="bg-primary-container text-on-primary-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+                {infoMessage}
+              </p>
+            )}
+
+            {showResendLink && (
+              <button
+                type="button"
+                disabled={loading}
+                onClick={handleResend}
+                className="text-on-secondary bg-secondary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {loading ? (
+                  <div className="flex grow items-center justify-center">
+                    <LoadingSpinner className="text-on-primary-container bg-primary-container h-6 w-6 rounded-full" />
+                  </div>
+                ) : (
+                  'Resend Verification Email'
+                )}
+              </button>
+            )}
+
+            {!showResendLink && (
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-primary text-on-primary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {loading ? (
+                  <div className="flex grow items-center justify-center">
+                    <LoadingSpinner className="text-on-primary-container bg-primary-container h-6 w-6 rounded-full" />
+                  </div>
+                ) : (
+                  'Login'
+                )}
+              </button>
+            )}
+          </form>
+          <p className="text-on-surface-variant text-label-large mt-4">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-primary">
+              Register
+            </Link>
+          </p>
+        </div>
+      )}
+
+      {/* Show this block ONLY when an info message is set */}
+      {infoMessage && (
+        <div className="bg-surface-container rounded-2xl p-8 shadow-sm">
+          <p className="bg-primary-container text-on-primary-container w-full rounded-2xl p-2 text-center text-sm">
+            {infoMessage}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
