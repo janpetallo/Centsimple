@@ -89,7 +89,11 @@ async function register(req, res) {
       ...user
     } = newUser;
 
-    res.status(201).json(user);
+    res.status(201).json({
+      message:
+        'Registration successful! Check your email to verify your account.',
+      user: user,
+    });
   } catch (error) {
     console.error('Registration error:', error);
 
