@@ -16,7 +16,6 @@ function RegisterPage() {
 
   useEffect(() => {
     function validatePassword() {
-      // The `!` is removed. Now it checks if confirmPassword has a value.
       if (
         formData.confirmPassword &&
         formData.password !== formData.confirmPassword
@@ -40,8 +39,11 @@ function RegisterPage() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (error) return;
-
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    
     setError(null);
     setLoading(true);
 
