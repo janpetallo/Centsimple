@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import * as apiService from '../services/api.service';
 import LoadingSpinner from '../components/LoadingSpinner';
+import CheckCircleIcon from '../icons/CheckCircleIcon';
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -178,7 +179,11 @@ function RegisterPage() {
       )}
 
       {infoMessage && (
-        <div className="bg-surface-container rounded-2xl p-8 shadow-sm">
+        <div className="bg-surface-container rounded-2xl p-8 shadow-sm flex flex-col items-center justify-center gap-4">
+          <CheckCircleIcon className="text-primary h-16 w-16" />
+
+          <h2 className="text-headline-medium">Verification Email Sent</h2>
+
           <p className="bg-primary-container text-on-primary-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
             {infoMessage}
           </p>

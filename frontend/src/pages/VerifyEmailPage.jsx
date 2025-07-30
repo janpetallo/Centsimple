@@ -12,7 +12,7 @@ function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
   const effectRan = useRef(false);
   const [email, setEmail] = useState('');
-  const [isResending, setIsResending] = useState(false); // New state for resend button
+  const [isResending, setIsResending] = useState(false);
   const [infoMessage, setInfoMessage] = useState('');
   const [error, setError] = useState(null);
 
@@ -98,12 +98,52 @@ function VerifyEmailPage() {
 
         {!loading && status === 'error' && (
           <>
-            {/* Only show the "Failed" header if a resend hasn't been triggered */}
             {!infoMessage && (
               <>
                 <ErrorIcon className="text-error h-16 w-16" />
                 <h2 className="text-headline-medium">Verification Failed</h2>
                 <p className="text-body-large">{message}</p>
+
+                <form
+                  className="mt-8 flex w-full flex-col gap-4 text-left"
+                  onSubmit={handleResend}
+                >
+                  <label
+                    htmlFor="email"
+                    className="text-label-large text-on-surface-variant hidden"
+                  >
+                    Email
+                  </label>
+                  <input
+                    className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    onChange={handleChange}
+                    required
+                  />
+
+                  {error && (
+                    <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
+                      {error}
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isResending}
+                    className="text-on-secondary bg-secondary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:cursor-not-allowed disabled:hover:scale-100"
+                  >
+                    {isResending ? (
+                      <div className="flex grow items-center justify-center">
+                        <LoadingSpinner className="text-on-primary-container bg-primary-container h-6 w-6 rounded-full" />
+                      </div>
+                    ) : (
+                      'Resend Verification Email'
+                    )}
+                  </button>
+                </form>
               </>
             )}
 
@@ -114,58 +154,12 @@ function VerifyEmailPage() {
                 <h2 className="text-headline-medium">
                   Verification Email Sent
                 </h2>
-              </>
-            )}
 
-            <form
-              className="mt-8 flex w-full flex-col gap-4 text-left"
-              onSubmit={handleResend}
-            >
-              <label
-                htmlFor="email"
-                className="text-label-large text-on-surface-variant hidden"
-              >
-                Email
-              </label>
-              <input
-                className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Enter your email"
-                onChange={handleChange}
-                required
-              />
-
-              {error && (
-                <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
-                  {error}
-                </p>
-              )}
-
-              {infoMessage && (
                 <p className="bg-primary-container text-on-primary-container mt-2 w-full rounded-2xl p-2 text-center text-sm">
                   {infoMessage}
                 </p>
-              )}
-
-              {/* Hide the button after a successful resend */}
-              {!infoMessage && (
-                <button
-                  type="submit"
-                  disabled={isResending}
-                  className="text-on-secondary bg-secondary text-label-large mt-4 inline-block cursor-pointer rounded-full px-8 py-3 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:cursor-not-allowed disabled:hover:scale-100"
-                >
-                  {isResending ? (
-                    <div className="flex grow items-center justify-center">
-                      <LoadingSpinner className="text-on-primary-container bg-primary-container h-6 w-6 rounded-full" />
-                    </div>
-                  ) : (
-                    'Resend Verification Email'
-                  )}
-                </button>
-              )}
-            </form>
+              </>
+            )}
           </>
         )}
       </div>
