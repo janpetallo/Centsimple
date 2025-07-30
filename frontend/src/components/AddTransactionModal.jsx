@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import * as apiService from '../services/api.service';
 import Modal from './Modal';
+import SegmentedControl from './SegmentedControl';
 
 function AddTransactionModal({ categories, onTransactionCreated, onClose }) {
   const [formData, setFormData] = useState({
@@ -13,6 +14,18 @@ function AddTransactionModal({ categories, onTransactionCreated, onClose }) {
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const transactionTypeOptions = [
+    { label: 'Expense', value: 'EXPENSE' },
+    { label: 'Income', value: 'INCOME' },
+  ];
+
+  function handleTypeChange(newType) {
+    setFormData({
+      ...formData,
+      type: newType,
+    });
+  }
 
   function handleChange(e) {
     setFormData({
@@ -87,26 +100,14 @@ function AddTransactionModal({ categories, onTransactionCreated, onClose }) {
           required
         />
 
-        <label
-          htmlFor="type"
-          className="text-label-large text-on-surface-variant"
-        >
-          Type
-        </label>
-        <select
-          className="bg-surface-variant text-on-surface-variant border-outline focus:ring-inverse-surface rounded-2xl border px-4 py-2 focus:ring-1 focus:outline-none"
-          id="type"
-          name="type"
-          value={formData.type}
-          onChange={handleChange}
-          required
-        >
-          <option value="" disabled>
-            -- Select a type --
-          </option>
-          <option value="INCOME">Income</option>
-          <option value="EXPENSE">Expense</option>
-        </select>
+        <label className="text-label-large text-on-surface-variant">Type</label>
+        <div>
+          <SegmentedControl
+            options={transactionTypeOptions}
+            value={formData.type}
+            onChange={handleTypeChange}
+          />
+        </div>
 
         <label
           htmlFor="category"
