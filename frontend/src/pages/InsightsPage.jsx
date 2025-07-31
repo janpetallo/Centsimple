@@ -115,9 +115,11 @@ function InsightsPage() {
                   <div className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-center rounded-xl border p-4 transition-colors">
                     <IncomeExpenseChart reportData={reportData} />
                   </div>
-                  <div className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-center rounded-xl border p-4 transition-colors">
-                    <ExpensePieChart reportData={reportData} />
-                  </div>
+                  {reportData.totalExpense > 0 && (
+                    <div className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-center rounded-xl border p-4 transition-colors">
+                      <ExpensePieChart reportData={reportData} />
+                    </div>
+                  )}
                 </div>
               ) : (
                 // If there is no data, show a helpful message
