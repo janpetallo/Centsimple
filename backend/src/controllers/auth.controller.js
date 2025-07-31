@@ -41,7 +41,10 @@ async function register(req, res) {
       // If user exists but is not verified, resend their verification email.
       if (!existingUser.isVerified) {
         const verificationToken = crypto.randomBytes(32).toString('hex');
-        const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+        const expiresAt = new Date(
+          Date.now() +
+            (Number(process.env.VERIFICATION_TOKEN_EXPIRES_IN_MS) || 3600000)
+        );
 
         await prisma.user.update({
           where: { email: email },
@@ -61,9 +64,13 @@ async function register(req, res) {
       return res.status(201).json({ message: successMessage });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+    const expiresAt = new Date(
+      Date.now() +
+        (Number(process.env.VERIFICATION_TOKEN_EXPIRES_IN_MS) || 3600000)
+    ); // 1 hour from now
 
     newUser = await prisma.user.create({
       data: {
@@ -164,7 +171,10 @@ async function resendVerificationEmail(req, res) {
 
     // This block now only runs if the user exists AND is not verified.
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+    const expiresAt = new Date(
+      Date.now() +
+        (Number(process.env.VERIFICATION_TOKEN_EXPIRES_IN_MS) || 3600000)
+    ); // 1 hour from now
 
     await prisma.user.update({
       where: {
@@ -198,11 +208,13 @@ async function login(req, res) {
     };
 
     const secret = process.env.JWT_SECRET;
-    const token = jwt.sign(userPayload, secret, { expiresIn: '1h' });
+    const token = jwt.sign(userPayload, secret, {
+      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    });
 
     const cookieOptions = {
       ...getCookieOptions(),
-      maxAge: 60 * 60 * 1000, // 1 hour
+      maxAge: Number(process.env.JWT_COOKIE_EXPIRES_IN_MS) || 3600000, // 1 hour
     };
 
     res.cookie('token', token, cookieOptions);
