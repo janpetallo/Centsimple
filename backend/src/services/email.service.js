@@ -32,6 +32,7 @@ async function sendVerificationEmail(userEmail, token) {
     text: `Welcome to Centsimple! Please confirm your email address by visiting this link: ${verificationUrl}`, // plain text body
     html: `
       <div style="font-family: sans-serif; padding: 20px; text-align: center;">
+        <img src="https://raw.githubusercontent.com/janpetallo/finance-tracker-app/refs/heads/fix/final-mvp-polish/assets/favicon.svg" alt="Centsimple Logo" width="64" height="64" style="margin-bottom: 10px;" />
         <h2 style="color: #333;">Welcome to Centsimple!</h2>
         <p style="color: #555; font-size: 16px;">
           Please click the button below to confirm your email address and activate your account.
