@@ -1,3 +1,5 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 let logoutCallback;
 
 function setupApiInterceptor(logoutFunc) {
@@ -38,7 +40,7 @@ async function apiClient(url, options) {
 
 async function registerUser(formData) {
   try {
-    const url = 'http://localhost:5001/api/auth/register';
+    const url = `${API_BASE_URL}/auth/register`;
     const options = {
       method: 'POST',
       credentials: 'include', // include cookies including the JWT cookie
@@ -60,7 +62,7 @@ async function registerUser(formData) {
 
 async function verifyEmail(token) {
   try {
-    const link = new URL('http://localhost:5001/api/auth/verify-email');
+    const link = new URL(`${API_BASE_URL}/auth/verify-email`);
     link.searchParams.append('token', token);
     const url = link.toString();
     const options = {
@@ -78,7 +80,7 @@ async function verifyEmail(token) {
 
 async function resendVerificationEmail(email) {
   try {
-    const url = 'http://localhost:5001/api/auth/resend-verification';
+    const url = `${API_BASE_URL}/auth/resend-verification`;
     const options = {
       method: 'POST',
       credentials: 'include',
@@ -99,7 +101,7 @@ async function resendVerificationEmail(email) {
 // This does not use the apiClient above so it correctly displays specific error message
 async function loginUser(formData) {
   try {
-    const response = await fetch('http://localhost:5001/api/auth/login', {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -124,7 +126,7 @@ async function loginUser(formData) {
 
 async function logoutUser() {
   try {
-    const url = 'http://localhost:5001/api/auth/logout';
+    const url = `${API_BASE_URL}/auth/logout`;
     const options = {
       method: 'POST',
       credentials: 'include', // include cookies including the JWT cookie
@@ -140,7 +142,7 @@ async function logoutUser() {
 
 async function checkAuthStatus() {
   try {
-    const response = await fetch('http://localhost:5001/api/auth/profile', {
+    const response = await fetch(`${API_BASE_URL}/auth/profile`, {
       method: 'GET',
       credentials: 'include', // include cookies including the JWT cookie
     });
@@ -167,7 +169,7 @@ async function checkAuthStatus() {
 
 async function getCategories() {
   try {
-    const url = 'http://localhost:5001/api/categories';
+    const url = `${API_BASE_URL}/categories`;
     const options = {
       method: 'GET',
       credentials: 'include',
@@ -189,7 +191,7 @@ async function getTransactions(
   limit = 10
 ) {
   try {
-    const link = new URL('http://localhost:5001/api/transactions');
+    const link = new URL(`${API_BASE_URL}/transactions`);
     link.searchParams.append('page', page);
     link.searchParams.append('limit', limit);
 
@@ -221,7 +223,7 @@ async function getTransactions(
 
 async function createCategory(categoryData) {
   try {
-    const url = 'http://localhost:5001/api/categories/create';
+    const url = `${API_BASE_URL}/categories/create`;
     const options = {
       method: 'POST',
       credentials: 'include',
@@ -241,7 +243,7 @@ async function createCategory(categoryData) {
 
 async function createTransaction(transactionData) {
   try {
-    const url = 'http://localhost:5001/api/transactions/create';
+    const url = `${API_BASE_URL}/transactions/create`;
     const options = {
       method: 'POST',
       credentials: 'include',
@@ -260,7 +262,7 @@ async function createTransaction(transactionData) {
 
 async function updateCategory(categoryId, categoryData) {
   try {
-    const url = 'http://localhost:5001/api/categories/update/' + categoryId;
+    const url = `${API_BASE_URL}/categories/update/${categoryId}`;
     const options = {
       method: 'PUT',
       credentials: 'include',
@@ -280,8 +282,7 @@ async function updateCategory(categoryId, categoryData) {
 
 async function updateTransaction(transactionId, transactionData) {
   try {
-    const url =
-      'http://localhost:5001/api/transactions/update/' + transactionId;
+    const url = `${API_BASE_URL}/transactions/update/${transactionId}`;
     const options = {
       method: 'PUT',
       credentials: 'include',
@@ -301,7 +302,7 @@ async function updateTransaction(transactionId, transactionData) {
 
 async function deleteCategory(categoryId) {
   try {
-    const url = 'http://localhost:5001/api/categories/delete/' + categoryId;
+    const url = `${API_BASE_URL}/categories/delete/${categoryId}`;
     const options = {
       method: 'DELETE',
       credentials: 'include',
@@ -317,8 +318,7 @@ async function deleteCategory(categoryId) {
 
 async function deleteTransaction(transactionId) {
   try {
-    const url =
-      'http://localhost:5001/api/transactions/delete/' + transactionId;
+    const url = `${API_BASE_URL}/transactions/delete/${transactionId}`;
     const options = {
       method: 'DELETE',
       credentials: 'include',
@@ -334,7 +334,7 @@ async function deleteTransaction(transactionId) {
 
 async function getSummaryReport(dateRange) {
   try {
-    const link = new URL('http://localhost:5001/api/reports/summary');
+    const link = new URL(`${API_BASE_URL}/reports/summary`);
     if (dateRange) {
       link.searchParams.append('dateRange', dateRange);
     }
@@ -354,7 +354,7 @@ async function getSummaryReport(dateRange) {
 
 async function toggleCategoryPin(categoryId) {
   try {
-    const link = 'http://localhost:5001/api/categories/' + categoryId + '/pin';
+    const link = `${API_BASE_URL}/categories/${categoryId}/pin`;
     const options = {
       method: 'PUT',
       credentials: 'include',
