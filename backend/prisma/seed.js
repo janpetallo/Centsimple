@@ -14,7 +14,6 @@ const defaultCategories = [
 
   // Forward-Looking
   'Subscriptions',
-  'Savings',
 ];
 
 async function main() {
