@@ -36,7 +36,7 @@ async function sendVerificationEmail(userEmail, token) {
         <p style="color: #555; font-size: 16px;">
           Please click the button below to confirm your email address and activate your account.
         </p>
-        <a href="${verificationUrl}" style="display: inline-block; padding: 12px 24px; margin: 20px 0; font-size: 16px; color: white; background-color: #6750a4; text-decoration: none; border-radius: 5px;">
+        <a href="${verificationUrl}" style="display: inline-block; padding: 12px 24px; margin: 20px 0; font-size: 16px; color: white; background-color: #6750a4; text-decoration: none; border-radius: 9999px;">
           Confirm Email Address
         </a>
         <p style="color: #888; font-size: 12px;">
