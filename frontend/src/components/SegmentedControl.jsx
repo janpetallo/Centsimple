@@ -1,22 +1,25 @@
+import CheckIcon from '../icons/CheckIcon';
+
 function SegmentedControl({ options, value, onChange }) {
   return (
-    <div className="flex w-full">
+    <div className="flex w-full gap-1">
       {options.map((option, index, array) => (
         <button
           key={option.value}
+          type="button"
           onClick={() => onChange(option.value)}
-          className={`text-label-large grow px-4 py-2 text-center transition-colors ${
+          className={`text-label-large grow cursor-pointer px-4 py-2 text-center transition-colors ${
             option.value === value
-              ? 'bg-primary-container text-on-primary-container'
-              : 'border-outline text-on-surface-variant hover:bg-surface-container border'
-          } ${index == 0 ? 'rounded-l-full' : ''} ${index == array.length - 1 ? 'rounded-r-full' : ''} ${
-            // This is a clever trick to hide the border between unselected buttons
-            option.value !== value && index !== options.length - 1
-              ? '-mr-px'
-              : ''
-          }`}
+              ? 'bg-tertiary text-on-tertiary rounded-full'
+              : 'bg-tertiary-container text-on-tertiary-container hover:bg-tertiary hover:text-on-tertiary'
+          } ${
+            index == 0 && option.value !== value ? 'rounded-l-full' : ''
+          } ${index == array.length - 1 && option.value !== value ? 'rounded-r-full' : ''} `}
         >
-          {option.label}
+          <div className="flex items-center justify-center gap-4">
+            {option.value === value && <CheckIcon className="h-5 w-5" />}
+            <span className="flex-shrink-0">{option.label}</span>
+          </div>
         </button>
       ))}
     </div>
