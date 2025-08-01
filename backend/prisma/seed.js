@@ -17,26 +17,24 @@ const defaultCategories = [
 ];
 
 async function main() {
-  // Delete existing default categories
-  await prisma.category.deleteMany({
-    where: {
-      name: {
-        in: defaultCategories,
+  for (const name of defaultCategories) {
+    await prisma.category.upsert({
+      where: {
+        name_userId: {
+          name: name,
+          userId: null,
+        },
       },
-      userId: null,
-    },
-  });
-
-  // Create default categories
-  await prisma.category.createMany({
-    data: defaultCategories.map((name) => ({ name })),
-  });
-  console.log('Default categories created successfully.');
+      update: {},
+      create: { name: name, userId: null },
+    });
+  }
+  console.log('Default categories created or updated successfully.');
 }
 
 main()
   .catch((error) => {
-    console.error('Error creating default categories:', error);
+    console.error('Error creating or updating default categories:', error);
     process.exit(1);
   })
   .finally(async () => {
