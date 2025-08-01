@@ -1,5 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Logo from './Logo';
 
 function Navbar() {
   const { user, logout } = useAuth();
@@ -17,9 +18,8 @@ function Navbar() {
       {/* Brand/Logo Link */}
       <Link
         to={user ? '/dashboard' : '/'}
-        className="text-primary text-title-large"
       >
-        Centsimple
+        <Logo />
       </Link>
 
       {/* Action Links Container */}
