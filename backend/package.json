@@ -8,7 +8,8 @@
     "dev": "nodemon src/app.js",
     "seed": "npx prisma db seed",
     "generate": "npx prisma generate",
-    "migrate": "npx prisma migrate dev"
+    "migrate": "npx prisma migrate dev",
+    "db:deploy": "npx prisma migrate deploy"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
