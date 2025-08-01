@@ -11,11 +11,7 @@ const validateUser = [
     .isLength({ min: 2 })
     .withMessage('Last name must be at least 2 characters.')
     .escape(),
-  body('email')
-    .trim()
-    .isEmail()
-    .withMessage('Please enter a valid email.')
-    .normalizeEmail(),
+  body('email').trim().isEmail().withMessage('Please enter a valid email.'),
   body('password')
     .trim()
     .isLength({ min: 8 })
