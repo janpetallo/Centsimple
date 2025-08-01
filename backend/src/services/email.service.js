@@ -1,5 +1,7 @@
 const nodemailer = require('nodemailer');
 
+const path = require('path');
+
 // Temporary function to generate an account ONCE
 async function createTestAccount() {
   const testAccount = await nodemailer.createTestAccount();
@@ -48,7 +50,7 @@ async function sendVerificationEmail(userEmail, token) {
     text: `Welcome to Centsimple! Please confirm your email address by visiting this link: ${verificationUrl}`, // plain text body
     html: `
       <div style="font-family: sans-serif; padding: 20px; text-align: center;">
-        <img src="https://raw.githubusercontent.com/janpetallo/finance-tracker-app/refs/heads/fix/final-mvp-polish/assets/favicon.svg" alt="Centsimple Logo" width="64" height="64" style="margin-bottom: 10px;" />
+        <img src="cid:logo" alt="Centsimple Logo" width="64" />
         <h2 style="color: #333;">Welcome to Centsimple!</h2>
         <p style="color: #555; font-size: 16px;">
           Please click the button below to confirm your email address and activate your account.
@@ -61,6 +63,13 @@ async function sendVerificationEmail(userEmail, token) {
         </p>
       </div>
     `, // html body
+    attachments: [
+      {
+        filename: 'favicon.svg',
+        path: path.join(__dirname, '../assets/favicon.svg'),
+        cid: 'logo',
+      },
+    ],
   });
 
   // Log the URL to the special Ethereal inbox where you can view the sent email
