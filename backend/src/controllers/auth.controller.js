@@ -12,7 +12,7 @@ function getCookieOptions() {
   };
   if (process.env.NODE_ENV === 'production') {
     options.secure = true;
-    options.sameSite = 'strict';
+    options.sameSite = 'none';
   } else {
     // For development on localhost with different ports
     options.secure = true;
