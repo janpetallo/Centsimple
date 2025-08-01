@@ -170,7 +170,7 @@ function RegisterPage() {
             </button>
             <p className="text-on-surface-variant text-label-large mt-2">
               Already have an account?{' '}
-              <Link to="/login" className="text-primary">
+              <Link to="/login" className="text-primary hover:underline">
                 Login
               </Link>
             </p>
@@ -179,7 +179,7 @@ function RegisterPage() {
       )}
 
       {infoMessage && (
-        <div className="bg-surface-container rounded-2xl p-8 shadow-sm flex flex-col items-center justify-center gap-4">
+        <div className="bg-surface-container flex flex-col items-center justify-center gap-4 rounded-2xl p-8 shadow-sm">
           <CheckCircleIcon className="text-primary h-16 w-16" />
 
           <h2 className="text-headline-medium">Verification Email Sent</h2>

@@ -156,7 +156,7 @@ function LoginPage() {
           </form>
           <p className="text-on-surface-variant text-label-large mt-4">
             Don't have an account?{' '}
-            <Link to="/register" className="text-primary">
+            <Link to="/register" className="text-primary hover:underline">
               Register
             </Link>
           </p>
