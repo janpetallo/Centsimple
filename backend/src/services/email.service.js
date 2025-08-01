@@ -10,16 +10,32 @@ async function createTestAccount() {
 
 // createTestAccount(); // Comment this out after generating test account
 
-// Create the transporter object using Etheral credentials
-const transporter = nodemailer.createTransport({
-  host: 'smtp.ethereal.email',
-  port: 587,
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: process.env.ETHEREAL_USER,
-    pass: process.env.ETHEREAL_PASS,
-  },
-});
+// Create the transporter object
+let transporter;
+
+if (process.env.NODE_ENV === 'production') {
+  // Production: Use real Gmail credentials
+  transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // use SSL
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+} else {
+  // Development: Use Ethereal
+  transporter = nodemailer.createTransport({
+    host: 'smtp.ethereal.email',
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.ETHEREAL_USER,
+      pass: process.env.ETHEREAL_PASS,
+    },
+  });
+}
 
 async function sendVerificationEmail(userEmail, token) {
   // The verification URL your user will click
