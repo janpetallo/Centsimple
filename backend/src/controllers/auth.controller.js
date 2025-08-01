@@ -12,8 +12,7 @@ function getCookieOptions() {
   };
   if (process.env.NODE_ENV === 'production') {
     options.secure = true;
-    options.sameSite = 'lax';
-    options.domain = process.env.COOKIE_DOMAIN;
+    options.sameSite = 'strict';
   } else {
     // For development on localhost with different ports
     options.secure = true;
