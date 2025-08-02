@@ -98,6 +98,36 @@ To get a local copy up and running, follow these simple steps.
      npm run dev
      ```
 
+## Deployment
+
+This application is designed to be deployed with a reverse proxy architecture, where the frontend and backend are hosted as separate services but appear to come from the same origin to the user's browser. This is the recommended setup to avoid cross-origin cookie issues with modern browsers like Safari.
+
+The following instructions are for deploying on a platform like Render:
+
+1.  **Deploy Services:**
+
+    - Deploy the `backend` folder as a "Web Service".
+    - Deploy the `frontend` folder as a "Static Site".
+
+2.  **Set Production Environment Variables:**
+
+    - **Backend Service:**
+      - `DATABASE_URL`: Your production database connection string.
+      - `JWT_SECRET`: A long, random, secret string.
+      - `CORS_ORIGIN`: The full URL of your live frontend (e.g., `https://centsimple.onrender.com`).
+      - `FRONTEND_URL`: The same full URL of your live frontend.
+      - `EMAIL_USER` / `EMAIL_PASS`: Your production email credentials.
+    - **Frontend Service:**
+      - `VITE_API_BASE_URL`: Set this to the relative path `/api`.
+
+3.  **Configure Reverse Proxy:**
+    - On your **frontend** service settings, add the following "Rewrite" rules in this exact order:
+
+| Source   | Destination                                   | Action  |
+| :------- | :-------------------------------------------- | :------ |
+| `/api/*` | `https://your-backend-url.onrender.com/api/*` | Rewrite |
+| `/*`     | `/index.html`                                 | Rewrite |
+
 ## Future Enhancements
 
 This project is a solid MVP with a clear roadmap for future features, including:
