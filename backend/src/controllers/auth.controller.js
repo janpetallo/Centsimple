@@ -217,6 +217,8 @@ async function login(req, res) {
       maxAge: Number(process.env.JWT_COOKIE_EXPIRES_IN_MS) || 3600000, // 1 hour
     };
 
+    console.log('Attempting to set cookie with options:', cookieOptions);
+
     res.cookie('token', token, cookieOptions);
 
     res.status(200).json(req.user);
