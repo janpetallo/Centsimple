@@ -4,13 +4,11 @@ const validateUser = [
   body('firstName')
     .trim() // Remove whitespace
     .isLength({ min: 2 })
-    .withMessage('First name must be at least 2 characters.')
-    .escape(), // Sanitize to prevent XSS
+    .withMessage('First name must be at least 2 characters.'),
   body('lastName')
     .trim()
     .isLength({ min: 2 })
-    .withMessage('Last name must be at least 2 characters.')
-    .escape(),
+    .withMessage('Last name must be at least 2 characters.'),
   body('email').trim().isEmail().withMessage('Please enter a valid email.'),
   body('password')
     .trim()
@@ -38,8 +36,7 @@ const validateCategory = [
     .notEmpty()
     .withMessage('Category name is required.')
     .isLength({ min: 2 })
-    .withMessage('Category name must be at least 2 characters.')
-    .escape(),
+    .withMessage('Category name must be at least 2 characters.'),
 ];
 
 const validateTransaction = [
@@ -49,11 +46,7 @@ const validateTransaction = [
     .withMessage('Amount is required.')
     .isFloat({ gt: 0 })
     .withMessage('Amount must be a positive number.'),
-  body('description')
-    .trim()
-    .notEmpty()
-    .withMessage('Description is required.')
-    .escape(),
+  body('description').trim().notEmpty().withMessage('Description is required.'),
   body('categoryId')
     .trim()
     .notEmpty()
