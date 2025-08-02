@@ -12,7 +12,8 @@ function getCookieOptions() {
   };
   if (process.env.NODE_ENV === 'production') {
     options.secure = true;
-    options.sameSite = 'none';
+    // With a proxy, the cookie is now same-site, so we can use 'strict'.
+    options.sameSite = 'strict';
   } else {
     // For development on localhost with different ports
     options.secure = true;
