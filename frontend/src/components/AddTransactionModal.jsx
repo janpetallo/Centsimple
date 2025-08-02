@@ -66,6 +66,8 @@ function AddTransactionModal({ categories, onTransactionCreated, onClose }) {
           type="number"
           id="amount"
           name="amount"
+          step="0.01"
+          placeholder="0.00"
           onChange={handleChange}
           required
         />
