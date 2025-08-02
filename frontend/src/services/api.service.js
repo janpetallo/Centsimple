@@ -62,9 +62,8 @@ async function registerUser(formData) {
 
 async function verifyEmail(token) {
   try {
-    const link = new URL(`${API_BASE_URL}/auth/verify-email`);
-    link.searchParams.append('token', token);
-    const url = link.toString();
+    // Construct URL as a string to avoid 'new URL()' error with relative paths
+    const url = `${API_BASE_URL}/auth/verify-email?token=${token}`;
     const options = {
       method: 'GET',
       credentials: 'include',
@@ -191,23 +190,23 @@ async function getTransactions(
   limit = 10
 ) {
   try {
-    const link = new URL(`${API_BASE_URL}/transactions`);
-    link.searchParams.append('page', page);
-    link.searchParams.append('limit', limit);
+    // Use URLSearchParams to safely build the query string
+    const params = new URLSearchParams();
+    params.append('page', page);
+    params.append('limit', limit);
 
     if (categoryId) {
-      link.searchParams.append('categoryId', categoryId);
+      params.append('categoryId', categoryId);
     }
-
     if (dateRange) {
-      link.searchParams.append('dateRange', dateRange);
+      params.append('dateRange', dateRange);
     }
-
     if (search) {
-      link.searchParams.append('search', search);
+      params.append('search', search);
     }
 
-    const url = link.toString();
+    // Construct the final URL as a string, which is valid for fetch()
+    const url = `${API_BASE_URL}/transactions?${params.toString()}`;
     const options = {
       method: 'GET',
       credentials: 'include',
@@ -334,11 +333,15 @@ async function deleteTransaction(transactionId) {
 
 async function getSummaryReport(dateRange) {
   try {
-    const link = new URL(`${API_BASE_URL}/reports/summary`);
+    // Start with the base URL string
+    let url = `${API_BASE_URL}/reports/summary`;
+
+    // Safely add the dateRange parameter if it exists
     if (dateRange) {
-      link.searchParams.append('dateRange', dateRange);
+      const params = new URLSearchParams({ dateRange });
+      url += `?${params.toString()}`;
     }
-    const url = link.toString();
+
     const options = {
       method: 'GET',
       credentials: 'include',
