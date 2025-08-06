@@ -355,6 +355,28 @@ async function getSummaryReport(dateRange) {
   }
 }
 
+async function getAiSummary(dateRange) {
+  try {
+    let url = `${API_BASE_URL}/reports/ai-summary`;
+
+    if (dateRange) {
+      const params = new URLSearchParams({ dateRange });
+      url += `?${params.toString()}`;
+    }
+
+    const options = {
+      method: 'GET',
+      credentials: 'include',
+    };
+
+    const data = await apiClient(url, options);
+    return data;
+  } catch (error) {
+    console.error('Get AI summary error:', error);
+    throw error;
+  }
+}
+
 async function toggleCategoryPin(categoryId) {
   try {
     const link = `${API_BASE_URL}/categories/${categoryId}/pin`;
@@ -388,5 +410,6 @@ export {
   deleteCategory,
   deleteTransaction,
   getSummaryReport,
+  getAiSummary,
   toggleCategoryPin,
 };

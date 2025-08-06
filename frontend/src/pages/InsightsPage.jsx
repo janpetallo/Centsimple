@@ -3,33 +3,54 @@ import * as apiService from '../services/api.service';
 import * as formatter from '../utils/format';
 import IncomeExpenseChart from '../components/IncomeExpenseBarChart';
 import ExpensePieChart from '../components/ExpensePieChart';
+import AiSummary from '../components/AiSummary';
 import LoadingSpinner from '../components/LoadingSpinner';
 import BackIcon from '../icons/BackIcon';
 import { useNavigate } from 'react-router-dom';
 
 function InsightsPage() {
   const [reportData, setReportData] = useState(null);
+  const [summary, setSummary] = useState('');
   const [dateRange, setDateRange] = useState('last30days'); // Default to last 30 days'
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isReportLoading, setIsReportLoading] = useState(false);
+  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+  const [isReportError, setIsReportError] = useState(false);
+  const [isSummaryError, setIsSummaryError] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchReportData() {
-      setLoading(true);
-      setError(null);
+      setIsReportLoading(true);
+      setIsReportError(null);
 
       try {
-        const data = await apiService.getSummaryReport(dateRange);
-        console.log('Report data fetched successfully', data);
-        setReportData(data);
+        const reportData = await apiService.getSummaryReport(dateRange);
+        console.log('Report data fetched successfully', reportData);
+        setReportData(reportData);
       } catch (error) {
         console.error('Error fetching report data:', error.message);
-        setError(error.message);
+        setIsReportError(error.message);
       } finally {
-        setLoading(false);
+        setIsReportLoading(false);
       }
     }
+    async function fetchSummary() {
+      setIsSummaryLoading(true);
+      setIsSummaryError(null);
+
+      try {
+        const summaryData = await apiService.getAiSummary(dateRange);
+        console.log('Summary fetched successfully', summaryData.summary);
+        setSummary(summaryData.summary);
+      } catch (error) {
+        console.error('Error fetching summary:', error.message);
+        setIsSummaryError(error.message);
+      } finally {
+        setIsSummaryLoading(false);
+      }
+    }
+
+    fetchSummary();
     fetchReportData();
   }, [dateRange]);
 
@@ -79,7 +100,7 @@ function InsightsPage() {
         </div>
       </div>
 
-      {loading ? (
+      {isReportLoading ? (
         <div className="flex grow items-center justify-center">
           <LoadingSpinner className="text-on-primary-container bg-primary-container h-16 w-16 rounded-full" />
         </div>
@@ -110,6 +131,14 @@ function InsightsPage() {
                 )}
               </div>
 
+              <div className="bg-primary-container mt-4 flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
+                <AiSummary
+                  summary={summary}
+                  isLoading={isSummaryLoading}
+                  error={isSummaryError}
+                />
+              </div>
+
               {reportData.totalIncome > 0 || reportData.totalExpense > 0 ? ( // If there is data, show the charts
                 <div className="mt-4 grid grid-cols-1 gap-8 lg:grid-cols-2">
                   <div className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-center rounded-xl border p-4 transition-colors">
@@ -135,9 +164,9 @@ function InsightsPage() {
           )}
         </div>
       )}
-      {error && (
+      {isReportError && (
         <p className="text-on-error-container bg-error-container mt-2 w-fit rounded-2xl p-2 text-center text-sm">
-          {error}
+          {isReportError}
         </p>
       )}
     </>
