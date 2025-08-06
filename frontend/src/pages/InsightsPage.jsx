@@ -131,25 +131,26 @@ function InsightsPage() {
                 )}
               </div>
 
-              <div className="bg-primary-container mt-4 flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
-                <AiSummary
-                  summary={summary}
-                  isLoading={isSummaryLoading}
-                  error={isSummaryError}
-                />
-              </div>
-
               {reportData.totalIncome > 0 || reportData.totalExpense > 0 ? ( // If there is data, show the charts
-                <div className="mt-4 grid grid-cols-1 gap-8 lg:grid-cols-2">
-                  <div className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-center rounded-xl border p-4 transition-colors">
-                    <IncomeExpenseChart reportData={reportData} />
+                <>
+                  <div className="bg-primary-container mt-4 flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
+                    <AiSummary
+                      summary={summary}
+                      isLoading={isSummaryLoading}
+                      error={isSummaryError}
+                    />
                   </div>
-                  {reportData.totalExpense > 0 && (
+                  <div className="mt-4 grid grid-cols-1 gap-8 lg:grid-cols-2">
                     <div className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-center rounded-xl border p-4 transition-colors">
-                      <ExpensePieChart reportData={reportData} />
+                      <IncomeExpenseChart reportData={reportData} />
                     </div>
-                  )}
-                </div>
+                    {reportData.totalExpense > 0 && (
+                      <div className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant flex items-center justify-center rounded-xl border p-4 transition-colors">
+                        <ExpensePieChart reportData={reportData} />
+                      </div>
+                    )}
+                  </div>
+                </>
               ) : (
                 // If there is no data, show a helpful message
                 <p className="bg-surface-container border-outline/10 mt-4 rounded-xl border p-8">

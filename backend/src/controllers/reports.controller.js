@@ -154,6 +154,12 @@ async function getAiSummary(req, res) {
 
   try {
     const reportData = await calculateReportData(userId, dateRange);
+    if (reportData.totalIncome === 0 && reportData.totalExpense === 0) {
+      return res.status(200).json({
+        message:
+          "There's no transaction data for this period, so no insights are available yet. Add some transactions to get started!",
+      });
+    }
     const summary = await generateFinancialSummary(reportData, dateRange);
     res.status(200).json({
       message: 'AI summary fetched successfully.',
