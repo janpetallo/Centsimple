@@ -43,6 +43,76 @@ async function generateFinancialSummary(financialData, dateRange) {
   }
 }
 
+async function isTransactionPotentiallyDeductible(description, categoryName) {
+  try {
+    const dataString = `
+    - Description: ${description}
+    - Category: ${categoryName}
+    `;
+
+    const prompt = `You are a tax expense classifier. 
+    
+      Based on the following transaction, is it potentially related to a common Canadian tax deduction? 
+      Respond with only the word 'YES' or 'NO'.
+
+      **Context for this classification:**
+      ${dataString}
+    `;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-lite',
+      contents: prompt,
+    });
+
+    if (response.text.trim().toUpperCase() === 'YES') {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error('Error communicating with the Gemini API:', error);
+    throw new Error('Failed to validate transaction.');
+  }
+}
+
+async function generateTaxTip(description, categoryName) {
+  try {
+    const dataString = `
+    - Description: ${description}
+    - Category: ${categoryName}
+    `;
+
+    const prompt = `You are an AI assistant for a Canadian finance app called Centsimple. Your goal is to provide a helpful, educational tip if a user's expense is potentially tax-deductible.
+
+      **Your Guiding Principles:**
+      1.  **Persona & Tone:** Act as a helpful Canadian tax expert. Your tone is clear, encouraging, and easy to understand.
+      2.  **Simplicity:** Use simple, everyday language. Do not use financial jargon.
+      3.  **Safety & Disclaimers:** You are an educational tool, not a tax preparer. Your tip MUST include a sentence advising the user to consult official guidelines or a professional, especially mentioning that rules around reimbursement can affect their claim.
+      4.  **Brevity & Directness:** The tip should be concise (2-3 sentences). Do not include any greetings, intros, or sign-offs.
+
+      **Content Requirements (Follow Strictly):**
+      1.  Provide a short, educational tip explaining why this type of expense might be relevant for their taxes.
+      2.  If a relevant page exists, you MUST also provide the full URL to the most authoritative page on the Canada.ca or CRA website that explains this tax rule. Format the URL on its own line at the end of your response.
+
+      **Transaction to Analyze:**
+      ${dataString}
+    `;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+
+    const tip = response.text;
+    return tip;
+  } catch (error) {
+    console.error('Error communicating with the Gemini API:', error);
+    throw new Error('Failed to generate tax tip.');
+  }
+}
+
 module.exports = {
   generateFinancialSummary,
+  isTransactionPotentiallyDeductible,
+  generateTaxTip,
 };

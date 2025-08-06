@@ -1,5 +1,9 @@
 const prisma = require('../config/prisma');
 const { validationResult } = require('express-validator');
+const {
+  isTransactionPotentiallyDeductible,
+  generateTaxTip,
+} = require('../services/ai.service');
 
 async function createTransaction(req, res) {
   const { description, type } = req.body;
@@ -43,9 +47,21 @@ async function createTransaction(req, res) {
       },
     });
 
+    const isDeductible = await isTransactionPotentiallyDeductible(
+      description,
+      category.name
+    );
+
+    let taxTip = null;
+
+    if (isDeductible) {
+      taxTip = await generateTaxTip(description, category.name);
+    }
+
     res.status(201).json({
       message: 'Transaction created successfully.',
       transaction: transaction,
+      taxTip: taxTip,
     });
   } catch (error) {
     console.error('Error creating a transaction', error);
@@ -242,9 +258,21 @@ async function updateTransaction(req, res) {
       },
     });
 
+    const isDeductible = await isTransactionPotentiallyDeductible(
+      description,
+      category.name
+    );
+
+    let taxTip = null;
+
+    if (isDeductible) {
+      taxTip = await generateTaxTip(description, category.name);
+    }
+
     res.status(200).json({
       message: 'Transaction updated successfully.',
       transaction: updatedTransaction,
+      taxTip: taxTip,
     });
   } catch (error) {
     // Prisma's error code for "record to update not found".
