@@ -154,7 +154,7 @@ async function getAiSummary(req, res) {
 
   try {
     const reportData = await calculateReportData(userId, dateRange);
-    const summary = await generateFinancialSummary(reportData);
+    const summary = await generateFinancialSummary(reportData, dateRange);
     res.status(200).json({
       message: 'AI summary fetched successfully.',
       summary: summary,

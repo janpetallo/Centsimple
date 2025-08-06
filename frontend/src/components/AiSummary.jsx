@@ -3,7 +3,7 @@ import LoadingSpinner from './LoadingSpinner';
 function AiSummary({ summary, isLoading, error }) {
   return (
     <>
-      <p className="text-on-surface-variant text-sm">AI Summary</p>
+      <p className="text-on-surface-variant text-sm">Key Insights</p>
 
       {isLoading ? (
         <div className="flex grow items-center justify-center">
@@ -11,7 +11,7 @@ function AiSummary({ summary, isLoading, error }) {
         </div>
       ) : (
         <div className="text-on-primary-container">
-          <p>{summary}</p>
+          <p className="whitespace-pre-line">{summary}</p>
         </div>
       )}
 
