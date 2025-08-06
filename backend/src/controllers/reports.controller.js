@@ -1,9 +1,7 @@
 const prisma = require('../config/prisma');
+const { generateFinancialSummary } = require('../services/ai.service');
 
-async function getSummaryReport(req, res) {
-  const userId = req.user.id;
-  const dateRange = req.query.dateRange;
-
+async function calculateReportData(userId, dateRange) {
   const whereOptions = {
     userId: userId,
   };
@@ -120,21 +118,54 @@ async function getSummaryReport(req, res) {
       total: item._sum.amount || 0,
     }));
 
-    res.status(200).json({
-      message: 'Summary report fetched successfully.',
+    return {
       balance: balance,
       totalIncome: totalIncome,
       totalExpense: totalExpense,
       expenseBreakdown: expenseBreakdown,
       startDate: whereOptions.date ? whereOptions.date.gte : null,
       endDate: whereOptions.date ? whereOptions.date.lt : null,
-    });
+    };
   } catch (error) {
-    console.error('Error fetching summary report', error);
-    res
-      .status(500)
-      .json({ message: 'Could not load your report. Please try again.' });
+    console.error('Error calculating report data', error);
+    throw new Error('Could not load your report. Please try again.');
   }
 }
 
-module.exports = { getSummaryReport };
+async function getSummaryReport(req, res) {
+  const userId = req.user.id;
+  const dateRange = req.query.dateRange;
+
+  try {
+    const reportData = await calculateReportData(userId, dateRange);
+    res.status(200).json({
+      message: 'Summary report fetched successfully.',
+      ...reportData,
+    });
+  } catch (error) {
+    console.error('Error fetching summary report', error);
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function getAiSummary(req, res) {
+  const userId = req.user.id;
+  const dateRange = req.query.dateRange;
+
+  try {
+    const reportData = await calculateReportData(userId, dateRange);
+    const summary = await generateFinancialSummary(reportData, dateRange);
+    res.status(200).json({
+      message: 'AI summary fetched successfully.',
+      summary: summary,
+    });
+  } catch (error) {
+    console.error('Error fetching AI summary', error);
+    res.status(500).json({ message: error.message });
+  }
+}
+
+module.exports = {
+  getSummaryReport,
+  getAiSummary,
+};

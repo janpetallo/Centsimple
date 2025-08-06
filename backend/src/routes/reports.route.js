@@ -10,4 +10,10 @@ reportsRouter.get(
   reportsController.getSummaryReport
 );
 
+reportsRouter.get(
+  '/ai-summary',
+  passport.authenticate('jwt', { session: false }),
+  reportsController.getAiSummary
+);
+
 module.exports = reportsRouter;
