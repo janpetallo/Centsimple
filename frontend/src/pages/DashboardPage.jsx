@@ -28,6 +28,8 @@ function DashboardPage() {
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
   const [activeTaxTip, setActiveTaxTip] = useState(null);
+  const [isTipLoading, setIsTipLoading] = useState(false);
+  const [isTipError, setIsTipError] = useState(false);
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -56,14 +58,33 @@ function DashboardPage() {
 
   // This new success handler can be passed to both hooks.
   // It intelligently handles data refreshing, including resetting to page 1.
-  const handleSuccess = ({
+  const handleSuccess = async ({
     transactionData = null,
     shouldResetPage = false,
   } = {}) => {
-    if (transactionData && transactionData.taxTip) {
-      setActiveTaxTip(transactionData.taxTip);
+    if (transactionData && transactionData.isPotentiallyDeductible) {
+      setActiveTaxTip(null);
+      setIsTipLoading(true);
+      setIsTipError(null);
+
+      try {
+        // Destructure here to make it clear what you need
+        const { description, category } = transactionData.transaction;
+        const taxTip = await apiService.generateTaxTip(
+          description,
+          category.name
+        );
+        setActiveTaxTip(taxTip.tip);
+      } catch (error) {
+        console.error('Error fetching tax tip:', error.message);
+        setIsTipError(error.message);
+      } finally {
+        setIsTipLoading(false);
+      }
     } else {
       setActiveTaxTip(null);
+      setIsTipLoading(false);
+      setIsTipError(null);
     }
 
     if (shouldResetPage && currentPage !== 1) {
@@ -259,11 +280,13 @@ function DashboardPage() {
               />
             </div>
 
-            {activeTaxTip && (
+            {(isTipLoading || activeTaxTip || isTipError) && (
               <div className="bg-primary-container flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
                 <TaxTip
                   tip={activeTaxTip}
                   onDismiss={() => setActiveTaxTip(null)}
+                  isLoading={isTipLoading}
+                  error={isTipError}
                 />
               </div>
             )}

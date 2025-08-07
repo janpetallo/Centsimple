@@ -377,6 +377,27 @@ async function getAiSummary(dateRange) {
   }
 }
 
+async function generateTaxTip(description, categoryName) {
+  try {
+    const url = `${API_BASE_URL}/tips`
+    const options = {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ description, categoryName }),
+    };
+
+    const data = await apiClient(url, options);
+    return data;
+  } catch (error) {
+    console.error('Generate tax tip error:', error);
+    throw error;
+  }
+}
+
+
 async function toggleCategoryPin(categoryId) {
   try {
     const link = `${API_BASE_URL}/categories/${categoryId}/pin`;
@@ -411,5 +432,6 @@ export {
   deleteTransaction,
   getSummaryReport,
   getAiSummary,
+  generateTaxTip,
   toggleCategoryPin,
 };
