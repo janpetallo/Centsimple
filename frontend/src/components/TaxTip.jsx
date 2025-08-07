@@ -1,9 +1,15 @@
+import CloseIcon from '../icons/CloseIcon';
 import LoadingSpinner from './LoadingSpinner';
 
-function AiSummary({ summary, isLoading, error }) {
+function TaxTip({ tip, onDismiss, isLoading, error }) {
   return (
     <>
-      <p className="text-on-surface-variant text-sm">Key Insights</p>
+      <div className="flex w-full items-center justify-between">
+        <p className="text-on-surface-variant text-sm">Tax Tip</p>
+        <button onClick={onDismiss}>
+          <CloseIcon className="hover:text-primary h-5 w-5 cursor-pointer" />
+        </button>
+      </div>
 
       {isLoading ? (
         <div className="flex grow items-center justify-center">
@@ -11,7 +17,7 @@ function AiSummary({ summary, isLoading, error }) {
         </div>
       ) : (
         <div className="text-on-primary-container">
-          <p className="break-words whitespace-pre-line">{summary}</p>
+          <p className="whitespace-pre-line break-words">{tip}</p>
         </div>
       )}
 
@@ -24,4 +30,4 @@ function AiSummary({ summary, isLoading, error }) {
   );
 }
 
-export default AiSummary;
+export default TaxTip;

@@ -43,6 +43,76 @@ async function generateFinancialSummary(financialData, dateRange) {
   }
 }
 
+async function isTransactionPotentiallyDeductible(description, categoryName) {
+  try {
+    const dataString = `
+    - Description: ${description}
+    - Category: ${categoryName}
+    `;
+
+    const prompt = `You are a tax expense classifier. 
+    
+      Based on the following transaction, is it potentially related to a common Canadian tax deduction? 
+      Respond with only the word 'YES' or 'NO'.
+
+      **Context for this classification:**
+      ${dataString}
+    `;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-lite',
+      contents: prompt,
+    });
+
+    if (response.text.trim().toUpperCase() === 'YES') {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error('Error communicating with the Gemini API:', error);
+    throw new Error('Failed to validate transaction.');
+  }
+}
+
+async function generateTaxTip(description, categoryName) {
+  try {
+    const dataString = `
+    - Description: ${description}
+    - Category: ${categoryName}
+    `;
+
+    const prompt = `You are an AI assistant for a Canadian finance app called Centsimple. Your goal is to provide a helpful, educational tip if a user's expense is potentially tax-deductible.
+
+      **Your Guiding Principles:**
+      1.  **Persona & Tone:** Act as a helpful Canadian tax expert. Your tone is clear, encouraging, and easy to understand.
+      2.  **Simplicity:** Use simple, everyday language. Do not use financial jargon.
+      3.  **Safety & Disclaimers:** You are an educational tool, not a tax preparer. Your tip MUST include a clear and simple sentence explaining that users can generally only claim expenses they paid for out-of-pocket that were **not reimbursed** by an insurance plan or any other source. Advise them to consult official CRA guidelines or a professional for specifics.     
+      4.  **Brevity & Directness:** The tip should be concise (2-3 sentences). Do not include any greetings, intros, or sign-offs.
+
+      **Content Requirements (Follow Strictly):**
+      1.  Provide a short, educational tip explaining why this type of expense might be relevant for their taxes.
+      2.  **If a specific official Canadian tax form or type of receipt (e.g., T2202 for tuition, official donation receipt for charity) is associated with the expense, you MUST mention it by name.**
+
+      **Transaction to Analyze:**
+      ${dataString}
+    `;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+
+    const tip = response.text;
+    return tip;
+  } catch (error) {
+    console.error('Error communicating with the Gemini API:', error);
+    throw new Error('Failed to generate tax tip.');
+  }
+}
+
 module.exports = {
   generateFinancialSummary,
+  isTransactionPotentiallyDeductible,
+  generateTaxTip,
 };

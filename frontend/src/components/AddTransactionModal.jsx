@@ -42,7 +42,7 @@ function AddTransactionModal({ categories, onTransactionCreated, onClose }) {
 
     try {
       const transactionData = await apiService.createTransaction(formData);
-      onTransactionCreated();
+      onTransactionCreated(transactionData);
       console.log('Transaction created successfully', transactionData);
     } catch (error) {
       console.error('Error creating a new transaction', error.message);

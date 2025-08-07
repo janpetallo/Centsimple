@@ -50,7 +50,7 @@ function EditTransactionModal({
         transaction.id,
         formData
       );
-      onTransactionUpdated();
+      onTransactionUpdated(transactionData);
       console.log('Transaction updated successfully', transactionData);
     } catch (error) {
       console.error('Error updating a transaction', error.message);
