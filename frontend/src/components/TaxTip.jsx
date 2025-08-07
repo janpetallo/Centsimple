@@ -6,9 +6,11 @@ function TaxTip({ tip, onDismiss, isLoading, error }) {
     <>
       <div className="flex w-full items-center justify-between">
         <p className="text-on-surface-variant text-sm">Tax Tip</p>
-        <button onClick={onDismiss}>
-          <CloseIcon className="hover:text-primary h-5 w-5 cursor-pointer" />
-        </button>
+        {!isLoading && (
+          <button onClick={onDismiss}>
+            <CloseIcon className="hover:text-primary h-5 w-5 cursor-pointer" />
+          </button>
+        )}
       </div>
 
       {isLoading ? (
@@ -17,7 +19,7 @@ function TaxTip({ tip, onDismiss, isLoading, error }) {
         </div>
       ) : (
         <div className="text-on-primary-container">
-          <p className="whitespace-pre-line break-words">{tip}</p>
+          <p className="break-words whitespace-pre-line">{tip}</p>
         </div>
       )}
 
