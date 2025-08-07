@@ -11,7 +11,7 @@ function AiSummary({ summary, isLoading, error }) {
         </div>
       ) : (
         <div className="text-on-primary-container">
-          <p className="whitespace-pre-line">{summary}</p>
+          <p className="break-words whitespace-pre-line">{summary}</p>
         </div>
       )}
 

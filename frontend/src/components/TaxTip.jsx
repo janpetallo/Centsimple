@@ -4,7 +4,7 @@ import LoadingSpinner from './LoadingSpinner';
 function TaxTip({ tip, onDismiss, isLoading, error }) {
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex w-full items-center justify-between">
         <p className="text-on-surface-variant text-sm">Tax Tip</p>
         <button onClick={onDismiss}>
           <CloseIcon className="hover:text-primary h-5 w-5 cursor-pointer" />
@@ -17,7 +17,7 @@ function TaxTip({ tip, onDismiss, isLoading, error }) {
         </div>
       ) : (
         <div className="text-on-primary-container">
-          <p className="whitespace-pre-line">{tip}</p>
+          <p className="whitespace-pre-line break-words">{tip}</p>
         </div>
       )}
 

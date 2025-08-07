@@ -49,10 +49,14 @@ async function createTransaction(req, res) {
       },
     });
 
-    const isDeductible = await isTransactionPotentiallyDeductible(
-      description,
-      category.name
-    );
+    let isDeductible = false;
+
+    if (type === 'EXPENSE') {
+      isDeductible = await isTransactionPotentiallyDeductible(
+        description,
+        category.name
+      );
+    }
 
     res.status(201).json({
       message: 'Transaction created successfully.',
@@ -257,10 +261,14 @@ async function updateTransaction(req, res) {
       },
     });
 
-    const isDeductible = await isTransactionPotentiallyDeductible(
-      description,
-      category.name
-    );
+    let isDeductible = false;
+
+    if (type === 'EXPENSE') {
+      isDeductible = await isTransactionPotentiallyDeductible(
+        description,
+        category.name
+      );
+    }
 
     res.status(200).json({
       message: 'Transaction updated successfully.',
