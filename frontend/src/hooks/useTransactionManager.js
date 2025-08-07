@@ -17,11 +17,11 @@ export function useTransactionManager(onSuccess) {
     setIsTransactionModalOpen(false);
   }
 
-  function handleTransactionCreated() {
+  function handleTransactionCreated(transactionData) {
     setIsTransactionModalOpen(false);
     // We call the success callback and pass a flag
     // to indicate a page reset might be needed.
-    onSuccess({ shouldResetPage: true });
+    onSuccess({ transactionData: transactionData, shouldResetPage: true });
   }
 
   function handleEditTransaction(transaction) {
@@ -32,9 +32,9 @@ export function useTransactionManager(onSuccess) {
     setEditingTransaction(null);
   }
 
-  function handleTransactionUpdated() {
+  function handleTransactionUpdated(transactionData) {
     setEditingTransaction(null);
-    onSuccess();
+    onSuccess({ transactionData: transactionData });
   }
 
   async function handleDeleteTransaction(transactionId) {

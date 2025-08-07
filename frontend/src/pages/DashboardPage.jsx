@@ -9,6 +9,7 @@ import EditCategoryModal from '../components/EditCategoryModal';
 import AddTransactionModal from '../components/AddTransactionModal';
 import EditTransactionModal from '../components/EditTransactionModal';
 import ConfirmationDialog from '../components/ConfirmationDialog';
+import TaxTip from '../components/TaxTip';
 import TransactionListItem from '../components/TransactionListItem';
 import SearchIcon from '../icons/SearchIcon';
 import FilterListIcon from '../icons/FilterListIcon';
@@ -26,6 +27,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 function DashboardPage() {
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
+  const [activeTaxTip, setActiveTaxTip] = useState(null);
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -54,7 +56,16 @@ function DashboardPage() {
 
   // This new success handler can be passed to both hooks.
   // It intelligently handles data refreshing, including resetting to page 1.
-  const handleSuccess = ({ shouldResetPage = false } = {}) => {
+  const handleSuccess = ({
+    transactionData = null,
+    shouldResetPage = false,
+  } = {}) => {
+    if (transactionData && transactionData.taxTip) {
+      setActiveTaxTip(transactionData.taxTip);
+    } else {
+      setActiveTaxTip(null);
+    }
+
     if (shouldResetPage && currentPage !== 1) {
       setCurrentPage(1);
     } else {
@@ -247,6 +258,15 @@ function DashboardPage() {
                 onClearFilter={clearFilter}
               />
             </div>
+
+            {activeTaxTip && (
+              <div className="bg-primary-container flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
+                <TaxTip
+                  tip={activeTaxTip}
+                  onDismiss={() => setActiveTaxTip(null)}
+                />
+              </div>
+            )}
 
             {transactions.length === 0 && (
               <p className="bg-surface-container border-outline/10 mt-4 rounded-xl border p-8">
