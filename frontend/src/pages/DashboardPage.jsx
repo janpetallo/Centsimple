@@ -90,35 +90,41 @@ function DashboardPage() {
     if (shouldResetPage && currentPage !== 1) {
       setCurrentPage(1);
     } else {
-      fetchData();
+      fetchData(false);
     }
   };
 
   // Wrap fetchData in useCallback
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [categoriesData, transactionsData] = await Promise.all([
-        apiService.getCategories(),
-        apiService.getTransactions(
-          currentPage,
-          filters.categoryFilter,
-          filters.dateRangeFilter,
-          debouncedSearchTerm
-        ),
-      ]);
+  const fetchData = useCallback(
+    async (showPageLoader = true) => {
+      if (showPageLoader) {
+        setLoading(true);
+      }
 
-      setCategories(categoriesData.categories);
-      setPinnedCategoryIds(new Set(categoriesData.pinnedIds));
-      setTransactions(transactionsData.transactions);
-      setBalance(transactionsData.balance);
-      setPagination(transactionsData.pagination);
-    } catch (error) {
-      console.error('Error fetching data:', error.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, filters, debouncedSearchTerm]); // fetchData will only be re-created if any of these changes
+      try {
+        const [categoriesData, transactionsData] = await Promise.all([
+          apiService.getCategories(),
+          apiService.getTransactions(
+            currentPage,
+            filters.categoryFilter,
+            filters.dateRangeFilter,
+            debouncedSearchTerm
+          ),
+        ]);
+
+        setCategories(categoriesData.categories);
+        setPinnedCategoryIds(new Set(categoriesData.pinnedIds));
+        setTransactions(transactionsData.transactions);
+        setBalance(transactionsData.balance);
+        setPagination(transactionsData.pagination);
+      } catch (error) {
+        console.error('Error fetching data:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [currentPage, filters, debouncedSearchTerm]
+  ); // fetchData will only be re-created if any of these changes
 
   const {
     isManageCategoriesModalOpen,
@@ -281,7 +287,7 @@ function DashboardPage() {
             </div>
 
             {(isTipLoading || activeTaxTip || isTipError) && (
-              <div className="bg-primary-container flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
+              <div className="bg-primary-container mt-4 flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
                 <TaxTip
                   tip={activeTaxTip}
                   onDismiss={() => setActiveTaxTip(null)}
