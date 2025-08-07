@@ -21,6 +21,9 @@ The application is designed with a "simple, but not bland" philosophy, taking in
 - **Advanced Filtering & Search:** The transaction list can be filtered by date range and category, and includes a debounced text search for a fast and responsive user experience.
 - **Personalized Category Pinning:** Users can "pin" their most-used categories (both default and custom) to sort them to the top of lists for quick access.
 - **Data-Driven Insights:** A dedicated "Insights" page with interactive charts (Bar and Pie) that provide a visual summary of the user's financial habits over various time periods.
+- **AI-Powered "Smart Advisor":**
+  - **Key Insights:** An AI-generated natural-language summary of a user's financial performance on the Insights page.
+  - **Tax Tip Finder:** An intelligent feature that asynchronously checks new expense transactions and alerts the user with a dismissible card if the expense is a potential Canadian tax deduction.
 - **Professional UI/UX:**
   - Built with a mobile-first, fully responsive design.
   - A cohesive design system for color, typography, and shape inspired by Google's Material 3.
@@ -43,6 +46,7 @@ The application is designed with a "simple, but not bland" philosophy, taking in
 - **Framework:** Express.js
 - **Authentication:** Passport.js (Local and JWT strategies)
 - **Database ORM:** Prisma
+- **AI Service:** Google Gemini (`@google/genai`)
 - **Email Service:** Nodemailer (with Ethereal for development)
 
 ### Database
@@ -78,7 +82,7 @@ To get a local copy up and running, follow these simple steps.
    ```
 4. **Set Up Environment Variables**
 
-   - In the `backend` folder, create a `.env` file. You can use the `.env.example` file as a template.
+   - In the `backend` folder, create a `.env` file. You can use the `.env.example` file as a template. You will need to provide your `DATABASE_URL`, a `JWT_SECRET`, and a `GEMINI_API_KEY` for the AI features to work.
    - **Generate Ethereal Credentials:** To get your development email credentials, temporarily uncomment the `createTestAccount()` function call in `backend/src/services/email.service.js`. Run the script with `node src/services/email.service.js`, copy the new credentials into your `.env` file, and then re-comment the function call.
    - In the `frontend` folder, create a `.env.local` file. Use the `.env.local.example` file as a template.
 
@@ -114,6 +118,7 @@ The following instructions are for deploying on a platform like Render:
     - **Backend Service:**
       - `DATABASE_URL`: Your production database connection string.
       - `JWT_SECRET`: A long, random, secret string.
+      - `GEMINI_API_KEY`: Your Google Gemini API key.
       - `CORS_ORIGIN`: The full URL of your live frontend (e.g., `https://centsimple.onrender.com`).
       - `FRONTEND_URL`: The same full URL of your live frontend.
       - `EMAIL_USER` / `EMAIL_PASS`: Your production email credentials.
@@ -133,7 +138,8 @@ The following instructions are for deploying on a platform like Render:
 This project is a solid MVP with a clear roadmap for future features, including:
 
 - Savings Goals: A dedicated feature to create and track progress towards financial goals.
-- AI Integration: Exploring opportunities to integrate AI for smarter financial insights and automation.
-- Subscription Saver: A tool to manage and track recurring bills and subscriptions.
+- AI-Powered Goal Forecaster: An enhancement to Savings Goals that will provide a realistic forecast of how long it will take to reach a goal.
+- Subscription Saver: A tool to manage and track recurring bills and subscriptions using a scheduled cron job.
+- File Uploading: The ability to attach receipts to transactions using a secure, direct-to-cloud storage pattern.
 - Dark Mode: A complete, professionally designed dark theme.
 - Custom Form Components: Replacing all native browser controls (like dropdowns and date pickers) with fully-styled, custom components.
