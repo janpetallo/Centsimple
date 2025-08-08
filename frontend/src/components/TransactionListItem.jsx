@@ -5,7 +5,7 @@ function TransactionListItem({ transaction, onEdit, onDelete, error }) {
   return (
     <li className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant rounded-xl border p-4 transition-colors">
       <div className="flex items-start justify-between gap-4">
-        <div className="flex grow flex-col gap-4 md:flex-row">
+        <div className="flex grow flex-col gap-4">
           <p className="font-medium">{transaction.description}</p>
           <div className="flex items-center gap-2">
             <p className="bg-secondary-container text-on-secondary-container max-w-fit rounded-full px-2 py-1 text-xs whitespace-nowrap">

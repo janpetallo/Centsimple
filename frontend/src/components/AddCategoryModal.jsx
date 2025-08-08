@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import * as apiService from '../services/api.service';
 import Modal from './Modal';
+import LoadingSpinner from './LoadingSpinner';
 
 function AddCategoryModel({ onCategoryCreated, onClose }) {
   const [formData, setFormData] = useState({
@@ -70,9 +71,15 @@ function AddCategoryModel({ onCategoryCreated, onClose }) {
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary text-on-primary text-label-large inline-block w-full cursor-pointer rounded-full px-6 py-2 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg sm:w-fit"
+            className="bg-primary text-on-primary text-label-large inline-block w-full cursor-pointer rounded-full px-6 py-2 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:cursor-not-allowed disabled:hover:scale-100 sm:w-fit"
           >
-            Add
+            {loading ? (
+              <div className="flex grow items-center justify-center">
+                <LoadingSpinner className="text-on-primary-container bg-primary-container h-6 w-6 rounded-full" />
+              </div>
+            ) : (
+              'Add'
+            )}
           </button>
         </div>
       </form>
