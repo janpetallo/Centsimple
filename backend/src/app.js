@@ -50,6 +50,9 @@ app.use('/api/reports', reportsRouter);
 const tipRouter = require('./routes/tip.route');
 app.use('/api/tips', tipRouter);
 
+const savingsRouter = require('./routes/savings.route');
+app.use('/api/savings', savingsRouter);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

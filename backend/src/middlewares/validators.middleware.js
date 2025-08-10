@@ -75,10 +75,73 @@ const validateTransactionId = [
   param('transactionId').isInt().withMessage('Invalid transaction ID.'),
 ];
 
+const validateSaving = [
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('Name is required.')
+    .isLength({ min: 2 })
+    .withMessage('Name must be at least 2 characters.'),
+  body('initialBalance')
+    .isFloat({ gte: 0 })
+    .withMessage('Initial balance must be a non-negative number.'),
+  body('targetAmount')
+    .optional({ nullable: true })
+    .isFloat({ gt: 0 })
+    .withMessage('Target amount must be a positive number.'),
+  body('targetDate')
+    .optional({ nullable: true })
+    .isISO8601()
+    .withMessage('Please use a valid date format.'),
+  body('isTransfer')
+    .isBoolean()
+    .withMessage('isTransfer must be a boolean value.'),
+];
+
+const validateTransferSaving = [
+  param('goalId').isInt().withMessage('Invalid Goal ID.'),
+  body('amount')
+    .isFloat()
+    .not()
+    .equals('0')
+    .withMessage('Amount cannot be zero.'),
+  body('date')
+    .notEmpty()
+    .withMessage('Date is required.')
+    .isISO8601()
+    .withMessage('Please use a valid date format.'),
+];
+
+const validateSpendSaving = [
+  param('goalId').isInt().withMessage('Invalid Goal ID.'),
+  body('amount')
+    .trim()
+    .notEmpty()
+    .withMessage('Amount is required.')
+    .isFloat({ gt: 0 })
+    .withMessage('Amount must be a positive number.'),
+  body('description').trim().notEmpty().withMessage('Description is required.'),
+  body('categoryId')
+    .trim()
+    .notEmpty()
+    .withMessage('Category is required.')
+    .isInt()
+    .withMessage('Invalid category selected.'),
+  body('date')
+    .trim()
+    .notEmpty()
+    .withMessage('Date is required.')
+    .isISO8601()
+    .withMessage('Please use a valid date format.'),
+];
+
 module.exports = {
   validateUser,
   validateCategory,
   validateTransaction,
   validateCategoryId,
   validateTransactionId,
+  validateSaving,
+  validateTransferSaving,
+  validateSpendSaving,
 };
