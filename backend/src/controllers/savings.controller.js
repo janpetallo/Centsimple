@@ -47,32 +47,34 @@ async function createSaving(req, res) {
         });
       }
 
-      const [saving, transferTransaction] = await prisma.$transaction([
-        prisma.savingGoal.create({
-          data: {
-            name,
-            initialBalance: 0, // If transfered from Centsimple balance, set this to 0 and create a negative transaction below
-            targetAmount,
-            targetDate,
-            userId,
+      // Use a nested write to create the goal and the linked transaction together
+      const saving = await prisma.savingGoal.create({
+        data: {
+          name,
+          initialBalance: 0, // If transferred, initial balance is 0
+          targetAmount,
+          targetDate,
+          userId,
+          transactions: {
+            create: {
+              amount: -initialBalance, // Negative for contribution
+              description: `Initial transfer to ${name}`,
+              type: 'TRANSFER',
+              date: new Date(),
+              userId,
+              // categoryId is null by default for transfers
+            },
           },
-        }),
-        prisma.transaction.create({
-          data: {
-            amount: -initialBalance, // Contribute to savings is NEGATIVE
-            description: `Initial transfer to ${name}`,
-            type: 'TRANSFER',
-            date: new Date(),
-            categoryId: null,
-            userId,
-          },
-        }),
-      ]);
+        },
+        include: {
+          transactions: true, // Include the created transaction in the response
+        },
+      });
 
       res.status(201).json({
         message: 'Saving goal and initial transfer created successfully.',
         saving,
-        transferTransaction,
+        transferTransaction: saving.transactions[0],
       });
     } else {
       // No transfer needed, just create the saving goal
