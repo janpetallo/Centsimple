@@ -1,52 +1,9 @@
 const prisma = require('../config/prisma');
 const { validationResult } = require('express-validator');
-
-// --- Helper Function for Overall Balance ---
-async function getUserOverallBalance(userId) {
-  const incomeResult = await prisma.transaction.aggregate({
-    _sum: { amount: true },
-    where: { userId, type: 'INCOME' },
-  });
-  const expenseResult = await prisma.transaction.aggregate({
-    _sum: { amount: true },
-    where: { userId, type: 'EXPENSE' },
-  });
-  const transferResult = await prisma.transaction.aggregate({
-    _sum: { amount: true },
-    where: { userId, type: 'TRANSFER' },
-  }); // Contribute to savings is NEGATIVE, Withdraw from savings is POSITIVE
-
-  const totalIncome = incomeResult._sum.amount || 0;
-  const totalExpense = expenseResult._sum.amount || 0;
-  const totalTransfers = transferResult._sum.amount || 0;
-
-  return totalIncome - totalExpense + totalTransfers;
-}
-
-// --- Helper Function for a Single Saving Goal's Details & Balance ---
-async function getSavingGoalDetails(goalId, userId) {
-  const saving = await prisma.savingGoal.findUnique({
-    where: { id: goalId, userId: userId },
-  });
-
-  if (!saving) {
-    return null;
-  }
-
-  const totalTransfers = await prisma.transaction.aggregate({
-    where: {
-      userId: userId,
-      savingGoalId: goalId,
-      type: 'TRANSFER',
-    },
-    _sum: { amount: true },
-  });
-
-  const currentBalance =
-    saving.initialBalance - (totalTransfers._sum.amount || 0);
-
-  return { saving, currentBalance };
-}
+const {
+  getUserOverallBalance,
+  getSavingGoalDetails,
+} = require('../services/balance.service');
 
 async function createSaving(req, res) {
   const { name, isTransfer } = req.body;
@@ -170,9 +127,15 @@ async function getSavings(req, res) {
       };
     });
 
+    const totalSavingsBalance = savingsWithTotal.reduce(
+      (total, saving) => total + saving.currentBalance,
+      0
+    );
+
     res.status(200).json({
       message: 'Savings fetched successfully.',
       savingsWithTotal: savingsWithTotal,
+      totalSavingsBalance: totalSavingsBalance,
     });
   } catch (error) {
     console.error('Error fetching all savings', error);

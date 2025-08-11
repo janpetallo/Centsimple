@@ -3,6 +3,10 @@ const { validationResult } = require('express-validator');
 const {
   isTransactionPotentiallyDeductible,
 } = require('../services/ai.service');
+const {
+  getUserOverallBalance,
+  getSavingGoalDetails,
+} = require('../services/balance.service');
 
 async function createTransaction(req, res) {
   const { description, type } = req.body;
@@ -146,55 +150,31 @@ async function getTransactions(req, res) {
     ];
   }
 
+  // Exclude TRANSFER transactions from SPEND action in savings
+  whereOptions.linkedTransactionId = null;
+
   try {
-    // CALCULATING OVERALL BALANCE
-
-    const totalIncomeResult = await prisma.transaction.aggregate({
-      where: {
-        userId: userId,
-        type: 'INCOME',
-      },
-      _sum: {
-        amount: true,
-      },
-    });
-
-    const totalExpenseResult = await prisma.transaction.aggregate({
-      where: {
-        userId: userId,
-        type: 'EXPENSE',
-      },
-      _sum: {
-        amount: true,
-      },
-    });
-
-    // Handle potential null sums by defaulting to 0
-    const totalIncome = totalIncomeResult._sum.amount || 0;
-    const totalExpense = totalExpenseResult._sum.amount || 0;
-
-    const balance = totalIncome - totalExpense;
-
-    // FETCHING THE TRANSACTIONS
-
-    const totalTransactions = await prisma.transaction.count({
-      where: whereOptions,
-    });
-
-    const transactions = await prisma.transaction.findMany({
-      where: whereOptions,
-      orderBy: { date: 'desc' },
-      skip: (page - 1) * limit,
-      take: limit,
-      include: {
-        category: true,
-      },
-    });
+    const [balance, totalSavingsBalance, totalTransactions, transactions] =
+      await Promise.all([
+        getUserOverallBalance(userId), // overall balance
+        getTotalSavingsBalance(userId), // total savings balance
+        prisma.transaction.count({ where: whereOptions }), // total transactions count
+        prisma.transaction.findMany({
+          where: whereOptions,
+          orderBy: { date: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit,
+          include: {
+            category: true,
+          },
+        }),
+      ]);
 
     res.status(200).json({
       message: 'Transactions fetched successfully.',
       transactions: transactions,
       balance: balance,
+      totalSavingsBalance: totalSavingsBalance,
       pagination: {
         total: totalTransactions,
         page: page,
