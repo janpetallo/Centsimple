@@ -1,10 +1,12 @@
 const prisma = require('../config/prisma');
 const { validationResult } = require('express-validator');
+const { getDateRange } = require('../utils/date.utils');
 const {
   isTransactionPotentiallyDeductible,
 } = require('../services/ai.service');
 const {
   getUserOverallBalance,
+  getTotalSavingsBalance,
   getSavingGoalDetails,
 } = require('../services/balance.service');
 
@@ -94,53 +96,7 @@ async function getTransactions(req, res) {
   }
 
   if (dateRange) {
-    const now = new Date();
-    let startDate;
-    let endDate; // Use an end date for specific ranges
-
-    // It's good practice to make these consistent (e.g., all lowercase or camelCase)
-    switch (dateRange) {
-      case 'last7days':
-        startDate = new Date();
-        startDate.setDate(now.getDate() - 7);
-        break;
-      case 'last30days':
-        startDate = new Date();
-        startDate.setDate(now.getDate() - 30);
-        break;
-      case 'last90days':
-        startDate = new Date();
-        startDate.setDate(now.getDate() - 90);
-        break;
-      case 'thisMonth':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
-      case 'lastMonth':
-        // First day of the previous month
-        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        // First day of the current month
-        endDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
-      case 'thisYear':
-        startDate = new Date(now.getFullYear(), 0, 1);
-        break;
-      case 'lastYear':
-        // First day of the previous year
-        startDate = new Date(now.getFullYear() - 1, 0, 1);
-        // First day of the current year
-        endDate = new Date(now.getFullYear(), 0, 1);
-        break;
-      default:
-        break;
-    }
-
-    if (startDate) {
-      startDate.setHours(0, 0, 0, 0); // Set to start of the day
-      whereOptions.date = { gte: startDate };
-    }
-    if (endDate) {
-      whereOptions.date = { ...whereOptions.date, lt: endDate };
-    }
+    whereOptions.date = getDateRange(dateRange);
   }
 
   if (search) {
