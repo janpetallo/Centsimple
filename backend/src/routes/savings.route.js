@@ -18,4 +18,25 @@ savingsRouter.get(
   savingsController.getSavings
 );
 
+savingsRouter.get(
+  '/:goalId/history',
+  validators.validateSavingId,
+  passport.authenticate('jwt', { session: false }),
+  savingsController.getSavingHistory
+);
+
+savingsRouter.post(
+  '/:goalId/spend',
+  validators.validateSpendSaving,
+  passport.authenticate('jwt', { session: false }),
+  savingsController.spendFromSaving
+);
+
+savingsRouter.post(
+  '/:goalId/transfer',
+  validators.validateTransferSaving,
+  passport.authenticate('jwt', { session: false }),
+  savingsController.transferSaving
+);
+
 module.exports = savingsRouter;

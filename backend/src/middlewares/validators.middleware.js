@@ -75,6 +75,10 @@ const validateTransactionId = [
   param('transactionId').isInt().withMessage('Invalid transaction ID.'),
 ];
 
+const validateSavingId = [
+  param('goalId').isInt().withMessage('Invalid Goal ID.'),
+];
+
 const validateSaving = [
   body('name')
     .trim()
@@ -140,6 +144,7 @@ module.exports = {
   validateCategory,
   validateTransaction,
   validateCategoryId,
+  validateSavingId,
   validateTransactionId,
   validateSaving,
   validateTransferSaving,
