@@ -43,7 +43,7 @@ async function createSaving(req, res) {
           transactions: {
             create: {
               amount: -initialBalance, // Negative for contribution
-              description: `Initial transfer to ${name}`,
+              description: `Initial contribution to ${name}`,
               type: 'TRANSFER',
               date: new Date(),
               userId,
@@ -155,6 +155,11 @@ async function getSavingHistory(req, res) {
       return res.status(400).json({ errors: errors.array() });
     }
 
+    const { saving, currentBalance } = await getSavingGoalDetails(
+      goalId,
+      userId
+    );
+
     const savingHistory = await prisma.transaction.findMany({
       where: {
         savingGoalId: goalId,
@@ -168,6 +173,8 @@ async function getSavingHistory(req, res) {
 
     res.status(200).json({
       message: 'Saving history fetched successfully.',
+      saving: saving,
+      currentBalance: currentBalance,
       savingHistory: savingHistory,
     });
   } catch (error) {

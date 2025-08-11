@@ -58,45 +58,75 @@ async function calculateReportData(userId, dateRange) {
 
   try {
     // CALCULATE BALANCE and BREAKDOWN
-    const [totalIncomeResult, totalExpenseResult, rawExpenseBreakdown] =
-      await Promise.all([
-        prisma.transaction.aggregate({
-          where: {
-            ...whereOptions,
-            type: 'INCOME',
-          },
-          _sum: {
-            amount: true,
-          },
-        }),
-        prisma.transaction.aggregate({
-          where: {
-            ...whereOptions,
-            type: 'EXPENSE',
-          },
-          _sum: {
-            amount: true,
-          },
-        }),
-        prisma.transaction.groupBy({
-          by: ['categoryId'],
-          where: {
-            ...whereOptions,
-            type: 'EXPENSE',
-          },
-          _sum: {
-            amount: true,
-          },
-          orderBy: {
-            _sum: { amount: 'desc' },
-          },
-        }),
-      ]);
+    const [
+      totalIncomeResult,
+      totalExpenseResult,
+      rawExpenseBreakdown,
+      totalSavingContributionResult,
+      totalSavingWithdrawalResult,
+    ] = await Promise.all([
+      prisma.transaction.aggregate({
+        where: {
+          ...whereOptions,
+          type: 'INCOME',
+        },
+        _sum: {
+          amount: true,
+        },
+      }),
+      prisma.transaction.aggregate({
+        where: {
+          ...whereOptions,
+          type: 'EXPENSE',
+        },
+        _sum: {
+          amount: true,
+        },
+      }),
+      prisma.transaction.groupBy({
+        by: ['categoryId'],
+        where: {
+          ...whereOptions,
+          type: 'EXPENSE',
+        },
+        _sum: {
+          amount: true,
+        },
+        orderBy: {
+          _sum: { amount: 'desc' },
+        },
+      }),
+      prisma.transaction.aggregate({
+        where: {
+          ...whereOptions,
+          type: 'TRANSFER',
+          amount: { lt: 0 }, // Contributions are negative
+        },
+        _sum: {
+          amount: true,
+        },
+      }),
+      prisma.transaction.aggregate({
+        where: {
+          ...whereOptions,
+          type: 'TRANSFER',
+          amount: { gt: 0 }, // Withdrawals are positive
+        },
+        _sum: {
+          amount: true,
+        },
+      }),
+    ]);
 
     // Handle potential null sums by defaulting to 0
     const totalIncome = totalIncomeResult._sum.amount || 0;
     const totalExpense = totalExpenseResult._sum.amount || 0;
-    const balance = totalIncome - totalExpense;
+    const netEarnSpend = totalIncome - totalExpense;
+
+    const totalSavingContribution =
+      Math.abs(totalSavingContributionResult._sum.amount) || 0;
+    const totalSavingWithdrawal = totalSavingWithdrawalResult._sum.amount || 0;
+    const netSavings = totalSavingContribution - totalSavingWithdrawal;
 
     // Get the category IDs from the groupBy result.
     const categoryIds = rawExpenseBreakdown.map((item) => item.categoryId);
@@ -119,10 +149,13 @@ async function calculateReportData(userId, dateRange) {
     }));
 
     return {
-      balance: balance,
+      netEarnSpend: netEarnSpend,
       totalIncome: totalIncome,
       totalExpense: totalExpense,
       expenseBreakdown: expenseBreakdown,
+      netSavings: netSavings,
+      totalSavingContribution: totalSavingContribution,
+      totalSavingWithdrawal: totalSavingWithdrawal,
       startDate: whereOptions.date ? whereOptions.date.gte : null,
       endDate: whereOptions.date ? whereOptions.date.lt : null,
     };
