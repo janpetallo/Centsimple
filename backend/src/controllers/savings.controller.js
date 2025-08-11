@@ -1,6 +1,53 @@
 const prisma = require('../config/prisma');
 const { validationResult } = require('express-validator');
 
+// --- Helper Function for Overall Balance ---
+async function getUserOverallBalance(userId) {
+  const incomeResult = await prisma.transaction.aggregate({
+    _sum: { amount: true },
+    where: { userId, type: 'INCOME' },
+  });
+  const expenseResult = await prisma.transaction.aggregate({
+    _sum: { amount: true },
+    where: { userId, type: 'EXPENSE' },
+  });
+  const transferResult = await prisma.transaction.aggregate({
+    _sum: { amount: true },
+    where: { userId, type: 'TRANSFER' },
+  }); // Contribute to savings is NEGATIVE, Withdraw from savings is POSITIVE
+
+  const totalIncome = incomeResult._sum.amount || 0;
+  const totalExpense = expenseResult._sum.amount || 0;
+  const totalTransfers = transferResult._sum.amount || 0;
+
+  return totalIncome - totalExpense + totalTransfers;
+}
+
+// --- Helper Function for a Single Saving Goal's Details & Balance ---
+async function getSavingGoalDetails(goalId, userId) {
+  const saving = await prisma.savingGoal.findUnique({
+    where: { id: goalId, userId: userId },
+  });
+
+  if (!saving) {
+    return null;
+  }
+
+  const totalTransfers = await prisma.transaction.aggregate({
+    where: {
+      userId: userId,
+      savingGoalId: goalId,
+      type: 'TRANSFER',
+    },
+    _sum: { amount: true },
+  });
+
+  const currentBalance =
+    saving.initialBalance - (totalTransfers._sum.amount || 0);
+
+  return { saving, currentBalance };
+}
+
 async function createSaving(req, res) {
   const { name, isTransfer } = req.body;
   const initialBalance = parseFloat(req.body.initialBalance) || 0;
@@ -20,26 +67,7 @@ async function createSaving(req, res) {
     const shouldCreateTransfer = isTransfer && initialBalance > 0;
 
     if (shouldCreateTransfer) {
-      const incomeResult = await prisma.transaction.aggregate({
-        _sum: { amount: true },
-        where: { userId: userId, type: 'INCOME' },
-      });
-
-      const expenseResult = await prisma.transaction.aggregate({
-        _sum: { amount: true },
-        where: { userId: userId, type: 'EXPENSE' },
-      });
-
-      const transferResult = await prisma.transaction.aggregate({
-        _sum: { amount: true },
-        where: { userId: userId, type: 'TRANSFER' },
-      }); // Contribute to savings is NEGATIVE, Withdraw from savings is POSITIVE
-
-      const totalIncome = incomeResult._sum.amount || 0;
-      const totalExpense = expenseResult._sum.amount || 0;
-      const totalTransfers = transferResult._sum.amount || 0;
-
-      const currentBalance = totalIncome - totalExpense + totalTransfers;
+      const currentBalance = await getUserOverallBalance(userId);
 
       if (currentBalance < initialBalance) {
         return res.status(400).json({
@@ -154,6 +182,39 @@ async function getSavings(req, res) {
   }
 }
 
+async function getSavingHistory(req, res) {
+  const goalId = parseInt(req.params.goalId, 10);
+  const userId = req.user.id;
+
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const savingHistory = await prisma.transaction.findMany({
+      where: {
+        savingGoalId: goalId,
+        userId: userId,
+        linkedTransactionId: null, // Exclude TRANSFER transactions for SPEND action
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+
+    res.status(200).json({
+      message: 'Saving history fetched successfully.',
+      savingHistory: savingHistory,
+    });
+  } catch (error) {
+    console.error('Error fetching saving history', error);
+    res
+      .status(500)
+      .json({ message: 'Could not load saving history. Please try again.' });
+  }
+}
+
 async function spendFromSaving(req, res) {
   const goalId = parseInt(req.params.goalId, 10);
   const { description } = req.body;
@@ -168,29 +229,16 @@ async function spendFromSaving(req, res) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // Ensure user has enough saving balance to spend
-    const saving = await prisma.savingGoal.findUnique({
-      where: { id: goalId, userId: userId },
-    });
+    const details = await getSavingGoalDetails(goalId, userId);
 
-    if (!saving) {
+    if (!details) {
       return res.status(404).json({
         message:
           'Saving goal not found or you do not have permission to edit it.',
       });
     }
 
-    const totalTransfers = await prisma.transaction.aggregate({
-      where: {
-        userId: userId,
-        savingGoalId: goalId,
-        type: 'TRANSFER',
-      },
-      _sum: { amount: true },
-    });
-
-    const currentBalance =
-      saving.initialBalance - (totalTransfers._sum.amount || 0);
+    const { saving, currentBalance } = details;
 
     if (currentBalance < amount) {
       return res.status(400).json({
@@ -251,39 +299,6 @@ async function spendFromSaving(req, res) {
   }
 }
 
-async function getSavingHistory(req, res) {
-  const goalId = parseInt(req.params.goalId, 10);
-  const userId = req.user.id;
-
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const savingHistory = await prisma.transaction.findMany({
-      where: {
-        savingGoalId: goalId,
-        userId: userId,
-        linkedTransactionId: null, // Exclude TRANSFER transactions for SPEND action
-      },
-      orderBy: {
-        date: 'desc',
-      },
-    });
-
-    res.status(200).json({
-      message: 'Saving history fetched successfully.',
-      savingHistory: savingHistory,
-    });
-  } catch (error) {
-    console.error('Error fetching saving history', error);
-    res
-      .status(500)
-      .json({ message: 'Could not load saving history. Please try again.' });
-  }
-}
-
 async function transferSaving(req, res) {
   const goalId = parseInt(req.params.goalId, 10);
   const date = new Date(req.body.date);
@@ -296,72 +311,38 @@ async function transferSaving(req, res) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const saving = await prisma.savingGoal.findUnique({
-      where: { id: goalId, userId: userId },
-    });
-
-    if (!saving) {
-      return res.status(404).json({
-        message:
-          'Saving goal not found or you do not have permission to edit it.',
-      });
+    // Fetch details at the top level of the function
+    const details = await getSavingGoalDetails(goalId, userId);
+    if (!details) {
+      return res.status(404).json({ message: 'Saving goal not found.' });
     }
 
-    // Withdrawal from saving
+    // Destructure for easy access
+    const { saving, currentBalance } = details;
+
     if (amount > 0) {
-      // Ensure user has enough saving balance to spend
-      const totalTransfers = await prisma.transaction.aggregate({
-        where: {
-          userId: userId,
-          savingGoalId: goalId,
-          type: 'TRANSFER',
-        },
-        _sum: { amount: true },
-      });
-
-      const currentBalance =
-        saving.initialBalance - (totalTransfers._sum.amount || 0);
-
+      // Withdrawal from saving
       if (currentBalance < amount) {
-        return res.status(400).json({
-          message: 'Insufficient funds to spend from this saving goal.',
-        });
+        return res
+          .status(400)
+          .json({ message: 'Insufficient funds in this saving goal.' });
       }
     } else if (amount < 0) {
       // Contribution to saving
-      const incomeResult = await prisma.transaction.aggregate({
-        _sum: { amount: true },
-        where: { userId: userId, type: 'INCOME' },
-      });
-
-      const expenseResult = await prisma.transaction.aggregate({
-        _sum: { amount: true },
-        where: { userId: userId, type: 'EXPENSE' },
-      });
-
-      const transferResult = await prisma.transaction.aggregate({
-        _sum: { amount: true },
-        where: { userId: userId, type: 'TRANSFER' },
-      }); // Contribute to savings is NEGATIVE, Withdraw from savings is POSITIVE
-
-      const totalIncome = incomeResult._sum.amount || 0;
-      const totalExpense = expenseResult._sum.amount || 0;
-      const totalTransfers = transferResult._sum.amount || 0;
-
-      const currentBalance = totalIncome - totalExpense + totalTransfers;
-
-      if (currentBalance < amount * -1) {
-        // Convert amount to positive for comparison
-        return res.status(400).json({
-          message: 'Insufficient funds to make the initial transfer.',
-        });
+      const overallBalance = await getUserOverallBalance(userId);
+      if (overallBalance < Math.abs(amount)) {
+        return res
+          .status(400)
+          .json({ message: 'Insufficient funds to make the transfer.' });
       }
     }
 
     const transferTransaction = await prisma.transaction.create({
       data: {
         amount: amount,
-        description: `${amount > 0 ? 'Withdrawal from' : 'Contribution to'} ${saving.name}`,
+        description: `${
+          amount > 0 ? 'Withdrawal from' : 'Contribution to'
+        } ${saving.name}`,
         date: date,
         type: 'TRANSFER',
         categoryId: null,
