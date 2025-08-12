@@ -379,7 +379,7 @@ async function getAiSummary(dateRange) {
 
 async function generateTaxTip(description, categoryName) {
   try {
-    const url = `${API_BASE_URL}/tips`
+    const url = `${API_BASE_URL}/tips`;
     const options = {
       method: 'POST',
       credentials: 'include',
@@ -397,7 +397,6 @@ async function generateTaxTip(description, categoryName) {
   }
 }
 
-
 async function toggleCategoryPin(categoryId) {
   try {
     const link = `${API_BASE_URL}/categories/${categoryId}/pin`;
@@ -410,6 +409,98 @@ async function toggleCategoryPin(categoryId) {
     return data;
   } catch (error) {
     console.error('Toggle category pin error:', error);
+    throw error;
+  }
+}
+
+async function getSavings() {
+  try {
+    const url = `${API_BASE_URL}/savings`;
+    const options = {
+      method: 'GET',
+      credentials: 'include',
+    };
+
+    const data = await apiClient(url, options);
+    return data;
+  } catch (error) {
+    console.error('Get savings error:', error);
+    throw error;
+  }
+}
+
+async function getSavingHistory(goalId) {
+  try {
+    const url = `${API_BASE_URL}/savings/${goalId}/history`;
+    const options = {
+      method: 'GET',
+      credentials: 'include',
+    };
+
+    const data = await apiClient(url, options);
+    return data;
+  } catch (error) {
+    console.error('Get saving history error:', error);
+    throw error;
+  }
+}
+
+async function createSaving(savingData) {
+  try {
+    const url = `${API_BASE_URL}/savings/create`;
+    const options = {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(savingData),
+    };
+
+    const data = await apiClient(url, options);
+    return data;
+  } catch (error) {
+    console.error('Create saving error:', error);
+    throw error;
+  }
+}
+
+async function transferSaving(goalId, transferData) {
+  try {
+    const url = `${API_BASE_URL}/savings/${goalId}/transfer`;
+    const options = {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(transferData),
+    };
+
+    const data = await apiClient(url, options);
+    return data;
+  } catch (error) {
+    console.error('Transfer saving error:', error);
+    throw error;
+  }
+}
+
+async function spendFromSaving(goalId, spendData) {
+  try {
+    const url = `${API_BASE_URL}/savings/${goalId}/spend`;
+    const options = {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(spendData),
+    };
+
+    const data = await apiClient(url, options);
+    return data;
+  } catch (error) {
+    console.error('Spend from saving error:', error);
     throw error;
   }
 }
@@ -434,4 +525,9 @@ export {
   getAiSummary,
   generateTaxTip,
   toggleCategoryPin,
+  getSavings,
+  getSavingHistory,
+  createSaving,
+  transferSaving,
+  spendFromSaving,
 };

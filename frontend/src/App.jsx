@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage.jsx';
 import VerifyEmailPage from './pages/VerifyEmailPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import InsightsPage from './pages/InsightsPage.jsx';
+import SavingsPage from './pages/SavingsPage.jsx';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="insights" element={<InsightsPage />} />
+          <Route path="savings" element={<SavingsPage />} />
         </Route>
       </Route>
     </Routes>

@@ -17,6 +17,7 @@ import FilterModal from '../components/FilterModal';
 import ActiveFilters from '../components/ActiveFilters';
 import AddIcon from '../icons/AddIcon';
 import InsightsIcon from '../icons/InsightsIcon';
+import WalletIcon from '../icons/WalletIcon';
 import CategoryIcon from '../icons/CategoryIcon';
 import { useCategoryManager } from '../hooks/useCategoryManager';
 import { useTransactionManager } from '../hooks/useTransactionManager';
@@ -178,6 +179,11 @@ function DashboardPage() {
     navigate('/insights');
   }
 
+  function handleManageSavings() {
+    console.log('Manage Savings');
+    navigate('/savings');
+  }
+
   function handlePageChange(newPageNumber) {
     setCurrentPage(newPageNumber);
   }
@@ -214,6 +220,14 @@ function DashboardPage() {
           >
             <InsightsIcon className="h-5 w-5" />
             View Financial Insights
+          </button>
+
+          <button
+            onClick={handleManageSavings}
+            className="border-outline text-primary flex grow cursor-pointer items-center justify-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 md:grow-0"
+          >
+            <WalletIcon className="h-5 w-5" />
+            Manage Savings
           </button>
 
           <button
