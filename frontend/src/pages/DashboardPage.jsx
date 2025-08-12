@@ -281,7 +281,7 @@ function DashboardPage() {
                 <span className="hidden sm:inline">Filters</span>
               </button>
 
-              {/* Add Transaction Button (medium screens)*/}
+              {/* Add Transaction Button (xlarge screens)*/}
               <button
                 onClick={handleAddTransaction}
                 className="bg-primary border-primary text-label-large text-on-primary hidden cursor-pointer items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 hover:scale-105 hover:shadow-lg xl:inline-flex"
@@ -313,11 +313,11 @@ function DashboardPage() {
 
             {transactions.length === 0 && (
               <p className="bg-surface-container border-outline/10 mt-4 rounded-xl border p-8">
-                <span className="md:hidden">
+                <span className="xl:hidden">
                   No transactions yet. Click the "+" button to get started!
                 </span>
                 {/* This span is HIDDEN by default and only appears on medium screens and up */}
-                <span className="hidden md:inline">
+                <span className="hidden xl:inline">
                   No transactions yet. Click "Add Transaction" to get started!
                 </span>
               </p>
