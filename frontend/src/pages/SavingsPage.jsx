@@ -47,7 +47,7 @@ function SavingsPage() {
 
   return (
     <>
-      <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center justify-start gap-2">
           <button
             onClick={handleBackButtonClick}
@@ -58,7 +58,7 @@ function SavingsPage() {
           <h2 className="text-headline-medium text-left">Savings</h2>
         </div>
 
-        {/* Create Saving Button (medium screens)*/}
+        {/* Create Saving Button (xlarge screens)*/}
         <div className="flex grow flex-col gap-4 sm:flex-row md:grow-0">
           <button
             onClick={handleOpenAddSavingModal}
