@@ -7,7 +7,7 @@ async function generateFinancialSummary(financialData, dateRange) {
     const dataString = `
     - Total Income: ${financialData.totalIncome.toFixed(2)} CAD
     - Total Expense: ${financialData.totalExpense.toFixed(2)} CAD
-    - Net Balance: ${financialData.balance.toFixed(2)} CAD
+    - Net Earnings (Income - Expense): ${financialData.netEarnSpend.toFixed(2)} CAD
     - Expense Breakdown: ${financialData.expenseBreakdown
       .map((item) => `${item.categoryName}: ${item.total.toFixed(2)} CAD`)
       .join(', ')}
@@ -22,8 +22,8 @@ async function generateFinancialSummary(financialData, dateRange) {
         4.  **Variety:** Do not use the same exact sentence structure for every summary. Vary your phrasing to sound natural.
 
         **Content Logic (Follow Strictly):**
-        - **IF Net Balance is positive:** The first sentence must celebrate that they saved money. The second sentence must provide an encouraging insight about their successful saving habits.
-        - **ELSE (if Net Balance is zero or negative):** The first sentence must be a neutral, non-judgmental observation that their spending was higher than their income. The second sentence must gently highlight a significant, non-essential spending area (like Shopping, Entertainment) as a helpful point for reflection.
+        - **IF Net Earnings is positive:** The first sentence must celebrate that they saved money. The second sentence must provide an encouraging insight about their successful saving habits.
+        - **ELSE (if Net Earnings is zero or negative):** The first sentence must be a neutral, non-judgmental observation that their spending was higher than their income. The second sentence must gently highlight a significant, non-essential spending area (like Shopping, Entertainment) as a helpful point for reflection.
 
         **Context for this summary:**
         - Time Period: ${dateRange}

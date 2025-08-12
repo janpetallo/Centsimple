@@ -109,9 +109,9 @@ function InsightsPage() {
           {reportData ? (
             <div>
               <div className="bg-surface-container flex flex-col items-start justify-between gap-1 rounded-2xl p-6 shadow-sm">
-                <p className="text-on-surface-variant text-sm">Balance</p>
+                <p className="text-on-surface-variant text-sm">Net Earnings</p>
                 <p className="text-headline-medium text-on-surface">
-                  {formatter.formatCurrency(reportData.balance)}
+                  {formatter.formatCurrency(reportData.netEarnSpend)}
                 </p>
 
                 {reportData.startDate && (
