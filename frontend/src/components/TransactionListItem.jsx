@@ -11,9 +11,15 @@ function TransactionListItem({ transaction, onEdit, onDelete, error }) {
             <p className="bg-secondary-container text-on-secondary-container max-w-fit rounded-full px-2 py-1 text-xs whitespace-nowrap">
               {formatter.formatDate(transaction.date)}
             </p>
-            <p className="bg-tertiary-container text-on-tertiary-container truncate rounded-full px-2 py-1 text-xs whitespace-nowrap">
-              {transaction.category.name}
-            </p>
+            {transaction.category ? (
+              <p className="bg-tertiary-container text-on-tertiary-container truncate rounded-full px-2 py-1 text-xs whitespace-nowrap">
+                {transaction.category.name}
+              </p>
+            ) : (
+              <p className="bg-tertiary text-on-tertiary truncate rounded-full px-2 py-1 text-xs whitespace-nowrap">
+                Savings
+              </p>
+            )}
           </div>
         </div>
 
@@ -26,10 +32,13 @@ function TransactionListItem({ transaction, onEdit, onDelete, error }) {
             )}
           </p>
 
-          <ActionMenu
-            onDelete={() => onDelete(transaction.id)}
-            onEdit={() => onEdit(transaction)}
-          />
+          {/* Avoid rendering action menu for any savings related transactions */}
+          {transaction.type !== 'TRANSFER' && !transaction.savingGoalId && (
+            <ActionMenu
+              onDelete={() => onDelete(transaction.id)}
+              onEdit={() => onEdit(transaction)}
+            />
+          )}
         </div>
       </div>
 

@@ -95,11 +95,12 @@ function SavingsPage() {
               {savings.length > 0 ? (
                 <ul className="mt-4 flex flex-col gap-2">
                   {savings.map((saving) => (
+                    // Can make a separate component for this like TransactionListItem
                     <li
                       key={saving.id}
                       className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant rounded-xl border p-4 transition-colors"
                     >
-                      <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-center justify-between gap-4">
                         <div className="flex grow flex-col gap-4">
                           <p className="font-medium">{saving.name}</p>
                         </div>
