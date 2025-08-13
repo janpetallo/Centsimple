@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export function useSavingsManager() {
+export function useSavingsManager({ onSuccess }) {
   const [isAddSavingModalOpen, setIsAddSavingModalOpen] = useState(false);
 
   function handleOpenAddSavingModal() {
@@ -11,9 +11,15 @@ export function useSavingsManager() {
     setIsAddSavingModalOpen(false);
   }
 
+  function handleSavingCreated() {
+    handleCloseAddSavingModal();
+    onSuccess();
+  }
+
   return {
     isAddSavingModalOpen,
     handleOpenAddSavingModal,
     handleCloseAddSavingModal,
+    handleSavingCreated,
   };
 }

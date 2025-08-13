@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSavingsManager } from '../hooks/useSavingsManager';
 import * as apiService from '../services/api.service';
@@ -14,30 +14,38 @@ function SavingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    async function fetchSavingsData() {
-      setLoading(true);
-      setError(null);
+  // Wrap the data fetching logic in useCallback
+  const fetchSavingsData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
 
-      try {
-        const savingsData = await apiService.getSavings();
-        setTotalSavingsBalance(savingsData.totalSavingsBalance);
-        setSavings(savingsData.savingsWithTotal);
-      } catch (error) {
-        console.error('Error fetching savings data:', error.message);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
+    try {
+      const savingsData = await apiService.getSavings();
+      setTotalSavingsBalance(savingsData.totalSavingsBalance);
+      setSavings(savingsData.savingsWithTotal);
+    } catch (error) {
+      console.error('Error fetching savings data:', error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
+  }, []); // Created only once and will never be recreated
+
+  // Call fetchData on initial mount
+  useEffect(() => {
     fetchSavingsData();
-  }, []);
+  }, [fetchSavingsData]); // Since fetchSavingsData() will not be recreated, this only runs on the initial mount
+
+  function handleSuccess() {
+    fetchSavingsData();
+  }
 
   const {
     isAddSavingModalOpen,
     handleOpenAddSavingModal,
     handleCloseAddSavingModal,
-  } = useSavingsManager();
+    handleSavingCreated,
+  } = useSavingsManager({ onSuccess: handleSuccess });
 
   const navigate = useNavigate();
 
@@ -147,7 +155,10 @@ function SavingsPage() {
       )}
 
       {isAddSavingModalOpen && (
-        <AddSavingModal onClose={handleCloseAddSavingModal} />
+        <AddSavingModal
+          onSavingCreated={handleSavingCreated}
+          onClose={handleCloseAddSavingModal}
+        />
       )}
     </>
   );
