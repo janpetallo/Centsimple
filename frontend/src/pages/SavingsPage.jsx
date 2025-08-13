@@ -7,6 +7,7 @@ import BackIcon from '../icons/BackIcon';
 import AddIcon from '../icons/AddIcon';
 import LoadingSpinner from '../components/LoadingSpinner';
 import AddSavingModal from '../components/AddSavingModal';
+import SavingGoalListItem from '../components/SavingGoalListItem';
 
 function SavingsPage() {
   const [totalSavingsBalance, setTotalSavingsBalance] = useState(0);
@@ -95,28 +96,13 @@ function SavingsPage() {
               {savings.length > 0 ? (
                 <ul className="mt-4 flex flex-col gap-2">
                   {savings.map((saving) => (
-                    // Can make a separate component for this like TransactionListItem
-                    <li
+                    <SavingGoalListItem
                       key={saving.id}
-                      className="bg-surface-container border-outline/10 hover:bg-surface-variant hover:text-on-surface-variant rounded-xl border p-4 transition-colors"
-                    >
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex grow flex-col gap-4">
-                          <p className="font-medium">{saving.name}</p>
-                        </div>
-                        <div className="flex flex-shrink-0 items-center gap-4">
-                          <p className="text-label-large p-1 text-right md:w-28">
-                            {formatter.formatCurrency(saving.currentBalance)}
-                          </p>
-
-                          {/* can replace when update and delete functionality are implemented */}
-                          {/* <ActionMenu
-                            onDelete={() => onDelete(transaction.id)}
-                            onEdit={() => onEdit(transaction)}
-                          /> */}
-                        </div>
-                      </div>
-                    </li>
+                      saving={saving}
+                      // onEdit={handleEditTransaction}
+                      // onDelete={handleDeleteTransactionConfirmation}
+                      // error={transactionError}
+                    />
                   ))}
                 </ul>
               ) : (
